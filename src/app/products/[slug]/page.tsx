@@ -4,7 +4,9 @@ import ProductGallery from '@/components/ProductGallery'
 import ProductActions from '@/components/ProductActions'
 import ProductDescriptionTabs from '@/components/ProductDescriptionTabs'
 import Link from 'next/link'
-import DOMPurify from 'isomorphic-dompurify'
+function sanitize(html: string) {
+  return html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '')
+}
 import type { Product } from '@/lib/types'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -76,7 +78,7 @@ export default async function ProductPage({ params }: Props) {
         .limit(4)
     : { data: [] }
 
-  const cleanDescription = p.description ? DOMPurify.sanitize(p.description) : null
+  const cleanDescription = p.description ? sanitize(p.description) : null
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -118,7 +120,7 @@ export default async function ProductPage({ params }: Props) {
           {p.short_description && (
             <div
               className="text-muted text-sm mb-6 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(p.short_description) }}
+              dangerouslySetInnerHTML={{ __html: sanitize(p.short_description) }}
             />
           )}
 
