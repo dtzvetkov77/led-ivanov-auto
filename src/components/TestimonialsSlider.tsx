@@ -4,6 +4,15 @@ import { createClient } from '@/lib/supabase/client'
 
 const COLORS = ['#cc0000', '#1a6be0', '#e07b00', '#228844', '#7b22cc', '#cc6600']
 
+const FALLBACK: Review[] = [
+  { id: '1', name: 'Георги Петров',   car: 'BMW E46',          stars: 5, photo_url: null, text: 'Много съм доволен! Светят изключително силно, а монтажът беше буквално за 5 минути. Каренето стана удоволствие – виждам пътя като ден.' },
+  { id: '2', name: 'Николай Димитров', car: 'Mercedes W204',   stars: 5, photo_url: null, text: 'Не очаквах такова качество за тази цена. Светлината е бяла и ясна, без разсейване. Минаха над 6 месеца – никакъв проблем.' },
+  { id: '3', name: 'Иван Стоянов',     car: 'Audi A4',         stars: 5, photo_url: null, text: 'Ползвам ги вече 3 месеца – никакви проблеми. Няма грешки по таблото, не мигат и светят супер стабилно. Препоръчвам!' },
+  { id: '4', name: 'Мартин Василев',   car: 'BMW E90',         stars: 5, photo_url: null, text: 'Поръчах за BMW E90 – монтажът беше лесен и без CanBus грешки. Изглеждат страхотно нощем.' },
+  { id: '5', name: 'Димитър Колев',    car: 'VW Golf 7',       stars: 5, photo_url: null, text: 'Бързо обслужване, продуктът дойде добре опакован. Монтирах ги сам за 10 минути. Разликата е огромна!' },
+  { id: '6', name: 'Стефан Иванов',    car: 'Toyota Corolla',  stars: 5, photo_url: null, text: 'Отличен продукт! Светят много по-силно от оригиналните халогени. Цената е достъпна, качеството е на ниво.' },
+]
+
 type Review = {
   id: string
   name: string
@@ -88,7 +97,7 @@ export default function TestimonialsSlider() {
       .eq('published', true)
       .order('position')
       .order('created_at', { ascending: false })
-      .then(({ data }) => { if (data?.length) setReviews(data) })
+      .then(({ data }) => { if (data?.length) setReviews(data); else setReviews(FALLBACK) })
   }, [])
 
   const total = reviews.length
