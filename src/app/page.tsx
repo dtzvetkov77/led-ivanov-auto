@@ -31,7 +31,11 @@ export default async function HomePage() {
 
       {/* ── Categories ───────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 py-14">
-        <h2 className="text-2xl md:text-3xl font-black mb-8 text-center">Категории</h2>
+        <div className="text-center mb-10">
+          <span className="text-xs font-bold tracking-[4px] uppercase text-accent mb-3 block">ПРОДУКТИ</span>
+          <h2 className="text-2xl md:text-3xl font-black mb-2">КАТЕГОРИИ</h2>
+          <p className="text-muted text-sm">Разгледай нашата гама от LED продукти за автомобили</p>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
           {PRODUCT_CATEGORIES.map((cat, i) => {
             const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -61,8 +65,9 @@ export default async function HomePage() {
       <section className="bg-surface border-y border-border py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-black mb-2">НАЙ-ПРОДАВАНИ</h2>
-            <p className="text-muted">Разгледай най-популярните продукти от LED IVANOV AUTO</p>
+            <span className="text-xs font-bold tracking-[4px] uppercase text-accent mb-3 block">ТОП ПРОДУКТИ</span>
+            <h2 className="text-2xl md:text-3xl font-black mb-2">НАЙ-ПРОДАВАНИ</h2>
+            <p className="text-muted text-sm">Разгледай най-популярните продукти от LED IVANOV AUTO</p>
           </div>
           <ProductGrid products={products ?? []} />
           <div className="text-center mt-8">
