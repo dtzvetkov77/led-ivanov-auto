@@ -34,7 +34,8 @@ export default async function HomePage() {
         <h2 className="text-2xl md:text-3xl font-black mb-8 text-center">Категории</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
           {PRODUCT_CATEGORIES.map((cat, i) => {
-            const img = `/images/categories/${cat.slug}.webp`
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+            const img = `${supabaseUrl}/storage/v1/object/public/product-images/categories/${cat.slug}.webp`
             const hue = (i * 37 + 200) % 360
             return (
               <Link
