@@ -43,6 +43,7 @@ next-env.d.ts
 # WooCommerce CSV exports
 wc-product-export-*.csv
 
-# Local product images (too large for git)
+# Local images (too large for git)
 /public/images/products-local/
 /public/images/customers/
+/public/images/categories/
