@@ -177,7 +177,7 @@ export default function ProductSlider() {
         <button
           key={dir}
           onClick={() => { dir === 'prev' ? prev() : next(); setPaused(true) }}
-          className={`absolute top-1/2 -translate-y-1/2 ${dir === 'prev' ? 'left-3' : 'right-3'} w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/15 border border-white/10 rounded-full transition-colors`}
+          className={`absolute top-1/2 -translate-y-1/2 z-20 ${dir === 'prev' ? 'left-3' : 'right-3'} w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/70 border border-white/10 rounded-full transition-colors`}
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d={dir === 'prev' ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'} strokeLinecap="round" strokeLinejoin="round"/>

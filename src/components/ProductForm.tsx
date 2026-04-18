@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { uploadFile } from '@/lib/upload'
 import type { Product, Category } from '@/lib/types'
 
 type Props = {
@@ -39,21 +40,18 @@ export default function ProductForm({ product, categories }: Props) {
     if (!files || files.length === 0) return
     setUploading(true)
     setError('')
-    const supabase = createClient()
     const folder = product?.slug ?? `new-${Date.now()}`
     const uploaded: string[] = []
 
     for (const file of Array.from(files)) {
       const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { error: upErr } = await supabase.storage
-        .from('product-images')
-        .upload(path, file, { upsert: true })
-
-      if (upErr) { setError(`Грешка при качване: ${upErr.message}`); continue }
-
-      const { data } = supabase.storage.from('product-images').getPublicUrl(path)
-      uploaded.push(data.publicUrl)
+      try {
+        const url = await uploadFile(file, path)
+        uploaded.push(url)
+      } catch (e: any) {
+        setError(`Грешка при качване: ${e.message}`)
+      }
     }
 
     setImages(prev => [...prev, ...uploaded])
@@ -150,7 +148,7 @@ export default function ProductForm({ product, categories }: Props) {
         {images.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {images.map((url, i) => (
-              <div key={url} className="relative group w-24 h-24 rounded-lg overflow-hidden border border-border bg-surface flex-shrink-0">
+              <div key={url} className="relative group w-24 h-24 rounded-lg overflow-hidden border border-border bg-surface shrink-0">
                 <img src={url} alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                   {i > 0 && (

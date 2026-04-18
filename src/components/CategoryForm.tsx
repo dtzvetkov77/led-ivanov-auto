@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { uploadFile } from '@/lib/upload'
 import type { Category } from '@/lib/types'
 
 type Props = { category?: Category }
@@ -36,20 +37,16 @@ export default function CategoryForm({ category }: Props) {
     if (!files || files.length === 0) return
     setUploading(true)
     setError('')
-    const supabase = createClient()
-    const file = files[0]
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-    const slug = form.slug || `cat-${Date.now()}`
-    const path = `categories/${slug}-${Date.now()}.${ext}`
-
-    const { error: upErr } = await supabase.storage
-      .from('product-images')
-      .upload(path, file, { upsert: true })
-
-    if (upErr) { setError(`Грешка при качване: ${upErr.message}`); setUploading(false); return }
-
-    const { data } = supabase.storage.from('product-images').getPublicUrl(path)
-    setForm(f => ({ ...f, image_url: data.publicUrl }))
+    try {
+      const file = files[0]
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
+      const slug = form.slug || `cat-${Date.now()}`
+      const path = `categories/${slug}-${Date.now()}.${ext}`
+      const url = await uploadFile(file, path)
+      setForm(f => ({ ...f, image_url: url }))
+    } catch (e: any) {
+      setError(`Грешка при качване: ${e.message}`)
+    }
     setUploading(false)
   }
 
