@@ -1,0 +1,115 @@
+<h2>Как да изглежда началната страница?</h2>
+<p class="subtitle">Три варианта за структурата на homepage-а — кликни на предпочитания</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a;padding:16px;font-family:sans-serif;color:#fff;">
+      <div style="background:linear-gradient(135deg,#1a0000,#0a0a0a);border:1px solid #cc0000;border-radius:6px;padding:10px 14px;margin-bottom:8px;text-align:center;">
+        <div style="font-size:10px;color:#cc0000;text-transform:uppercase;letter-spacing:2px;">LED IVANOV AUTO</div>
+        <div style="font-size:14px;font-weight:700;margin:4px 0;">Шофирай уверено с перфектна видимост</div>
+        <div style="display:flex;gap:6px;margin-top:6px;justify-content:center;">
+          <select style="background:#111;border:1px solid #444;color:#fff;font-size:9px;padding:3px 6px;border-radius:3px;"><option>Марка</option></select>
+          <select style="background:#111;border:1px solid #444;color:#fff;font-size:9px;padding:3px 6px;border-radius:3px;"><option>Модел</option></select>
+          <select style="background:#111;border:1px solid #444;color:#fff;font-size:9px;padding:3px 6px;border-radius:3px;"><option>Категория</option></select>
+          <div style="background:#cc0000;color:#fff;font-size:9px;padding:3px 8px;border-radius:3px;">Търси</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div style="background:#111;border:1px solid #333;border-radius:4px;padding:8px;text-align:center;font-size:9px;">
+          <div style="height:30px;background:linear-gradient(45deg,#1a0000,#2a0000);border-radius:3px;margin-bottom:4px;"></div>
+          LED Крушки
+        </div>
+        <div style="background:#111;border:1px solid #333;border-radius:4px;padding:8px;text-align:center;font-size:9px;">
+          <div style="height:30px;background:linear-gradient(45deg,#001a00,#002a00);border-radius:3px;margin-bottom:4px;"></div>
+          LED Комплекти
+        </div>
+        <div style="background:#111;border:1px solid #333;border-radius:4px;padding:8px;text-align:center;font-size:9px;">
+          <div style="height:30px;background:linear-gradient(45deg,#00001a,#00002a);border-radius:3px;margin-bottom:4px;"></div>
+          DRL Светлини
+        </div>
+        <div style="background:#111;border:1px solid #333;border-radius:4px;padding:8px;text-align:center;font-size:9px;">
+          <div style="height:30px;background:linear-gradient(45deg,#1a1a00,#2a2a00);border-radius:3px;margin-bottom:4px;"></div>
+          Аксесоари
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Филтър горе, категории долу</h3>
+      <p>Голям hero с филтър по марка/модел/категория на преден план. Веднага под него — grid с категориите. Класически e-commerce подход, ориентиран към търсене.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a;padding:16px;font-family:sans-serif;color:#fff;">
+      <div style="background:#111;border-radius:6px;padding:10px 14px;margin-bottom:8px;">
+        <div style="display:flex;gap:8px;margin-bottom:6px;justify-content:center;">
+          <div style="background:#cc0000;padding:3px 8px;border-radius:12px;font-size:9px;">LED Крушки</div>
+          <div style="background:#222;padding:3px 8px;border-radius:12px;font-size:9px;color:#888;">Комплекти</div>
+          <div style="background:#222;padding:3px 8px;border-radius:12px;font-size:9px;color:#888;">DRL</div>
+          <div style="background:#222;padding:3px 8px;border-radius:12px;font-size:9px;color:#888;">Аксесоари</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+          <div style="background:#1a1a1a;border:1px solid #cc0000;border-radius:4px;padding:6px;text-align:center;">
+            <div style="height:28px;background:radial-gradient(circle,#330000,#1a0000);border-radius:3px;margin-bottom:3px;"></div>
+            <div style="font-size:8px;">H7 200W</div>
+            <div style="font-size:9px;color:#cc0000;font-weight:700;">€94.99</div>
+          </div>
+          <div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px;text-align:center;">
+            <div style="height:28px;background:radial-gradient(circle,#1a1a1a,#111);border-radius:3px;margin-bottom:3px;"></div>
+            <div style="font-size:8px;">H4 50000LM</div>
+            <div style="font-size:9px;color:#cc0000;font-weight:700;">€74.99</div>
+          </div>
+          <div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px;text-align:center;">
+            <div style="height:28px;background:radial-gradient(circle,#1a1a1a,#111);border-radius:3px;margin-bottom:3px;"></div>
+            <div style="font-size:8px;">DRL+Мигач</div>
+            <div style="font-size:9px;color:#cc0000;font-weight:700;">€39.99</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#1a0000;border:1px solid #cc0000;border-radius:4px;padding:8px;text-align:center;">
+        <div style="font-size:9px;margin-bottom:4px;">Намери части за твоята кола</div>
+        <div style="display:flex;gap:4px;justify-content:center;">
+          <select style="background:#111;border:1px solid #444;color:#fff;font-size:9px;padding:2px 4px;border-radius:3px;"><option>Марка</option></select>
+          <select style="background:#111;border:1px solid #444;color:#fff;font-size:9px;padding:2px 4px;border-radius:3px;"><option>Модел</option></select>
+          <div style="background:#cc0000;color:#fff;font-size:8px;padding:2px 8px;border-radius:3px;">Виж</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Категории с табове + продукти + филтър</h3>
+      <p>Хоризонтални табове за категории, директно под тях — продукти. Филтърът е по-компактен и живее в отделна секция. По-близо до стандартен онлайн магазин.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a;padding:16px;font-family:sans-serif;color:#fff;">
+      <div style="background:linear-gradient(180deg,#1a0000 0%,#0a0a0a 100%);border-radius:6px;padding:12px;margin-bottom:8px;text-align:center;border:1px solid #cc000044;">
+        <div style="font-size:8px;color:#cc0000;letter-spacing:3px;text-transform:uppercase;">LED IVANOV AUTO</div>
+        <div style="font-size:13px;font-weight:800;margin:4px 0;line-height:1.2;">Висококачествени LED крушки<br><span style="color:#cc0000;">+500% яркост</span></div>
+        <div style="display:inline-flex;gap:6px;margin-top:6px;background:#11111188;padding:6px 10px;border-radius:4px;border:1px solid #333;">
+          <select style="background:transparent;border:none;color:#fff;font-size:9px;"><option>Марка ▾</option></select>
+          <div style="width:1px;background:#444;"></div>
+          <select style="background:transparent;border:none;color:#fff;font-size:9px;"><option>Модел ▾</option></select>
+          <div style="width:1px;background:#444;"></div>
+          <select style="background:transparent;border:none;color:#fff;font-size:9px;"><option>Категория ▾</option></select>
+          <div style="background:#cc0000;padding:2px 8px;border-radius:3px;font-size:9px;margin-left:4px;">Търси</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px;">
+        <div style="background:#111;border-radius:4px;padding:6px;text-align:center;font-size:8px;border-top:2px solid #cc0000;">LED<br>Крушки</div>
+        <div style="background:#111;border-radius:4px;padding:6px;text-align:center;font-size:8px;border-top:2px solid #444;">Комплекти</div>
+        <div style="background:#111;border-radius:4px;padding:6px;text-align:center;font-size:8px;border-top:2px solid #444;">DRL</div>
+      </div>
+      <div style="background:#111;border-radius:4px;padding:6px;text-align:center;font-size:8px;color:#888;">✦ Топ продукти на деня ✦</div>
+    </div>
+    <div class="card-body">
+      <h3>C — Cinematic hero + inline филтър + категории</h3>
+      <p>Тъмен, кинематографичен hero с вграден прозрачен филтър (като в screenshots-ите). Категориите са визуални карти под него. Най-близо до дизайна от изображенията.</p>
+    </div>
+  </div>
+
+</div>
