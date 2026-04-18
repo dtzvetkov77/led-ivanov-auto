@@ -237,11 +237,10 @@ export default function HeroFilter() {
 
       {/* Hero photo background */}
       <div className="absolute inset-0 bg-background" />
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-35"
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-55"
         style={{ backgroundImage: 'url(/images/hero.webp)' }} />
-      {/* Dark gradient overlay so text stays readable */}
       <div className="absolute inset-0"
-        style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.3) 50%, rgba(10,10,10,0.75) 100%)' }} />
+        style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.15) 50%, rgba(10,10,10,0.65) 100%)' }} />
       <div className="absolute inset-0"
         style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(180,0,0,0.15) 0%, transparent 70%)' }} />
 

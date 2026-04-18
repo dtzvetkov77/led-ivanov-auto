@@ -20,11 +20,11 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null
 
   return (
-    <div className="fixed bottom-6 left-0 right-0 z-100 flex flex-col items-center gap-2 pointer-events-none">
+    <div className="fixed top-20 md:top-auto md:bottom-6 left-0 right-0 z-200 flex flex-col items-center gap-2 pointer-events-none px-4">
       {toasts.map(toast => (
         <div
           key={toast.id}
-          className={`toast-animate flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl text-sm font-semibold text-white ${
+          className={`toast-animate flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl text-sm font-semibold text-white w-full max-w-sm ${
             toast.type === 'success'
               ? 'bg-surface border border-green-500/40'
               : 'bg-surface border border-red-500/40'

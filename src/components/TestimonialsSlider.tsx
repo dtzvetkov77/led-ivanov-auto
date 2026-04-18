@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const COLORS = ['#cc0000', '#1a6be0', '#e07b00', '#228844', '#7b22cc', '#cc6600']
@@ -89,6 +89,7 @@ export default function TestimonialsSlider() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [idx, setIdx] = useState(0)
   const [paused, setPaused] = useState(false)
+  const touchStartX = useRef<number | null>(null)
 
   useEffect(() => {
     createClient()
@@ -131,7 +132,19 @@ export default function TestimonialsSlider() {
           {deskItems.map((t, i) => <Card key={t.id} t={t} index={deskPage * DESK_VISIBLE + i} />)}
         </div>
 
-        <div className="md:hidden overflow-hidden">
+        <div className="md:hidden overflow-hidden"
+          onTouchStart={e => { touchStartX.current = e.touches[0].clientX }}
+          onTouchEnd={e => {
+            if (touchStartX.current === null) return
+            const diff = touchStartX.current - e.changedTouches[0].clientX
+            if (Math.abs(diff) > 40) {
+              if (diff > 0) setIdx(i => Math.min(i + 1, total - 1))
+              else setIdx(i => Math.max(i - 1, 0))
+              setPaused(true)
+            }
+            touchStartX.current = null
+          }}
+        >
           <div className="flex transition-transform duration-500 ease-out"
             style={{ gap: '12px', transform: `translateX(calc(-${idx} * (82vw + 12px)))` }}>
             {reviews.map((t, i) => (
