@@ -72,25 +72,25 @@ export default function ProductSlider() {
       <div className="absolute inset-0 opacity-[0.025]"
         style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
 
-      <div className="relative max-w-7xl mx-auto px-4 py-14 md:py-20">
+      <div className="relative max-w-7xl mx-auto px-4 py-10 md:py-20">
         <div className="grid md:grid-cols-2 gap-2 items-center">
 
           {/* ── Text ── */}
-          <div>
-            <span className="inline-block text-[11px] font-bold tracking-[4px] uppercase mb-4"
+          <div className="text-center md:text-left">
+            <span className="inline-block text-[11px] font-bold tracking-[4px] uppercase mb-3"
               style={{ color: s.accent }}>
               {s.badge}
             </span>
 
             <h2 className="font-display font-black leading-none mb-3 uppercase tracking-wide"
-              style={{ fontSize: 'clamp(2rem, 5.5vw, 4rem)' }}>
+              style={{ fontSize: 'clamp(1.6rem, 5.5vw, 4rem)' }}>
               {s.title.split('\n').map((l, i) => <span key={i} className="block">{l}</span>)}
               {s.highlight.split('\n').map((l, i) => (
                 <span key={i} className="block" style={{ color: s.accent }}>{l}</span>
               ))}
             </h2>
 
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-4 border"
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-3 border"
               style={{ background: `${s.accent}18`, borderColor: `${s.accent}30` }}>
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" style={{ color: s.accent }}>
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -98,9 +98,9 @@ export default function ProductSlider() {
               <span className="text-xs font-bold" style={{ color: s.accent }}>{s.tagline}</span>
             </div>
 
-            <p className="text-muted text-sm mb-6 leading-relaxed">{s.sub}</p>
+            <p className="text-muted text-sm mb-4 leading-relaxed">{s.sub}</p>
 
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-6">
               {s.stats.map(st => (
                 <span key={st} className="bg-white/5 border border-white/10 text-xs text-muted-2 px-3 py-1.5 rounded-lg">
                   {st}
@@ -108,21 +108,23 @@ export default function ProductSlider() {
               ))}
             </div>
 
-            <Link
-              href={s.href}
-              className="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl transition-all duration-200 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98]"
-              style={{ background: s.accent }}
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.98-1.67L23 6H6" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              КУПЕТЕ СЕГА
-            </Link>
+            <div className="flex justify-center md:justify-start">
+              <Link
+                href={s.href}
+                className="inline-flex items-center gap-2 text-white font-bold px-7 py-3 rounded-xl transition-all duration-200 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] text-sm md:text-base"
+                style={{ background: s.accent }}
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.98-1.67L23 6H6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                КУПЕТЕ СЕГА
+              </Link>
+            </div>
           </div>
 
           {/* ── Image ── */}
-          <div className="relative flex items-center justify-center min-h-75 md:min-h-105">
+          <div className="relative flex items-center justify-center min-h-48 md:min-h-105">
             {/* Glow behind image */}
             <div className="absolute w-80 h-80 rounded-full blur-3xl opacity-25 transition-all duration-700"
               style={{ background: s.accent }} />
