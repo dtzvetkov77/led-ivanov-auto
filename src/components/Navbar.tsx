@@ -209,8 +209,9 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-border bg-surface pb-4 px-4">
-            <div className="pt-3 space-y-1">
+          <div className="md:hidden border-t border-border bg-surface px-4 overflow-y-auto"
+            style={{ maxHeight: 'calc(100dvh - 6rem)' }}>
+            <div className="pt-3 pb-6 space-y-1">
               <p className="text-xs text-muted uppercase tracking-widest px-3 py-2">Продукти</p>
               <Link href="/products" className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
                 onClick={() => setMobileOpen(false)}>
