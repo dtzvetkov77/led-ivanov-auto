@@ -250,8 +250,9 @@ export default function HeroFilter() {
 
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-16 text-center">
 
-        {/* Badge */}
-        <span className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs px-4 py-1.5 rounded-full font-semibold mb-6 tracking-widest uppercase">
+        {/* Badges row */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+        <span className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs px-4 py-1.5 rounded-full font-semibold tracking-widest uppercase">
           <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
           </svg>
@@ -262,7 +263,7 @@ export default function HeroFilter() {
         <a
           href="https://www.google.com/maps/place/LED+IVANOV+AUTO/@42.6370748,23.3354294,17z"
           target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-white/8 hover:bg-white/12 border border-white/12 rounded-full px-4 py-1.5 mb-5 transition-colors"
+          className="inline-flex items-center gap-2 bg-white/8 hover:bg-white/12 border border-white/12 rounded-full px-4 py-1.5 transition-colors"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path fill="#EA4335" d="M5.27 9.17A6.74 6.74 0 0112 5.25a6.7 6.7 0 014.75 1.97l3.55-3.55A11.25 11.25 0 0012 0 11.94 11.94 0 00.9 7.27l4.37 1.9z"/>
@@ -279,9 +280,10 @@ export default function HeroFilter() {
                 </svg>
               ))}
             </span>
-            <span className="text-white/50 text-xs">· 50+ рецензии</span>
+            <span className="text-white/50 text-xs">· 250+ ревюта</span>
           </span>
         </a>
+        </div>
 
         {/* Headline */}
         <h1 className="font-display font-bold leading-none mb-2 tracking-wide uppercase"
@@ -293,7 +295,7 @@ export default function HeroFilter() {
           ДОРИ В НАЙ-ТЪМНАТА НОЩ
         </h2>
         <p className="text-muted text-sm sm:text-base max-w-lg mx-auto mb-10 leading-relaxed">
-          Осигури си кристално ясна картина, по-бърза реакция и пълна безопасност на пътя.
+          Висококачествени LED крушки за фарове — Plug & Play монтаж, без CanBus грешки, с до 2 години гаранция.
         </p>
 
         {/* ── Filter card ── */}
