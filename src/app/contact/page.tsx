@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import Image from 'next/image'
 import type { Metadata } from 'next'
 
 const PHONE = '+359 99 999 7996'
@@ -8,7 +7,6 @@ const PHONE_RAW = '+35999999796'
 const FACEBOOK = 'https://www.facebook.com/p/LED-Ivanov-Auto-%D0%9A%D1%80%D1%83%D1%88%D0%BA%D0%B8-%D0%B8-%D0%90%D0%B2%D1%82%D0%BE%D0%B0%D0%BA%D1%81%D0%B5%D1%81%D0%BE%D0%B0%D1%80%D0%B8-100065233232609/'
 const TIKTOK = 'https://www.tiktok.com/@ivanov_auto'
 const YOUTUBE = 'https://www.youtube.com/@Ivanov-Auto'
-const MAPS = 'https://www.google.com/maps/place/LED+IVANOV+AUTO/@42.6370748,23.3354294,17z'
 
 const FAQ = [
   {
@@ -142,21 +140,16 @@ export default function ContactPage() {
               </div>
             </a>
 
-            {/* Google Maps — clickable image */}
-            <a href={MAPS} target="_blank" rel="noopener noreferrer"
-              className="flex-1 rounded-xl overflow-hidden border border-border min-h-45 relative block group">
-              <Image
-                src="/images/about.webp"
-                alt="LED Ivanov Auto — местоположение"
-                fill
-                unoptimized
-                className="object-cover"
+            {/* Google Maps iframe */}
+            <div className="flex-1 rounded-xl overflow-hidden border border-border min-h-56">
+              <iframe
+                title="LED Ivanov Auto Location"
+                src="https://maps.google.com/maps?q=ул.+Георги+Русев+2,+жк+Малинова+долина,+1734+София,+България&hl=bg&z=16&output=embed"
+                className="w-full h-full min-h-56 border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-black/60 flex items-center justify-center gap-2 py-2.5 text-white text-xs font-semibold tracking-wide group-hover:bg-black/75 transition-colors">
-                <span>📍</span>
-                <span>Отвори в Google Maps</span>
-              </div>
-            </a>
+            </div>
           </div>
 
           {/* Info */}
