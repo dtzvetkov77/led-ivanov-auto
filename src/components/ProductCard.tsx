@@ -59,8 +59,12 @@ export default function ProductCard({ product }: Props) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col">
             <span className="text-accent font-bold text-base whitespace-nowrap">{displayPrice.toFixed(2)} €</span>
+            <span className="text-muted/60 text-xs whitespace-nowrap">{(displayPrice * 1.95583).toFixed(2)} лв.</span>
             {product.sale_price && (
-              <span className="text-muted line-through text-xs whitespace-nowrap">{product.price.toFixed(2)} €</span>
+              <>
+                <span className="text-muted line-through text-xs whitespace-nowrap">{product.price.toFixed(2)} €</span>
+                <span className="text-muted/40 line-through text-xs whitespace-nowrap">{(product.price * 1.95583).toFixed(2)} лв.</span>
+              </>
             )}
           </div>
           <button

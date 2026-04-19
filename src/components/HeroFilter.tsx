@@ -6,7 +6,7 @@ import { PRODUCT_CATEGORIES } from '@/lib/categories'
 
 type Make  = { id: string; name: string; slug: string }
 type Model = { id: string; name: string }
-type StaticCategory = { slug: string; name: string }
+type StaticCategory = { slug: string; name: string; onlyMakes?: readonly string[] }
 
 // ── Shared dropdown UI ───────────────────────────────────────────────────────
 function DropdownButton({
@@ -222,6 +222,12 @@ export default function HeroFilter() {
       .finally(() => { setModelsLoading(false); setModelsFetched(true) })
   }, [selectedMake])
 
+  useEffect(() => {
+    if (selectedCategory?.onlyMakes && selectedMake && !selectedCategory.onlyMakes.includes(selectedMake.slug)) {
+      setSelectedCategory(null)
+    }
+  }, [selectedMake])
+
   const handleSearch = () => {
     const params = new URLSearchParams()
     if (selectedMake)     params.set('make',     selectedMake.slug)
@@ -340,7 +346,9 @@ export default function HeroFilter() {
             <div>
               <p className="text-[11px] text-muted uppercase tracking-widest mb-1.5 font-semibold">Категория</p>
               <CatSelect
-                options={PRODUCT_CATEGORIES}
+                options={PRODUCT_CATEGORIES.filter(cat =>
+                  !cat.onlyMakes || !selectedMake || cat.onlyMakes.includes(selectedMake.slug)
+                )}
                 value={selectedCategory}
                 onChange={setSelectedCategory}
               />

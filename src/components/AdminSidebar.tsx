@@ -62,6 +62,16 @@ const links = [
       </svg>
     ),
   },
+  {
+    href: '/admin/partners',
+    label: 'Партньори',
+    icon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
 ]
 
 export default function AdminSidebar() {
@@ -161,7 +171,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 bg-surface border-r border-border flex-shrink-0 flex-col">
+      <aside className="hidden md:flex w-56 bg-surface border-r border-border shrink-0 flex-col">
         <div className="px-4 py-5 border-b border-border">
           <p className="text-accent font-bold text-xs uppercase tracking-widest">Admin панел</p>
         </div>

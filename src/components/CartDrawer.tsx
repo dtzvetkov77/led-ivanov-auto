@@ -180,9 +180,12 @@ export default function CartDrawer({ open, onClose }: Props) {
         {/* Footer */}
         {items.length > 0 && (
           <div className="p-4 border-t border-border shrink-0">
-            <div className="flex justify-between mb-3">
+            <div className="flex justify-between items-start mb-3">
               <span className="text-muted">Общо</span>
-              <span className="font-bold text-lg whitespace-nowrap">{total.toFixed(2)} €</span>
+              <div className="flex flex-col items-end">
+                <span className="font-bold text-lg whitespace-nowrap">{total.toFixed(2)} €</span>
+                <span className="text-muted text-xs">≈ {(total * 1.95583).toFixed(2)} лв.</span>
+              </div>
             </div>
             <Link href="/checkout" onClick={onClose}
               className="block w-full bg-accent hover:bg-accent-hover text-white text-center py-3 rounded font-semibold transition-colors">

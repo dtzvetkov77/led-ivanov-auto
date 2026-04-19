@@ -40,10 +40,11 @@ export default function Navbar() {
   }, [])
 
   const navLinks = [
-    { href: '/about',   label: 'За нас' },
-    { href: '/gallery', label: 'Галерия' },
-    { href: '/video',   label: 'Видео' },
-    { href: '/contact', label: 'Контакти' },
+    { href: '/about',    label: 'За нас' },
+    { href: '/partners', label: 'Партньори' },
+    { href: '/gallery',  label: 'Галерия' },
+    { href: '/video',    label: 'Видео' },
+    { href: '/contact',  label: 'Контакти' },
   ]
 
   return (
@@ -87,6 +88,30 @@ export default function Navbar() {
                       </svg>
                     </span>
                     Полиране на фарове
+                  </Link>
+                  <Link
+                    href="/services/headlight-tinting"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted hover:text-white hover:bg-border transition-colors"
+                    onClick={() => setServicesOpen(false)}
+                  >
+                    <span className="w-7 h-7 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent shrink-0">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                    Фолиране на фарове
+                  </Link>
+                  <Link
+                    href="/services/headlight-alignment"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted hover:text-white hover:bg-border transition-colors"
+                    onClick={() => setServicesOpen(false)}
+                  >
+                    <span className="w-7 h-7 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent shrink-0">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" strokeLinecap="round"/>
+                      </svg>
+                    </span>
+                    Регулиране на фарове
                   </Link>
                 </div>
               )}
@@ -202,6 +227,16 @@ export default function Navbar() {
                 className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
                 onClick={() => setMobileOpen(false)}>
                 Полиране на фарове
+              </Link>
+              <Link href="/services/headlight-tinting"
+                className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                onClick={() => setMobileOpen(false)}>
+                Фолиране на фарове
+              </Link>
+              <Link href="/services/headlight-alignment"
+                className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                onClick={() => setMobileOpen(false)}>
+                Регулиране на фарове
               </Link>
               <div className="h-px bg-border mx-3 my-2" />
               {navLinks.map(l => (
