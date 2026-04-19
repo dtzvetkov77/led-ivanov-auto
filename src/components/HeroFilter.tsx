@@ -101,7 +101,7 @@ function DynSelect<T extends { id: string; name: string }>({
       />
 
       {open && (
-        <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-2 border border-border rounded-xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+        <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-surface-2 border border-border rounded-xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
           {value && <ClearRow onClear={() => { onChange(null); setOpen(false) }} />}
 
           {options.length === 0 ? (
@@ -159,7 +159,7 @@ function CatSelect({
       />
 
       {open && (
-        <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-2 border border-border rounded-xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+        <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-surface-2 border border-border rounded-xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
           {value && <ClearRow onClear={() => { onChange(null); setOpen(false) }} />}
           <div className="max-h-52 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#cc0000 #1a1a1a' }}>
             {options.map(opt => (
