@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { JsonLd } from '@/components/JsonLd'
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
 
 export const metadata: Metadata = {
   title: 'Полиране на фарове | LED Ivanov Auto',
@@ -36,9 +39,34 @@ const STATS = [
   { value: 'до 2г.', label: 'UV защита след запечатване' },
 ]
 
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Полиране на фарове',
+  serviceType: 'Automotive Headlight Restoration',
+  description: 'Професионално полиране и възстановяване на пожълтели и мътни фарове. Шлайфане, полиране и UV-защитно запечатване. Гаранция за резултата.',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'LED Ivanov Auto',
+    url: SITE,
+    telephone: '+35999999796',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'ул. Георги Русев 2',
+      addressLocality: 'София',
+      postalCode: '1734',
+      addressCountry: 'BG',
+    },
+  },
+  areaServed: { '@type': 'Country', name: 'Bulgaria' },
+  url: `${SITE}/services/headlight-polishing`,
+  image: `${SITE}/images/services/headlight-polishing-hero.webp`,
+}
+
 export default function HeadlightPolishingPage() {
   return (
     <div className="bg-background min-h-screen text-white">
+      <JsonLd data={serviceSchema} />
 
       {/* ── Hero ── */}
       <section className="relative min-h-[60vh] flex flex-col items-center justify-center overflow-hidden">

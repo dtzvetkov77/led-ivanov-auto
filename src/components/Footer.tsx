@@ -85,11 +85,12 @@ export default function Footer() {
           <p className="text-xs text-muted/50">
             © {new Date().getFullYear()} LED Ivanov Auto. Всички права запазени.
           </p>
-          <div className="flex items-center gap-1 text-xs text-muted/50">
-            <svg className="w-3.5 h-3.5 text-accent" viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-            </svg>
-            Powered by LED Ivanov Auto
+          <div className="flex items-center gap-3 text-xs text-muted/40 flex-wrap justify-center">
+            <Link href="/privacy-policy" className="hover:text-muted transition-colors">Поверителност</Link>
+            <span>·</span>
+            <Link href="/terms" className="hover:text-muted transition-colors">Условия</Link>
+            <span>·</span>
+            <Link href="/cookies" className="hover:text-muted transition-colors">Бисквитки</Link>
           </div>
         </div>
       </div>
