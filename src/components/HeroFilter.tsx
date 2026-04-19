@@ -237,21 +237,16 @@ export default function HeroFilter() {
 
       {/* Hero photo background */}
       <div className="absolute inset-0 bg-background" />
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-55"
+      {/* Desktop background */}
+      <div className="hidden md:block absolute inset-0 bg-cover bg-center bg-no-repeat opacity-55"
         style={{ backgroundImage: 'url(/images/hero.webp)' }} />
+      {/* Mobile background — portrait headlights image */}
+      <div className="md:hidden absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
+        style={{ backgroundImage: 'url(/images/hero-mobile.webp)' }} />
       <div className="absolute inset-0"
-        style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.15) 50%, rgba(10,10,10,0.65) 100%)' }} />
+        style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.2) 40%, rgba(10,10,10,0.7) 100%)' }} />
       <div className="absolute inset-0"
         style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(180,0,0,0.15) 0%, transparent 70%)' }} />
-
-      {/* Mobile headlight image */}
-      <div className="md:hidden absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none z-1">
-        <img
-          src="/images/hero-mobile.webp"
-          alt=""
-          className="w-72 object-contain opacity-40 select-none"
-        />
-      </div>
 
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-16 text-center">
 

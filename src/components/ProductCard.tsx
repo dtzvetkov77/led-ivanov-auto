@@ -57,10 +57,10 @@ export default function ProductCard({ product }: Props) {
       <div className="p-3 flex flex-col flex-1">
         <h3 className="text-sm font-medium line-clamp-3 flex-1 mb-3">{product.name}</h3>
         <div className="flex items-center justify-between gap-2">
-          <div>
+          <div className="flex flex-col">
             <span className="text-accent font-bold text-base whitespace-nowrap">{displayPrice.toFixed(2)} €</span>
             {product.sale_price && (
-              <span className="text-muted line-through text-xs ml-2 whitespace-nowrap">{product.price.toFixed(2)} €</span>
+              <span className="text-muted line-through text-xs whitespace-nowrap">{product.price.toFixed(2)} €</span>
             )}
           </div>
           <button
