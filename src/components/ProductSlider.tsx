@@ -133,25 +133,25 @@ export default function ProductSlider() {
           </div>
 
           {/* ── Image ── */}
-          <div className="relative flex items-center justify-center h-44 md:min-h-105">
+          <div className="relative flex items-center justify-center h-32 md:min-h-105">
             {/* Glow behind image */}
-            <div className="absolute w-60 h-60 md:w-80 md:h-80 rounded-full blur-3xl opacity-25 transition-all duration-700"
+            <div className="absolute w-48 h-48 md:w-80 md:h-80 rounded-full blur-3xl opacity-25 transition-all duration-700"
               style={{ background: s.accent }} />
             <img
               key={s.img}
               src={s.img}
               alt={s.badge}
-              className="relative z-10 h-full max-h-44 md:max-h-none md:w-full md:max-w-120 mx-auto object-contain drop-shadow-2xl animate-[fadeIn_0.5s_ease]"
+              className="relative z-10 h-full max-h-32 md:max-h-none md:w-full md:max-w-120 mx-auto object-contain drop-shadow-2xl animate-[fadeIn_0.5s_ease]"
               onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
             />
           </div>
         </div>
 
         {/* Mobile button */}
-        <div className="md:hidden flex justify-center mt-5">
+        <div className="md:hidden flex justify-center mt-3">
           <Link
             href={s.href}
-            className="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl transition-all w-full max-w-xs justify-center"
+            className="inline-flex items-center gap-2 text-white font-bold px-6 py-2.5 rounded-xl transition-all w-full max-w-56 justify-center text-sm"
             style={{ background: s.accent }}
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

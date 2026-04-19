@@ -236,7 +236,6 @@ function ImageSlot({ src, alt }: { src: string; alt: string }) {
         fill
         className="object-cover"
         unoptimized
-        onError={() => {}}
       />
     </>
   )
