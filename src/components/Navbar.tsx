@@ -10,8 +10,10 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState<number | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
+  const [servicesOpen, setServicesOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const servicesRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const update = () => {
@@ -23,11 +25,14 @@ export default function Navbar() {
     return () => window.removeEventListener('cart-updated', update)
   }, [])
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handle = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setProductsOpen(false)
+      }
+      if (servicesRef.current && !servicesRef.current.contains(e.target as Node)) {
+        setServicesOpen(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -56,10 +61,41 @@ export default function Navbar() {
           {/* Desktop links – center column */}
           <div className="hidden md:flex items-center justify-center gap-0.5 text-sm">
 
+            {/* Услуги dropdown */}
+            <div className="relative" ref={servicesRef}>
+              <button
+                onClick={() => { setServicesOpen(v => !v); setProductsOpen(false) }}
+                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${servicesOpen ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
+              >
+                Услуги
+                <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`}
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+
+              {servicesOpen && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-surface border border-border rounded-xl shadow-xl shadow-black/40 min-w-56 py-1 z-50">
+                  <Link
+                    href="/services/headlight-polishing"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted hover:text-white hover:bg-border transition-colors"
+                    onClick={() => setServicesOpen(false)}
+                  >
+                    <span className="w-7 h-7 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent shrink-0">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" strokeLinecap="round"/>
+                      </svg>
+                    </span>
+                    Полиране на фарове
+                  </Link>
+                </div>
+              )}
+            </div>
+
             {/* Продукти dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
-                onClick={() => setProductsOpen(v => !v)}
+                onClick={() => { setProductsOpen(v => !v); setServicesOpen(false) }}
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${productsOpen ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
               >
                 Продукти
@@ -160,6 +196,13 @@ export default function Navbar() {
                   {cat.name}
                 </Link>
               ))}
+              <div className="h-px bg-border mx-3 my-2" />
+              <p className="text-xs text-muted uppercase tracking-widest px-3 py-2">Услуги</p>
+              <Link href="/services/headlight-polishing"
+                className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                onClick={() => setMobileOpen(false)}>
+                Полиране на фарове
+              </Link>
               <div className="h-px bg-border mx-3 my-2" />
               {navLinks.map(l => (
                 <Link key={l.href} href={l.href}

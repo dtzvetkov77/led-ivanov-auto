@@ -60,10 +60,11 @@ export default function Footer() {
             <h3 className="text-xs font-semibold tracking-widest uppercase text-muted/70 mb-4">Информация</h3>
             <ul className="space-y-2">
               {[
-                { href: '/products', label: 'Всички продукти' },
-                { href: '/about',    label: 'За нас' },
-                { href: '/gallery',  label: 'Галерия' },
-                { href: '/contact',  label: 'Контакти' },
+                { href: '/products',                      label: 'Всички продукти' },
+                { href: '/services/headlight-polishing',  label: 'Полиране на фарове' },
+                { href: '/about',                         label: 'За нас' },
+                { href: '/gallery',                       label: 'Галерия' },
+                { href: '/contact',                       label: 'Контакти' },
               ].map(l => (
                 <li key={l.href}>
                   <Link href={l.href} className="text-sm text-muted hover:text-white transition-colors">
