@@ -48,7 +48,7 @@ const VALUES = [
 const STATS = [
   { value: '5000+', label: 'Доволни клиенти' },
   { value: '10+', label: 'Години опит' },
-  { value: '2–4г.', label: 'Гаранция' },
+  { value: 'до 2г.', label: 'Гаранция' },
   { value: '1–2 дни', label: 'Доставка' },
 ]
 
