@@ -27,6 +27,11 @@ export default function Navbar() {
     return () => window.removeEventListener('cart-updated', update)
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
+
   // Close dropdowns on outside click
   useEffect(() => {
     const handle = (e: MouseEvent) => {
