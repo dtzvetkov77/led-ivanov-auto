@@ -75,7 +75,7 @@ export default function ContactPage() {
         <div className="grid md:grid-cols-2 gap-5 mb-16">
 
           {/* Contact methods */}
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             <a href={`tel:${PHONE_RAW}`}
               className="flex items-center gap-4 bg-surface border border-border hover:border-accent rounded-xl p-5 transition-all group">
               <span className="w-11 h-11 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center text-accent shrink-0 group-hover:bg-accent group-hover:text-white transition-all">
@@ -116,7 +116,7 @@ export default function ContactPage() {
             </a>
 
             {/* Google Maps */}
-            <div className="rounded-xl overflow-hidden border border-border" style={{ height: 220 }}>
+            <div className="flex-1 rounded-xl overflow-hidden border border-border min-h-45">
               <iframe
                 title="LED Ivanov Auto"
                 src="https://maps.google.com/maps?q=ул.+Георги+Русев+2,+жк+Малинова+долина,+1734+София,+България&hl=bg&z=16&output=embed"
