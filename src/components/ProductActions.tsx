@@ -54,15 +54,18 @@ export default function ProductActions({ product }: Props) {
         />
       ) : (
         /* Price display for simple products */
-        <div className="flex items-baseline gap-3 mb-6">
-          <span className="text-3xl font-black text-accent">
-            {Number(effectivePrice).toFixed(2)} €
-          </span>
-          {product.sale_price && (
-            <span className="text-muted line-through text-lg">
-              {Number(product.price).toFixed(2)} €
+        <div className="mb-6">
+          <div className="flex items-baseline gap-3">
+            <span className="text-3xl font-black text-accent">
+              {Number(effectivePrice).toFixed(2)} €
             </span>
-          )}
+            {product.sale_price && (
+              <span className="text-muted line-through text-lg">
+                {Number(product.price).toFixed(2)} €
+              </span>
+            )}
+          </div>
+          <p className="text-muted/60 text-sm mt-0.5">≈ {(Number(effectivePrice) * 1.95583).toFixed(2)} лв.</p>
         </div>
       )}
 

@@ -130,6 +130,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                     )
                   })()}
                   <p className="text-accent font-semibold whitespace-nowrap">{item.price.toFixed(2)} €</p>
+                  <p className="text-muted/50 text-[11px]">{(item.price * 1.95583).toFixed(2)} лв.</p>
                   <div className="flex items-center gap-2 mt-1">
                     <button onClick={() => handleQty(item.product_id, item.qty - 1)} disabled={item.qty <= 1}
                       className="w-6 h-6 rounded bg-border-2 flex items-center justify-center text-sm disabled:opacity-30">−</button>

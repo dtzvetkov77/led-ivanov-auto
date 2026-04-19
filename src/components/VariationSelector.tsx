@@ -52,14 +52,17 @@ export default function VariationSelector({
   return (
     <div className="space-y-4 mb-6">
       {/* Price display */}
-      <div className="flex items-baseline gap-3">
-        <span className="text-3xl font-black text-accent">{displayPrice.toFixed(2)} €</span>
-        {hasSale && (
-          <span className="text-muted line-through text-lg">{originalPrice.toFixed(2)} €</span>
-        )}
-        {matchedVariation && matchedVariation.sku && (
-          <span className="text-xs text-muted ml-auto">SKU: {matchedVariation.sku}</span>
-        )}
+      <div>
+        <div className="flex items-baseline gap-3">
+          <span className="text-3xl font-black text-accent">{displayPrice.toFixed(2)} €</span>
+          {hasSale && (
+            <span className="text-muted line-through text-lg">{originalPrice.toFixed(2)} €</span>
+          )}
+          {matchedVariation && matchedVariation.sku && (
+            <span className="text-xs text-muted ml-auto">SKU: {matchedVariation.sku}</span>
+          )}
+        </div>
+        <p className="text-muted/60 text-sm mt-0.5">≈ {(displayPrice * 1.95583).toFixed(2)} лв.</p>
       </div>
 
       {/* Attribute selectors */}
