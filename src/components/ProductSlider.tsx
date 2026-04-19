@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 
 const SLIDES = [
@@ -47,6 +47,7 @@ const SLIDES = [
 export default function ProductSlider() {
   const [current, setCurrent] = useState(0)
   const [paused,  setPaused]  = useState(false)
+  const touchStartX = useRef<number | null>(null)
 
   const next = useCallback(() => setCurrent(c => (c + 1) % SLIDES.length), [])
   const prev = useCallback(() => setCurrent(c => (c - 1 + SLIDES.length) % SLIDES.length), [])
@@ -64,6 +65,13 @@ export default function ProductSlider() {
       className="relative overflow-hidden border-y border-border"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={e => { touchStartX.current = e.touches[0].clientX }}
+      onTouchEnd={e => {
+        if (touchStartX.current === null) return
+        const diff = touchStartX.current - e.changedTouches[0].clientX
+        if (Math.abs(diff) > 40) { diff > 0 ? next() : prev(); setPaused(true) }
+        touchStartX.current = null
+      }}
     >
       {/* BG */}
       <div className="absolute inset-0 transition-all duration-700" style={{ background: s.bg }} />
@@ -72,7 +80,7 @@ export default function ProductSlider() {
       <div className="absolute inset-0 opacity-[0.025]"
         style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
 
-      <div className="relative max-w-7xl mx-auto px-4 py-10 md:py-20">
+      <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-20 min-h-[520px] md:min-h-0 flex flex-col justify-center">
         <div className="grid md:grid-cols-2 gap-2 items-center">
 
           {/* ── Text ── */}
@@ -125,15 +133,15 @@ export default function ProductSlider() {
           </div>
 
           {/* ── Image ── */}
-          <div className="relative flex items-center justify-center min-h-48 md:min-h-105">
+          <div className="relative flex items-center justify-center h-44 md:min-h-105">
             {/* Glow behind image */}
-            <div className="absolute w-80 h-80 rounded-full blur-3xl opacity-25 transition-all duration-700"
+            <div className="absolute w-60 h-60 md:w-80 md:h-80 rounded-full blur-3xl opacity-25 transition-all duration-700"
               style={{ background: s.accent }} />
             <img
               key={s.img}
               src={s.img}
               alt={s.badge}
-              className="relative z-10 w-full max-w-120 mx-auto object-contain drop-shadow-2xl animate-[fadeIn_0.5s_ease]"
+              className="relative z-10 h-full max-h-44 md:max-h-none md:w-full md:max-w-120 mx-auto object-contain drop-shadow-2xl animate-[fadeIn_0.5s_ease]"
               onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
             />
           </div>

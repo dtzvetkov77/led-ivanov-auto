@@ -244,6 +244,15 @@ export default function HeroFilter() {
       <div className="absolute inset-0"
         style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(180,0,0,0.15) 0%, transparent 70%)' }} />
 
+      {/* Mobile headlight image */}
+      <div className="md:hidden absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none z-1">
+        <img
+          src="/images/hero-mobile.webp"
+          alt=""
+          className="w-72 object-contain opacity-40 select-none"
+        />
+      </div>
+
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-16 text-center">
 
         {/* Badge */}

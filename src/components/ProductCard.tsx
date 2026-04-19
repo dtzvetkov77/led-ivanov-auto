@@ -58,9 +58,9 @@ export default function ProductCard({ product }: Props) {
         <h3 className="text-sm font-medium line-clamp-3 flex-1 mb-3">{product.name}</h3>
         <div className="flex items-center justify-between gap-2">
           <div>
-            <span className="text-accent font-bold text-base">{displayPrice.toFixed(2)} €</span>
+            <span className="text-accent font-bold text-base whitespace-nowrap">{displayPrice.toFixed(2)} €</span>
             {product.sale_price && (
-              <span className="text-muted line-through text-xs ml-2">{product.price.toFixed(2)} €</span>
+              <span className="text-muted line-through text-xs ml-2 whitespace-nowrap">{product.price.toFixed(2)} €</span>
             )}
           </div>
           <button
@@ -73,12 +73,9 @@ export default function ProductCard({ product }: Props) {
             aria-label={`Добави ${product.name} в количка`}
           >
             {added ? (
-              <>
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                OK
-              </>
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             ) : (
               <>
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

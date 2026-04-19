@@ -32,7 +32,7 @@ export default function CartDrawer({ open, onClose }: Props) {
       {open && <div className="fixed inset-0 bg-black/60 z-40" onClick={onClose} />}
       <div
         aria-hidden={!open}
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-surface z-50 shadow-2xl flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-0 right-0 h-dvh w-full max-w-sm bg-surface z-50 shadow-2xl flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="font-semibold text-lg">Количка</h2>
