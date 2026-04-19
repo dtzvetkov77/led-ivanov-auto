@@ -1,12 +1,14 @@
 'use client'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import { getCart } from '@/lib/cart'
 import CartDrawer from './CartDrawer'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
 import LogoImage from './LogoImage'
 
 export default function Navbar() {
+  const pathname = usePathname()
   const [cartCount, setCartCount] = useState<number | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
@@ -66,7 +68,7 @@ export default function Navbar() {
             <div className="relative" ref={servicesRef}>
               <button
                 onClick={() => { setServicesOpen(v => !v); setProductsOpen(false) }}
-                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${servicesOpen ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
+                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${servicesOpen || pathname.startsWith('/services') ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
               >
                 Услуги
                 <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`}
@@ -121,7 +123,7 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => { setProductsOpen(v => !v); setServicesOpen(false) }}
-                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${productsOpen ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
+                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${productsOpen || pathname.startsWith('/products') ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
               >
                 Продукти
                 <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${productsOpen ? 'rotate-180' : ''}`}
@@ -160,7 +162,7 @@ export default function Navbar() {
 
             {navLinks.map(l => (
               <Link key={l.href} href={l.href}
-                className="px-3 py-2 rounded-lg text-muted hover:text-white hover:bg-surface transition-colors whitespace-nowrap">
+                className={`px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${pathname === l.href ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}>
                 {l.label}
               </Link>
             ))}

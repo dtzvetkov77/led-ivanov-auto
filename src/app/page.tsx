@@ -4,15 +4,16 @@ import ProductGrid from '@/components/ProductGrid'
 import ProductSlider from '@/components/ProductSlider'
 import TestimonialsSlider from '@/components/TestimonialsSlider'
 import Link from 'next/link'
+import Image from 'next/image'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
 
 const PARTNERS = [
-  { name: 'Авто Сервиз "Победа"',  city: 'София',        address: 'бул. Цариградско шосе 48',   phone: '+359 88 XXX XXXX' },
-  { name: 'Авто Електро Петров',    city: 'Пловдив',      address: 'ул. Карловска 12',            phone: '+359 89 XXX XXXX' },
-  { name: 'Мото Тех',               city: 'Варна',        address: 'бул. Владислав Варненчик 95', phone: '+359 87 XXX XXXX' },
-  { name: 'Сервиз "Авто Плюс"',     city: 'Бургас',       address: 'ул. Александровска 32',       phone: '+359 88 XXX XXXX' },
-  { name: 'Авто Ел Монтаж',         city: 'Стара Загора', address: 'ул. Цар Симеон Велики 15',    phone: '+359 88 XXX XXXX' },
-  { name: 'Авто Ателие Нова',        city: 'Русе',         address: 'бул. Трети март 22',          phone: '+359 89 XXX XXXX' },
+  { slug: 'kostas-garage',     name: "Kosta's Garage",      city: 'Бяла Слатина',                    phone: '+359895756194', hours: 'Всеки ден' },
+  { slug: 'dbr-tint',          name: 'DBR.tint',             city: 'с. Долна Бела Речка, обл. Монтана', phone: '+359885850342', hours: 'Всеки ден' },
+  { slug: 'antonio-dinchev',   name: 'Антонио Динчев',       city: 'Козлодуй',                         phone: '+359887723742', hours: 'Всеки ден' },
+  { slug: 'dzumbi-folio',      name: 'DZUMBI FOLIO',         city: 'Гоце Делчев',                      phone: '+359896853262', hours: 'Вс. 9:30–18:00' },
+  { slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС',   city: 'с. Искра, обл. Силистра',          phone: '+359899872135', hours: 'Пн–Нд 9:00–17:00' },
+  { slug: 'erik-auto',         name: 'Ерик Ауто',            city: 'Червен Бряг',                      phone: '+359877449103', hours: 'Пн–Пт 10:00–17:00' },
 ]
 
 
@@ -94,7 +95,7 @@ export default async function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {PARTNERS.map(p => (
-              <div key={p.name} className="bg-background border border-border rounded-xl p-5 hover:border-accent transition-colors group">
+              <Link key={p.slug} href={`/partners/${p.slug}`} className="bg-background border border-border rounded-xl p-5 hover:border-accent transition-colors group block">
                 <div className="flex items-start justify-between mb-3">
                   <div className="w-10 h-10 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all shrink-0">
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -110,7 +111,7 @@ export default async function HomePage() {
                       <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span>{p.city}, {p.address}</span>
+                    <span>{p.city}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg className="w-3.5 h-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -119,13 +120,24 @@ export default async function HomePage() {
                     <span>{p.phone}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
-          <p className="text-center text-xs text-muted mt-6">
-            Искаш да станеш партньор?{' '}
-            <Link href="/contact" className="text-accent hover:underline">Свържи се с нас</Link>
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+            <p className="text-xs text-muted">
+              Искаш да станеш партньор?{' '}
+              <Link href="/contact" className="text-accent hover:underline">Свържи се с нас</Link>
+            </p>
+            <Link
+              href="/partners"
+              className="inline-flex items-center gap-2 border border-accent text-accent hover:bg-accent hover:text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors"
+            >
+              Виж всички партньори
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M17 8l4 4m0 0l-4 4m4-4H3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -134,27 +146,31 @@ export default async function HomePage() {
         <div className="max-w-3xl mx-auto text-center">
           <span className="text-xs font-bold tracking-[4px] uppercase text-accent mb-3 block">НАМЕРЕТЕ НИ</span>
           <h2 className="text-2xl md:text-3xl font-black mb-2">НАШИЯТ СЕРВИЗ</h2>
-          <p className="text-muted text-sm mb-2">ж.к. Малинова долина, ул. „Георги Русев" 2, 1734 София</p>
+          <p className="text-muted text-sm mb-8">ж.к. Малинова долина, ул. „Георги Русев" 2, 1734 София</p>
           <a
             href="https://maps.google.com/?q=ул.+Георги+Русев+2,+жк+Малинова+долина,+1734+София"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-accent hover:underline text-sm font-medium mb-8"
+            className="block relative rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/30 hover:border-accent/50 transition-colors group"
+            style={{ height: 340 }}
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Отвори в Google Maps
-          </a>
-          <div className="rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/30" style={{ height: 340 }}>
-            <iframe
-              title="LED Ivanov Auto Location"
-              src="https://maps.google.com/maps?q=ул.+Георги+Русев+2,+жк+Малинова+долина,+1734+София,+България&hl=bg&z=16&output=embed"
-              className="w-full h-full border-0"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
+            <Image
+              src="/images/about.webp"
+              alt="LED Ivanov Auto — ж.к. Малинова долина, София"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              unoptimized
             />
-          </div>
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+              <span className="inline-flex items-center gap-2 bg-black/70 backdrop-blur-sm text-white text-sm font-bold px-5 py-2.5 rounded-full border border-white/20">
+                <svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Отвори в Google Maps
+              </span>
+            </div>
+          </a>
         </div>
       </section>
 
