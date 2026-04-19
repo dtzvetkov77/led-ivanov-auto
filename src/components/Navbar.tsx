@@ -35,8 +35,8 @@ export default function Navbar() {
   }, [])
 
   const navLinks = [
-    { href: '/video', label: 'Видео' },
-    { href: '/reviews', label: 'Отзиви' },
+    { href: '/about',   label: 'За нас' },
+    { href: '/gallery', label: 'Галерия' },
     { href: '/contact', label: 'Контакти' },
   ]
 
