@@ -38,7 +38,11 @@ export default function AdminGalleryPage() {
     try {
       for (const file of Array.from(files)) {
         const url = await uploadFile(file, `gallery/${Date.now()}-${file.name}`)
-        await supabase.from('gallery_images').insert({ url, published: true })
+        await fetch('/api/admin/gallery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        })
       }
       await fetchImages()
     } finally {
