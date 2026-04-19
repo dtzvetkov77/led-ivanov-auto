@@ -114,6 +114,17 @@ export default function ContactPage() {
                 <p className="font-bold group-hover:text-accent transition-colors">@ivanov_auto</p>
               </div>
             </a>
+
+            {/* Google Maps */}
+            <div className="rounded-xl overflow-hidden border border-border" style={{ height: 220 }}>
+              <iframe
+                title="LED Ivanov Auto"
+                src="https://maps.google.com/maps?q=ул.+Георги+Русев+2,+жк+Малинова+долина,+1734+София,+България&hl=bg&z=16&output=embed"
+                className="w-full h-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </div>
 
           {/* Info */}
