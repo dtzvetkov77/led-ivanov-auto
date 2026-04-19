@@ -71,7 +71,7 @@ export default function AboutPage() {
         <div className="grid md:grid-cols-2 gap-10 items-center mb-20">
           <div className="relative rounded-2xl overflow-hidden aspect-video md:aspect-square bg-surface border border-border">
             <div className="absolute inset-0 bg-cover bg-center opacity-80"
-              style={{ backgroundImage: 'url(/images/accessories-hero.webp)' }} />
+              style={{ backgroundImage: 'url(/images/about.webp)' }} />
             <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
               <p className="text-white font-black text-2xl font-display uppercase">LED Ivanov Auto</p>

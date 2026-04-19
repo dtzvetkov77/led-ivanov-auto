@@ -22,16 +22,18 @@ export default async function GalleryPage() {
         </div>
 
         {images && images.length > 0 ? (
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {images.map(img => (
-              <div key={img.id} className="mb-3 break-inside-avoid">
-                <img
-                  src={img.url}
-                  alt={img.caption ?? 'Gallery image'}
-                  className="w-full rounded-xl object-cover"
-                />
+              <div key={img.id} className="flex flex-col gap-1.5">
+                <div className="aspect-square overflow-hidden rounded-xl bg-surface">
+                  <img
+                    src={img.url}
+                    alt={img.caption ?? 'Gallery image'}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
                 {img.caption && (
-                  <p className="text-muted text-xs mt-1.5 px-1">{img.caption}</p>
+                  <p className="text-muted text-xs px-1">{img.caption}</p>
                 )}
               </div>
             ))}
