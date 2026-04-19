@@ -113,15 +113,14 @@ export default function HeadlightPolishingPage() {
             </p>
           </div>
 
-          {/* Service image placeholder — replace with real photo at /images/services/headlight-polishing-hero.webp */}
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-surface border border-border group">
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted/40">
-              <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-                <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <p className="text-xs text-center px-8">Снимка на услугата<br/><span className="text-accent/60">/images/services/headlight-polishing-hero.webp</span></p>
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent" />
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-surface border border-border">
+            <Image
+              src="/images/services/headlight-polishing-hero.webp"
+              alt="Полиране на фарове — LED Ivanov Auto"
+              fill
+              className="object-cover"
+              unoptimized
+            />
           </div>
         </div>
 
