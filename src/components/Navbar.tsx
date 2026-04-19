@@ -54,13 +54,13 @@ export default function Navbar() {
           </div>
 
           {/* Desktop links – center column */}
-          <div className="hidden md:flex items-center justify-center gap-1 text-sm">
+          <div className="hidden md:flex items-center justify-center gap-0.5 text-sm">
 
             {/* Продукти dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setProductsOpen(v => !v)}
-                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors ${productsOpen ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
+                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${productsOpen ? 'text-white bg-surface' : 'text-muted hover:text-white hover:bg-surface'}`}
               >
                 Продукти
                 <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${productsOpen ? 'rotate-180' : ''}`}
@@ -99,7 +99,7 @@ export default function Navbar() {
 
             {navLinks.map(l => (
               <Link key={l.href} href={l.href}
-                className="px-3 py-2 rounded-lg text-muted hover:text-white hover:bg-surface transition-colors">
+                className="px-3 py-2 rounded-lg text-muted hover:text-white hover:bg-surface transition-colors whitespace-nowrap">
                 {l.label}
               </Link>
             ))}

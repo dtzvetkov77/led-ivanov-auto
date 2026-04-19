@@ -62,7 +62,7 @@ export default function AboutPage() {
           <p className="text-accent text-xs tracking-[5px] uppercase mb-3 font-medium">Нашата история</p>
           <h1 className="text-4xl md:text-5xl font-black mb-5">ЗА НАС</h1>
           <p className="text-muted max-w-2xl mx-auto leading-relaxed">
-            LED Ivanov Auto е семеен бизнес, роден от страст към автомобилите и убедеността,
+            LED Ivanov Auto е роден от страст към автомобилите и убедеността,
             че всеки шофьор заслужава кристално ясна видимост на пътя – независимо от часа или времето.
           </p>
         </div>
@@ -70,8 +70,8 @@ export default function AboutPage() {
         {/* Hero image + story */}
         <div className="grid md:grid-cols-2 gap-10 items-center mb-20">
           <div className="relative rounded-2xl overflow-hidden aspect-video md:aspect-square bg-surface border border-border">
-            <div className="absolute inset-0 bg-cover bg-center opacity-60"
-              style={{ backgroundImage: 'url(/images/hero-mobile.webp)' }} />
+            <div className="absolute inset-0 bg-cover bg-center opacity-80"
+              style={{ backgroundImage: 'url(/images/accessories-hero.webp)' }} />
             <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
               <p className="text-white font-black text-2xl font-display uppercase">LED Ivanov Auto</p>
