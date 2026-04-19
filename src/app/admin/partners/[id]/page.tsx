@@ -39,9 +39,9 @@ export default function AdminPartnerDetailPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null)
 
   // Image add form
-  const [imgUrl, setImgUrl] = useState('')
   const [imgCaption, setImgCaption] = useState('')
   const [addingImg, setAddingImg] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -82,19 +82,36 @@ export default function AdminPartnerDetailPage() {
 
   async function handleAddImage(e: React.FormEvent) {
     e.preventDefault()
-    if (!imgUrl.trim()) return
+    const input = (e.currentTarget as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement
+    const file = input.files?.[0]
+    if (!file) return
     setAddingImg(true)
+    setUploadError(null)
+
+    const form = new FormData()
+    form.append('file', file)
+    form.append('partner_id', id)
+
+    const res = await fetch('/api/admin/upload-partner-image', { method: 'POST', body: form })
+    if (!res.ok) {
+      const d = await res.json()
+      setUploadError(d.error ?? 'Грешка при качване')
+      setAddingImg(false)
+      return
+    }
+    const { url } = await res.json()
+
     const nextPos = images.length > 0 ? Math.max(...images.map(i => i.position)) + 1 : 1
     const { data, error } = await supabase
       .from('partner_images')
-      .insert({ partner_id: id, url: imgUrl.trim(), caption: imgCaption.trim() || null, position: nextPos })
+      .insert({ partner_id: id, url, caption: imgCaption.trim() || null, position: nextPos })
       .select()
       .single()
     setAddingImg(false)
     if (!error && data) {
       setImages(prev => [...prev, data as PartnerImage])
-      setImgUrl('')
       setImgCaption('')
+      input.value = ''
     }
   }
 
@@ -188,32 +205,40 @@ export default function AdminPartnerDetailPage() {
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted mb-5">Галерия</h2>
 
         {/* Add image form */}
-        <form onSubmit={handleAddImage} className="flex flex-col sm:flex-row gap-3 mb-6">
-          <input
-            type="url"
-            value={imgUrl}
-            onChange={e => setImgUrl(e.target.value)}
-            placeholder="https://... URL на снимката"
-            required
-            className="flex-1 bg-background border border-border rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
-          />
-          <input
-            type="text"
-            value={imgCaption}
-            onChange={e => setImgCaption(e.target.value)}
-            placeholder="Надпис (незадължително)"
-            className="sm:w-48 bg-background border border-border rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
-          />
-          <button
-            type="submit"
-            disabled={addingImg}
-            className="shrink-0 inline-flex items-center gap-2 bg-accent text-black font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-accent/90 disabled:opacity-50 transition-colors"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Добави
-          </button>
+        <form onSubmit={handleAddImage} className="space-y-3 mb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <label className="flex-1 flex items-center gap-3 bg-background border border-border hover:border-accent/50 rounded-xl px-4 py-2.5 cursor-pointer transition-colors group">
+              <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-sm text-muted group-hover:text-white transition-colors">Избери снимка</span>
+              <input type="file" accept="image/*" required className="hidden" />
+            </label>
+            <input
+              type="text"
+              value={imgCaption}
+              onChange={e => setImgCaption(e.target.value)}
+              placeholder="Надпис (незадължително)"
+              className="sm:w-52 bg-background border border-border rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={addingImg}
+              className="shrink-0 inline-flex items-center gap-2 bg-accent text-black font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-accent/90 disabled:opacity-50 transition-colors"
+            >
+              {addingImg ? (
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+              {addingImg ? 'Качване...' : 'Качи'}
+            </button>
+          </div>
+          {uploadError && (
+            <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">{uploadError}</p>
+          )}
         </form>
 
         {/* Image grid */}
