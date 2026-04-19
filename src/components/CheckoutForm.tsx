@@ -298,7 +298,10 @@ export default function CheckoutForm() {
                       {variation && <p className="text-xs text-muted">{variation}</p>}
                       <p className="text-xs text-muted">× {item.qty}</p>
                     </div>
-                    <p className="text-sm font-bold text-accent shrink-0">{(item.price * item.qty).toFixed(2)} €</p>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-bold text-accent">{(item.price * item.qty).toFixed(2)} €</p>
+                      <p className="text-[11px] text-muted/50">{(item.price * item.qty * 1.95583).toFixed(2)} лв.</p>
+                    </div>
                   </div>
                 )
               })}
@@ -308,7 +311,10 @@ export default function CheckoutForm() {
           <div className="mt-4 pt-4 border-t border-border space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted">Продукти</span>
-              <span>{total.toFixed(2)} €</span>
+              <div className="text-right">
+                <span>{total.toFixed(2)} €</span>
+                <p className="text-[11px] text-muted/50">{(total * 1.95583).toFixed(2)} лв.</p>
+              </div>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted">Доставка</span>
@@ -321,7 +327,10 @@ export default function CheckoutForm() {
             )}
             <div className="flex justify-between font-black text-lg pt-2 border-t border-border">
               <span>Общо</span>
-              <span className="text-accent">{total.toFixed(2)} €</span>
+              <div className="text-right">
+                <span className="text-accent">{total.toFixed(2)} €</span>
+                <p className="text-sm font-normal text-muted/60">{(total * 1.95583).toFixed(2)} лв.</p>
+              </div>
             </div>
           </div>
         </div>

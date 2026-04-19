@@ -161,6 +161,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                       <p className="text-accent text-xs font-bold mt-0.5 whitespace-nowrap">
                         {(p.sale_price ?? p.price).toFixed(2)} €
                       </p>
+                      <p className="text-muted/50 text-[11px]">{((p.sale_price ?? p.price) * 1.95583).toFixed(2)} лв.</p>
                     </div>
                     <button
                       onClick={() => handleAddUpsell(p)}
