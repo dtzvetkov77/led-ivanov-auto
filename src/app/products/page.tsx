@@ -82,14 +82,22 @@ export default async function ProductsPage({ searchParams }: Props) {
     default:           query = query.order('position').order('created_at', { ascending: false })
   }
 
-  // ?category= filter — via product_categories join table
+  // ?category= filter — via product_categories join table, fallback to category_id column
   const effectiveCategory = params.category ?? categoryFallbackSlug
   if (effectiveCategory) {
     const cat = catsData.find(c => c.slug === effectiveCategory)
     if (cat) {
       const { data: pc } = await supabase
         .from('product_categories').select('product_id').eq('category_id', cat.id)
-      const catProductIds = (pc ?? []).map(r => r.product_id)
+      let catProductIds = (pc ?? []).map(r => r.product_id)
+
+      // Fallback: product_categories table missing or empty → try direct category_id column
+      if (catProductIds.length === 0) {
+        const { data: direct } = await supabase
+          .from('products').select('id').eq('category_id', cat.id).eq('published', true)
+        catProductIds = (direct ?? []).map(r => r.id)
+      }
+
       if (catProductIds.length === 0) {
         return renderPage(
           <p className="text-muted text-center py-20 text-lg">Няма намерени продукти за тази категория.</p>,

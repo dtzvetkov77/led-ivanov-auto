@@ -18,7 +18,11 @@ export default async function EditProductPage({ params }: Props) {
 
   if (!product) notFound()
 
-  const selectedCategoryIds = (pc ?? []).map(r => r.category_id)
+  // If product_categories table missing, fall back to direct category_id on product
+  let selectedCategoryIds = (pc ?? []).map(r => r.category_id)
+  if (selectedCategoryIds.length === 0 && product.category_id) {
+    selectedCategoryIds = [product.category_id]
+  }
   const selectedMakeIds = (pm ?? []).map(r => r.make_id)
 
   return (

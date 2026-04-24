@@ -107,9 +107,11 @@ export default function ProductForm({ product, categories, makes, selectedCatego
     }
 
     // Sync product_categories
-    await supabase.from('product_categories').delete().eq('product_id', productId)
+    const { error: delCatErr } = await supabase.from('product_categories').delete().eq('product_id', productId)
+    if (delCatErr) { setError(`Грешка категории: ${delCatErr.message}`); setSaving(false); return }
     if (categoryIds.length > 0) {
-      await supabase.from('product_categories').insert(categoryIds.map(cid => ({ product_id: productId, category_id: cid })))
+      const { error: insCatErr } = await supabase.from('product_categories').insert(categoryIds.map(cid => ({ product_id: productId, category_id: cid })))
+      if (insCatErr) { setError(`Грешка запис категории: ${insCatErr.message}`); setSaving(false); return }
     }
 
     // Sync product_makes
