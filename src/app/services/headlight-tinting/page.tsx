@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
+import { createClient } from '@/lib/supabase/server'
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
 
@@ -63,7 +64,16 @@ const serviceSchema = {
   image: `${SITE}/images/hero.webp`,
 }
 
-export default function HeadlightTintingPage() {
+export default async function HeadlightTintingPage() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('service_images')
+    .select('id, url, caption')
+    .eq('service', 'headlight-tinting')
+    .eq('published', true)
+    .order('position')
+  const gallery = data ?? []
+
   return (
     <div className="bg-background min-h-screen text-white">
       <JsonLd data={serviceSchema} />
@@ -176,27 +186,27 @@ export default function HeadlightTintingPage() {
           </div>
         </div>
 
-        {/* ── Before / After ── */}
-        <div className="mb-20">
-          <div className="text-center mb-10">
-            <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
-            <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
-            <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
+        {/* ── Gallery ── */}
+        {gallery.length > 0 && (
+          <div className="mb-20">
+            <div className="text-center mb-10">
+              <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
+              <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {gallery.map(img => (
+                <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
+                  <Image src={img.url} alt={img.caption ?? 'Фолиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                  {img.caption && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-xs text-white px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform">
+                      {img.caption}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-
-          <div className="space-y-6">
-            <BeforeAfterPair
-              before="/images/services/tinting-before-1.webp"
-              after="/images/services/tinting-after-1.webp"
-              label="BMW 3 серия — фолиране на фарове с PPF"
-            />
-            <BeforeAfterPair
-              before="/images/services/tinting-before-2.webp"
-              after="/images/services/tinting-after-2.webp"
-              label="Audi A4 — защита от UV и камъчета с PPF фолио"
-            />
-          </div>
-        </div>
+        )}
 
         {/* ── CTA ── */}
         <div className="bg-accent/10 border border-accent/20 rounded-2xl p-8 text-center">
@@ -221,48 +231,3 @@ export default function HeadlightTintingPage() {
   )
 }
 
-function BeforeAfterPair({ before, after, label }: { before: string; after: string; label: string }) {
-  return (
-    <div className="bg-surface border border-border rounded-2xl overflow-hidden">
-      <div className="grid grid-cols-2">
-        {/* Before */}
-        <div className="relative aspect-[4/3] border-r border-border group">
-          <ImageSlot src={before} alt={`Преди — ${label}`} />
-          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full border border-white/10">
-            ПРЕДИ
-          </div>
-        </div>
-        {/* After */}
-        <div className="relative aspect-[4/3] group">
-          <ImageSlot src={after} alt={`След — ${label}`} />
-          <div className="absolute top-3 right-3 bg-accent/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">
-            СЛЕД
-          </div>
-        </div>
-      </div>
-      <div className="px-5 py-3 border-t border-border">
-        <p className="text-xs text-muted">{label}</p>
-      </div>
-    </div>
-  )
-}
-
-function ImageSlot({ src, alt }: { src: string; alt: string }) {
-  return (
-    <>
-      <div className="absolute inset-0 bg-surface-2 flex flex-col items-center justify-center gap-2 text-muted/30">
-        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
-        </svg>
-        <p className="text-xs text-center px-4 break-all">{src.split('/').pop()}</p>
-      </div>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover"
-        unoptimized
-      />
-    </>
-  )
-}

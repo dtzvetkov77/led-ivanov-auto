@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
+import { createClient } from '@/lib/supabase/server'
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
 
@@ -63,7 +64,21 @@ const serviceSchema = {
   image: `${SITE}/images/services/headlight-polishing-hero.webp`,
 }
 
-export default function HeadlightPolishingPage() {
+const STATIC_PAIRS = [
+  { id: 's1', before_url: '/images/services/before-1.webp', after_url: '/images/services/after-1.webp', label: 'BMW 5 серия — пожълтели фарове след 8 години' },
+  { id: 's2', before_url: '/images/services/before-2.webp', after_url: '/images/services/after-2.webp', label: 'Toyota Corolla — мътни фарове след UV увреждане' },
+]
+
+export default async function HeadlightPolishingPage() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('service_before_after')
+    .select('id, before_url, after_url, label')
+    .eq('service', 'headlight-polishing')
+    .eq('published', true)
+    .order('position')
+  const pairs = (data && data.length > 0) ? data : STATIC_PAIRS
+
   return (
     <div className="bg-background min-h-screen text-white">
       <JsonLd data={serviceSchema} />
@@ -184,18 +199,14 @@ export default function HeadlightPolishingPage() {
           </div>
 
           <div className="space-y-6">
-            {/* Pair 1 */}
-            <BeforeAfterPair
-              before="/images/services/before-1.webp"
-              after="/images/services/after-1.webp"
-              label="BMW 5 серия — пожълтели фарове след 8 години"
-            />
-            {/* Pair 2 */}
-            <BeforeAfterPair
-              before="/images/services/before-2.webp"
-              after="/images/services/after-2.webp"
-              label="Toyota Corolla — мътни фарове след UV увреждане"
-            />
+            {pairs.map(pair => (
+              <BeforeAfterPair
+                key={pair.id}
+                before={pair.before_url}
+                after={pair.after_url}
+                label={pair.label ?? ''}
+              />
+            ))}
           </div>
         </div>
 

@@ -15,6 +15,7 @@ type Partner = {
   contact_person: string | null
   description: string | null
   cover_image: string | null
+  logo_url: string | null
   published: boolean
   position: number
 }
@@ -37,6 +38,14 @@ export default function AdminPartnerDetailPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState<string | null>(null)
+
+  // Cover image upload
+  const [uploadingCover, setUploadingCover] = useState(false)
+  const [coverError, setCoverError] = useState<string | null>(null)
+
+  // Logo upload
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [logoError, setLogoError] = useState<string | null>(null)
 
   // Image add form
   const [imgCaption, setImgCaption] = useState('')
@@ -72,12 +81,45 @@ export default function AdminPartnerDetailPage() {
         contact_person: partner.contact_person || null,
         description: partner.description || null,
         cover_image: partner.cover_image || null,
+        logo_url: partner.logo_url || null,
         published: partner.published,
       })
       .eq('id', id)
     setSaving(false)
     setSaveMsg(error ? `Грешка: ${error.message}` : 'Запазено успешно')
     setTimeout(() => setSaveMsg(null), 3000)
+  }
+
+  async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingCover(true)
+    setCoverError(null)
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
+    const form = new FormData()
+    form.append('file', file)
+    form.append('path', `partners/covers/${id}-cover.${ext}`)
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: form })
+    const data = await res.json()
+    setUploadingCover(false)
+    if (!res.ok) { setCoverError(data.error ?? 'Грешка при качване'); return }
+    setPartner(prev => prev ? { ...prev, cover_image: data.url } : prev)
+  }
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingLogo(true)
+    setLogoError(null)
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
+    const form = new FormData()
+    form.append('file', file)
+    form.append('path', `partners/logos/${id}-logo.${ext}`)
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: form })
+    const data = await res.json()
+    setUploadingLogo(false)
+    if (!res.ok) { setLogoError(data.error ?? 'Грешка при качване'); return }
+    setPartner(prev => prev ? { ...prev, logo_url: data.url } : prev)
   }
 
   async function handleAddImage(e: React.FormEvent) {
@@ -160,7 +202,51 @@ export default function AdminPartnerDetailPage() {
           {field('Телефон', 'phone')}
           {field('Работно време', 'hours')}
           {field('Лице за контакт', 'contact_person')}
-          {field('Cover image URL', 'cover_image')}
+          {/* Cover image upload */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-muted uppercase tracking-wide">Cover снимка</label>
+            <div className="flex items-center gap-3">
+              {partner.cover_image && (
+                <img src={partner.cover_image} alt="cover" className="w-12 h-12 object-cover rounded-lg border border-border" />
+              )}
+              <label className="flex items-center gap-2 bg-background border border-border hover:border-accent/50 rounded-xl px-3 py-2.5 cursor-pointer transition-colors text-sm text-muted hover:text-white">
+                {uploadingCover ? (
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                ) : (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                )}
+                {uploadingCover ? 'Качване...' : (partner.cover_image ? 'Смени снимката' : 'Качи cover снимка')}
+                <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploadingCover} />
+              </label>
+              {partner.cover_image && (
+                <button type="button" onClick={() => setPartner(p => p ? { ...p, cover_image: null } : p)} className="text-xs text-red-400 hover:text-red-300">Премахни</button>
+              )}
+            </div>
+            {coverError && <p className="text-xs text-red-400">{coverError}</p>}
+          </div>
+
+          {/* Logo upload */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-muted uppercase tracking-wide">Лого</label>
+            <div className="flex items-center gap-3">
+              {partner.logo_url && (
+                <img src={partner.logo_url} alt="лого" className="w-12 h-12 object-contain rounded-lg border border-border bg-white/5" />
+              )}
+              <label className="flex items-center gap-2 bg-background border border-border hover:border-accent/50 rounded-xl px-3 py-2.5 cursor-pointer transition-colors text-sm text-muted hover:text-white">
+                {uploadingLogo ? (
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                ) : (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                )}
+                {uploadingLogo ? 'Качване...' : (partner.logo_url ? 'Смени лого' : 'Качи лого')}
+                <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploadingLogo} />
+              </label>
+              {partner.logo_url && (
+                <button type="button" onClick={() => setPartner(p => p ? { ...p, logo_url: null } : p)} className="text-xs text-red-400 hover:text-red-300">Премахни</button>
+              )}
+            </div>
+            {logoError && <p className="text-xs text-red-400">{logoError}</p>}
+          </div>
 
           <div className="sm:col-span-2 flex flex-col gap-1.5">
             <label className="text-xs text-muted uppercase tracking-wide">Описание</label>

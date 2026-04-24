@@ -122,7 +122,16 @@ export default function ProductForm({ product, categories }: Props) {
           <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Категория</label>
           <select value={form.category_id} onChange={set('category_id')} className={inputCls}>
             <option value="">— без категория —</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.filter(c => !c.parent_id).map(parent => {
+              const children = categories.filter(c => c.parent_id === parent.id)
+              return children.length > 0 ? (
+                <optgroup key={parent.id} label={parent.name}>
+                  {children.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </optgroup>
+              ) : (
+                <option key={parent.id} value={parent.id}>{parent.name}</option>
+              )
+            })}
           </select>
         </div>
         <div>

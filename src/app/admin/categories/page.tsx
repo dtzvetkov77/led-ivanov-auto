@@ -7,6 +7,8 @@ export default async function AdminCategoriesPage() {
   const { data: categories } = await supabase.from('categories').select('*').order('name')
   const rows: Category[] = categories ?? []
 
+  const byId = Object.fromEntries(rows.map(c => [c.id, c]))
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -28,6 +30,7 @@ export default async function AdminCategoriesPage() {
             <tr>
               <th className="text-left px-4 py-3 text-muted font-medium">Снимка</th>
               <th className="text-left px-4 py-3 text-muted font-medium">Наименование</th>
+              <th className="text-left px-4 py-3 text-muted font-medium hidden sm:table-cell">Родител</th>
               <th className="text-left px-4 py-3 text-muted font-medium hidden sm:table-cell">Slug</th>
               <th className="text-right px-4 py-3 text-muted font-medium">Действия</th>
             </tr>
@@ -47,7 +50,13 @@ export default async function AdminCategoriesPage() {
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3 font-medium">{cat.name}</td>
+                <td className="px-4 py-3 font-medium">
+                  {cat.parent_id && <span className="text-muted mr-1">↳</span>}
+                  {cat.name}
+                </td>
+                <td className="px-4 py-3 text-muted text-xs hidden sm:table-cell">
+                  {cat.parent_id ? byId[cat.parent_id]?.name ?? '—' : '—'}
+                </td>
                 <td className="px-4 py-3 text-muted font-mono text-xs hidden sm:table-cell">{cat.slug}</td>
                 <td className="px-4 py-3 text-right">
                   <Link
@@ -64,7 +73,7 @@ export default async function AdminCategoriesPage() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-muted">Няма категории</td>
+                <td colSpan={5} className="px-4 py-10 text-center text-muted">Няма категории</td>
               </tr>
             )}
           </tbody>

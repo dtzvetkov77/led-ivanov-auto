@@ -16,20 +16,21 @@ type Partner = {
   phone: string
   hours: string
   contact_person: string | null
+  logo_url: string | null
   published: boolean
   position: number
 }
 
 const STATIC_PARTNERS: Partner[] = [
-  { id: '1', slug: 'kostas-garage', name: "Kosta's Garage", city: 'Бяла Слатина', address: 'ул. Панайот Хитов 1', phone: '+359895756194', hours: 'Всеки ден', contact_person: null, published: true, position: 1 },
-  { id: '2', slug: 'dbr-tint', name: 'DBR.tint', city: 'с. Долна Бела Речка, обл. Монтана', address: 'ул. Първа 40', phone: '+359885850342', hours: 'Всеки ден', contact_person: null, published: true, position: 2 },
-  { id: '3', slug: 'antonio-dinchev', name: 'Антонио Динчев', city: 'Козлодуй', address: 'Център', phone: '+359887723742', hours: 'Всеки ден', contact_person: null, published: true, position: 3 },
-  { id: '4', slug: 'dzumbi-folio', name: 'DZUMBI FOLIO', city: 'Гоце Делчев', address: 'ул. кмет Никола Атанасов 16', phone: '+359896853262', hours: 'Вс. 9:30–18:00', contact_person: null, published: true, position: 4 },
-  { id: '5', slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС', city: 'с. Искра, обл. Силистра', address: 'ул. Образцова 17', phone: '+359899872135', hours: 'Пн–Нд 9:00–17:00', contact_person: null, published: true, position: 5 },
-  { id: '6', slug: 'erik-auto', name: 'Ерик Ауто', city: 'Червен Бряг', address: 'ул. Бузлуджа 53', phone: '+359877449103', hours: 'Пн–Пт 10:00–17:00, Съб 10:00–13:00', contact_person: null, published: true, position: 6 },
-  { id: '7', slug: 'alpha-garage', name: 'Alpha Garage', city: 'Сандански', address: 'Индустриална зона', phone: '+359882605533', hours: 'Всеки ден 9:00–18:00', contact_person: null, published: true, position: 7 },
-  { id: '8', slug: 'georgi-videv', name: 'Георги Видев', city: 'обл. Казанлък', address: '—', phone: '+359897266437', hours: 'Всеки ден', contact_person: null, published: true, position: 8 },
-  { id: '9', slug: 'auto-union-19', name: 'Ауто Юнион19 ЕООД', city: 'Асеновград', address: '—', phone: '+359897211675', hours: 'Всеки ден', contact_person: 'Йордан Авков', published: true, position: 9 },
+  { id: '1', slug: 'kostas-garage', name: "Kosta's Garage", city: 'Бяла Слатина', address: 'ул. Панайот Хитов 1', phone: '+359895756194', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 1 },
+  { id: '2', slug: 'dbr-tint', name: 'DBR.tint', city: 'с. Долна Бела Речка, обл. Монтана', address: 'ул. Първа 40', phone: '+359885850342', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 2 },
+  { id: '3', slug: 'antonio-dinchev', name: 'Антонио Динчев', city: 'Козлодуй', address: 'Център', phone: '+359887723742', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 3 },
+  { id: '4', slug: 'dzumbi-folio', name: 'DZUMBI FOLIO', city: 'Гоце Делчев', address: 'ул. кмет Никола Атанасов 16', phone: '+359896853262', hours: 'Вс. 9:30–18:00', contact_person: null, logo_url: null, published: true, position: 4 },
+  { id: '5', slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС', city: 'с. Искра, обл. Силистра', address: 'ул. Образцова 17', phone: '+359899872135', hours: 'Пн–Нд 9:00–17:00', contact_person: null, logo_url: null, published: true, position: 5 },
+  { id: '6', slug: 'erik-auto', name: 'Ерик Ауто', city: 'Червен Бряг', address: 'ул. Бузлуджа 53', phone: '+359877449103', hours: 'Пн–Пт 10:00–17:00, Съб 10:00–13:00', contact_person: null, logo_url: null, published: true, position: 6 },
+  { id: '7', slug: 'alpha-garage', name: 'Alpha Garage', city: 'Сандански', address: 'Индустриална зона', phone: '+359882605533', hours: 'Всеки ден 9:00–18:00', contact_person: null, logo_url: null, published: true, position: 7 },
+  { id: '8', slug: 'georgi-videv', name: 'Георги Видев', city: 'обл. Казанлък', address: '—', phone: '+359897266437', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 8 },
+  { id: '9', slug: 'auto-union-19', name: 'Ауто Юнион19 ЕООД', city: 'Асеновград', address: '—', phone: '+359897211675', hours: 'Всеки ден', contact_person: 'Йордан Авков', logo_url: null, published: true, position: 9 },
 ]
 
 export default async function PartnersPage() {
@@ -104,9 +105,14 @@ export default async function PartnersPage() {
               href={`/partners/${partner.slug}`}
               className="group block bg-surface border border-border hover:border-accent/50 rounded-2xl p-6 transition-all duration-200 hover:shadow-lg hover:shadow-accent/5"
             >
-              <h3 className="text-lg font-bold text-white group-hover:text-accent transition-colors mb-1">
-                {partner.name}
-              </h3>
+              <div className="flex items-start justify-between gap-3 mb-1">
+                <h3 className="text-lg font-bold text-white group-hover:text-accent transition-colors">
+                  {partner.name}
+                </h3>
+                {partner.logo_url && (
+                  <img src={partner.logo_url} alt={`${partner.name} лого`} className="w-12 h-12 object-contain rounded-lg border border-border bg-white/5 shrink-0" />
+                )}
+              </div>
               <p className="text-accent text-sm font-medium mb-4">{partner.city}</p>
 
               <div className="space-y-2 text-sm text-muted">

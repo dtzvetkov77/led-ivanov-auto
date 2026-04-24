@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { uploadFile } from '@/lib/upload'
@@ -17,12 +17,23 @@ export default function CategoryForm({ category }: Props) {
     slug: category?.slug ?? '',
     description: category?.description ?? '',
     image_url: category?.image_url ?? '',
+    parent_id: category?.parent_id ?? '',
   })
+  const [allCategories, setAllCategories] = useState<Category[]>([])
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('categories').select('*').order('name').then(({ data }) => {
+      setAllCategories((data ?? []) as Category[])
+    })
+  }, [])
+
+  const parentOptions = allCategories.filter(c => c.id !== category?.id && !c.parent_id)
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
 
   const slugify = (text: string) =>
@@ -60,6 +71,7 @@ export default function CategoryForm({ category }: Props) {
       slug: form.slug.trim() || slugify(form.name),
       description: form.description.trim() || null,
       image_url: form.image_url.trim() || null,
+      parent_id: form.parent_id || null,
     }
     if (isNew) {
       const { error: err } = await supabase.from('categories').insert(payload)
@@ -77,6 +89,16 @@ export default function CategoryForm({ category }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 max-w-xl">
       {error && <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">{error}</p>}
+
+      <div>
+        <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Родителска категория</label>
+        <select value={form.parent_id} onChange={set('parent_id')} className={inputCls}>
+          <option value="">— без родител (главна категория) —</option>
+          {parentOptions.map(c => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+      </div>
 
       <div>
         <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Наименование *</label>
@@ -137,8 +159,6 @@ export default function CategoryForm({ category }: Props) {
             </>
           )}
         </button>
-        <p className="text-xs text-muted mt-1.5">или въведи URL:</p>
-        <input type="url" value={form.image_url} onChange={set('image_url')} placeholder="https://..." className={`${inputCls} mt-1`} />
       </div>
 
       <div className="flex gap-3 pt-2">
