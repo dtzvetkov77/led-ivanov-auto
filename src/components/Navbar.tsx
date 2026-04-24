@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { getCart } from '@/lib/cart'
 import CartDrawer from './CartDrawer'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
@@ -9,11 +9,15 @@ import LogoImage from './LogoImage'
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [cartCount, setCartCount] = useState<number | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const servicesRef = useRef<HTMLDivElement>(null)
 
@@ -32,6 +36,10 @@ export default function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus()
+  }, [searchOpen])
+
   // Close dropdowns on outside click
   useEffect(() => {
     const handle = (e: MouseEvent) => {
@@ -45,6 +53,16 @@ export default function Navbar() {
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [])
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const q = searchQuery.trim()
+    if (!q) return
+    setSearchOpen(false)
+    setSearchQuery('')
+    setMobileOpen(false)
+    router.push(`/products?q=${encodeURIComponent(q)}`)
+  }
 
   const navLinks = [
     { href: '/about',    label: 'За нас' },
@@ -175,6 +193,31 @@ export default function Navbar() {
 
           {/* Right actions – right column */}
           <div className="flex items-center justify-end gap-1">
+            {/* Search */}
+            <form onSubmit={handleSearch} className="flex items-center">
+              {searchOpen && (
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  onKeyDown={e => e.key === 'Escape' && (setSearchOpen(false), setSearchQuery(''))}
+                  placeholder="Търси продукт..."
+                  className="w-40 sm:w-56 bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-all mr-1"
+                />
+              )}
+              <button
+                type={searchOpen ? 'submit' : 'button'}
+                onClick={() => !searchOpen && setSearchOpen(true)}
+                className="p-2 text-muted hover:text-white transition-colors rounded-lg hover:bg-surface"
+                aria-label="Търсене"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </form>
+
             {/* Cart */}
             <button
               onClick={() => setDrawerOpen(true)}
@@ -217,6 +260,21 @@ export default function Navbar() {
           <div className="md:hidden border-t border-border bg-surface px-4 overflow-y-auto"
             style={{ maxHeight: 'calc(100dvh - 6rem)' }}>
             <div className="pt-3 pb-6 space-y-1">
+              {/* Mobile search */}
+              <form onSubmit={handleSearch} className="flex items-center gap-2 mb-3">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Търси продукт..."
+                  className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent"
+                />
+                <button type="submit" className="p-2 bg-accent rounded-lg text-white">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </form>
               <p className="text-xs text-muted uppercase tracking-widest px-3 py-2">Продукти</p>
               <Link href="/products" className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
                 onClick={() => setMobileOpen(false)}>

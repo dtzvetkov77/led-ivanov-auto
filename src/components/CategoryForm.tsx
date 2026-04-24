@@ -33,15 +33,31 @@ export default function CategoryForm({ category }: Props) {
 
   const parentOptions = allCategories.filter(c => c.id !== category?.id && !c.parent_id)
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }))
-
   const slugify = (text: string) =>
     text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')
 
+  const buildSlug = (name: string, parentId: string) => {
+    const base = slugify(name)
+    if (!parentId) return base
+    const parent = allCategories.find(c => c.id === parentId)
+    return parent ? `${parent.slug}-${base}` : base
+  }
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm(f => ({ ...f, [k]: e.target.value }))
+
+  const handleParentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const parentId = e.target.value
+    setForm(f => ({
+      ...f,
+      parent_id: parentId,
+      ...(isNew && f.name ? { slug: buildSlug(f.name, parentId) } : {}),
+    }))
+  }
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value
-    setForm(f => ({ ...f, name, ...(isNew ? { slug: slugify(name) } : {}) }))
+    setForm(f => ({ ...f, name, ...(isNew ? { slug: buildSlug(name, f.parent_id) } : {}) }))
   }
 
   const handleFile = async (files: FileList | null) => {
@@ -92,7 +108,7 @@ export default function CategoryForm({ category }: Props) {
 
       <div>
         <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Родителска категория</label>
-        <select value={form.parent_id} onChange={set('parent_id')} className={inputCls}>
+        <select value={form.parent_id} onChange={handleParentChange} className={inputCls}>
           <option value="">— без родител (главна категория) —</option>
           {parentOptions.map(c => (
             <option key={c.id} value={c.id}>{c.name}</option>

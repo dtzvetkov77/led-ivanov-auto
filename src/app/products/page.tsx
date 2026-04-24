@@ -11,6 +11,7 @@ type Props = {
     model?: string
     category?: string
     sort?: string
+    q?: string
   }>
 }
 
@@ -70,6 +71,10 @@ export default async function ProductsPage({ searchParams }: Props) {
   // ── Build query ───────────────────────────────────────────────────────────
   let query = supabase.from('products').select('*').eq('published', true)
 
+  if (params.q) {
+    query = query.ilike('name', `%${params.q}%`)
+  }
+
   switch (params.sort) {
     case 'price_asc':  query = query.order('price', { ascending: true }); break
     case 'price_desc': query = query.order('price', { ascending: false }); break
@@ -117,7 +122,9 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   // ── Page title ────────────────────────────────────────────────────────────
   let title = 'Всички продукти'
-  if (params.make && hasMakesTable) {
+  if (params.q) {
+    title = `Търсене: "${params.q}"`
+  } else if (params.make && hasMakesTable) {
     const make = makesData.find(m => m.slug === params.make)
     if (make) title = make.name
   } else if (effectiveCategory) {
@@ -128,7 +135,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     if (cat) title = cat.name
   }
 
-  const activeFiltersCount = [params.make, params.model, effectiveCategory].filter(Boolean).length
+  const activeFiltersCount = [params.make, params.model, effectiveCategory, params.q].filter(Boolean).length
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
