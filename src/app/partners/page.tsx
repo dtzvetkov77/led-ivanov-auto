@@ -16,21 +16,22 @@ type Partner = {
   phone: string
   hours: string
   contact_person: string | null
+  cover_image: string | null
   logo_url: string | null
   published: boolean
   position: number
 }
 
 const STATIC_PARTNERS: Partner[] = [
-  { id: '1', slug: 'kostas-garage', name: "Kosta's Garage", city: 'Бяла Слатина', address: 'ул. Панайот Хитов 1', phone: '+359895756194', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 1 },
-  { id: '2', slug: 'dbr-tint', name: 'DBR.tint', city: 'с. Долна Бела Речка, обл. Монтана', address: 'ул. Първа 40', phone: '+359885850342', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 2 },
-  { id: '3', slug: 'antonio-dinchev', name: 'Антонио Динчев', city: 'Козлодуй', address: 'Център', phone: '+359887723742', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 3 },
-  { id: '4', slug: 'dzumbi-folio', name: 'DZUMBI FOLIO', city: 'Гоце Делчев', address: 'ул. кмет Никола Атанасов 16', phone: '+359896853262', hours: 'Вс. 9:30–18:00', contact_person: null, logo_url: null, published: true, position: 4 },
-  { id: '5', slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС', city: 'с. Искра, обл. Силистра', address: 'ул. Образцова 17', phone: '+359899872135', hours: 'Пн–Нд 9:00–17:00', contact_person: null, logo_url: null, published: true, position: 5 },
-  { id: '6', slug: 'erik-auto', name: 'Ерик Ауто', city: 'Червен Бряг', address: 'ул. Бузлуджа 53', phone: '+359877449103', hours: 'Пн–Пт 10:00–17:00, Съб 10:00–13:00', contact_person: null, logo_url: null, published: true, position: 6 },
-  { id: '7', slug: 'alpha-garage', name: 'Alpha Garage', city: 'Сандански', address: 'Индустриална зона', phone: '+359882605533', hours: 'Всеки ден 9:00–18:00', contact_person: null, logo_url: null, published: true, position: 7 },
-  { id: '8', slug: 'georgi-videv', name: 'Георги Видев', city: 'обл. Казанлък', address: '—', phone: '+359897266437', hours: 'Всеки ден', contact_person: null, logo_url: null, published: true, position: 8 },
-  { id: '9', slug: 'auto-union-19', name: 'Ауто Юнион19 ЕООД', city: 'Асеновград', address: '—', phone: '+359897211675', hours: 'Всеки ден', contact_person: 'Йордан Авков', logo_url: null, published: true, position: 9 },
+  { id: '1', slug: 'kostas-garage', name: "Kosta's Garage", city: 'Бяла Слатина', address: 'ул. Панайот Хитов 1', phone: '+359895756194', hours: 'Всеки ден', contact_person: null, logo_url: null, cover_image: null, published: true, position: 1 },
+  { id: '2', slug: 'dbr-tint', name: 'DBR.tint', city: 'с. Долна Бела Речка, обл. Монтана', address: 'ул. Първа 40', phone: '+359885850342', hours: 'Всеки ден', contact_person: null, logo_url: null, cover_image: null, published: true, position: 2 },
+  { id: '3', slug: 'antonio-dinchev', name: 'Антонио Динчев', city: 'Козлодуй', address: 'Център', phone: '+359887723742', hours: 'Всеки ден', contact_person: null, logo_url: null, cover_image: null, published: true, position: 3 },
+  { id: '4', slug: 'dzumbi-folio', name: 'DZUMBI FOLIO', city: 'Гоце Делчев', address: 'ул. кмет Никола Атанасов 16', phone: '+359896853262', hours: 'Вс. 9:30–18:00', contact_person: null, logo_url: null, cover_image: null, published: true, position: 4 },
+  { id: '5', slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС', city: 'с. Искра, обл. Силистра', address: 'ул. Образцова 17', phone: '+359899872135', hours: 'Пн–Нд 9:00–17:00', contact_person: null, logo_url: null, cover_image: null, published: true, position: 5 },
+  { id: '6', slug: 'erik-auto', name: 'Ерик Ауто', city: 'Червен Бряг', address: 'ул. Бузлуджа 53', phone: '+359877449103', hours: 'Пн–Пт 10:00–17:00, Съб 10:00–13:00', contact_person: null, logo_url: null, cover_image: null, published: true, position: 6 },
+  { id: '7', slug: 'alpha-garage', name: 'Alpha Garage', city: 'Сандански', address: 'Индустриална зона', phone: '+359882605533', hours: 'Всеки ден 9:00–18:00', contact_person: null, logo_url: null, cover_image: null, published: true, position: 7 },
+  { id: '8', slug: 'georgi-videv', name: 'Георги Видев', city: 'обл. Казанлък', address: '—', phone: '+359897266437', hours: 'Всеки ден', contact_person: null, logo_url: null, cover_image: null, published: true, position: 8 },
+  { id: '9', slug: 'auto-union-19', name: 'Ауто Юнион19 ЕООД', city: 'Асеновград', address: '—', phone: '+359897211675', hours: 'Всеки ден', contact_person: 'Йордан Авков', logo_url: null, cover_image: null, published: true, position: 9 },
 ]
 
 export default async function PartnersPage() {
@@ -105,14 +106,21 @@ export default async function PartnersPage() {
               href={`/partners/${partner.slug}`}
               className="group block bg-surface border border-border hover:border-accent/50 rounded-2xl p-6 transition-all duration-200 hover:shadow-lg hover:shadow-accent/5"
             >
-              <div className="flex items-start justify-between gap-3 mb-1">
-                <h3 className="text-lg font-bold text-white group-hover:text-accent transition-colors">
-                  {partner.name}
-                </h3>
-                {partner.logo_url && (
-                  <img src={partner.logo_url} alt={`${partner.name} лого`} className="w-12 h-12 object-contain rounded-lg border border-border bg-white/5 shrink-0" />
-                )}
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0 overflow-hidden group-hover:border-accent/40 transition-colors">
+                  {(partner.logo_url || partner.cover_image) ? (
+                    <img src={(partner.logo_url ?? partner.cover_image)!} alt={`${partner.name} лого`} className="w-full h-full object-cover" />
+                  ) : (
+                    <svg className="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </div>
+                <span className="text-xs bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded-full font-medium mt-1">Партньор</span>
               </div>
+              <h3 className="text-lg font-bold text-white group-hover:text-accent transition-colors mb-1">
+                {partner.name}
+              </h3>
               <p className="text-accent text-sm font-medium mb-4">{partner.city}</p>
 
               <div className="space-y-2 text-sm text-muted">

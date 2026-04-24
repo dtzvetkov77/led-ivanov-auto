@@ -77,14 +77,24 @@ export default async function ProductsPage({ searchParams }: Props) {
     default:           query = query.order('position').order('created_at', { ascending: false })
   }
 
-  // ?category= filter — exact match in categories table
+  // ?category= filter — via product_categories join table
   const effectiveCategory = params.category ?? categoryFallbackSlug
   if (effectiveCategory) {
     const cat = catsData.find(c => c.slug === effectiveCategory)
     if (cat) {
-      query = query.eq('category_id', cat.id)
+      const { data: pc } = await supabase
+        .from('product_categories').select('product_id').eq('category_id', cat.id)
+      const catProductIds = (pc ?? []).map(r => r.product_id)
+      if (catProductIds.length === 0) {
+        return renderPage(
+          <p className="text-muted text-center py-20 text-lg">Няма намерени продукти за тази категория.</p>,
+          { makes: makesData, models: modelsData, categories: catsData, params }
+        )
+      }
+      productIds = productIds !== null
+        ? productIds.filter(id => catProductIds.includes(id))
+        : catProductIds
     } else {
-      // Category slug not found in DB — force empty result rather than showing everything
       return renderPage(
         <p className="text-muted text-center py-20 text-lg">Няма намерени продукти за тази категория.</p>,
         { makes: makesData, models: modelsData, categories: catsData, params }

@@ -7,15 +7,30 @@ type Props = { params: Promise<{ id: string }> }
 export default async function EditProductPage({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
-  const [{ data: product }, { data: categories }] = await Promise.all([
+
+  const [{ data: product }, { data: categories }, { data: makes }, { data: pc }, { data: pm }] = await Promise.all([
     supabase.from('products').select('*').eq('id', id).single(),
     supabase.from('categories').select('*').order('name'),
+    supabase.from('makes').select('*').order('name'),
+    supabase.from('product_categories').select('category_id').eq('product_id', id),
+    supabase.from('product_makes').select('make_id').eq('product_id', id),
   ])
+
   if (!product) notFound()
+
+  const selectedCategoryIds = (pc ?? []).map(r => r.category_id)
+  const selectedMakeIds = (pm ?? []).map(r => r.make_id)
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Редактирай продукт</h1>
-      <ProductForm product={product} categories={categories ?? []} />
+      <ProductForm
+        product={product}
+        categories={categories ?? []}
+        makes={makes ?? []}
+        selectedCategoryIds={selectedCategoryIds}
+        selectedMakeIds={selectedMakeIds}
+      />
     </div>
   )
 }

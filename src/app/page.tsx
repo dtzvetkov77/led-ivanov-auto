@@ -7,20 +7,22 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
 
-const PARTNERS = [
-  { slug: 'kostas-garage',     name: "Kosta's Garage",      city: 'Бяла Слатина',                    phone: '+359895756194', hours: 'Всеки ден' },
-  { slug: 'dbr-tint',          name: 'DBR.tint',             city: 'с. Долна Бела Речка, обл. Монтана', phone: '+359885850342', hours: 'Всеки ден' },
-  { slug: 'antonio-dinchev',   name: 'Антонио Динчев',       city: 'Козлодуй',                         phone: '+359887723742', hours: 'Всеки ден' },
-  { slug: 'dzumbi-folio',      name: 'DZUMBI FOLIO',         city: 'Гоце Делчев',                      phone: '+359896853262', hours: 'Вс. 9:30–18:00' },
-  { slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС',   city: 'с. Искра, обл. Силистра',          phone: '+359899872135', hours: 'Пн–Нд 9:00–17:00' },
-  { slug: 'erik-auto',         name: 'Ерик Ауто',            city: 'Червен Бряг',                      phone: '+359877449103', hours: 'Пн–Пт 10:00–17:00' },
+const STATIC_PARTNERS = [
+  { slug: 'kostas-garage',     name: "Kosta's Garage",      city: 'Бяла Слатина',                    phone: '+359895756194', cover_image: null as string | null, logo_url: null as string | null },
+  { slug: 'dbr-tint',          name: 'DBR.tint',             city: 'с. Долна Бела Речка, обл. Монтана', phone: '+359885850342', cover_image: null, logo_url: null },
+  { slug: 'antonio-dinchev',   name: 'Антонио Динчев',       city: 'Козлодуй',                         phone: '+359887723742', cover_image: null, logo_url: null },
+  { slug: 'dzumbi-folio',      name: 'DZUMBI FOLIO',         city: 'Гоце Делчев',                      phone: '+359896853262', cover_image: null, logo_url: null },
+  { slug: 'zlatnite-race-ses', name: 'Златните Ръце-СЕС',   city: 'с. Искра, обл. Силистра',          phone: '+359899872135', cover_image: null, logo_url: null },
+  { slug: 'erik-auto',         name: 'Ерик Ауто',            city: 'Червен Бряг',                      phone: '+359877449103', cover_image: null, logo_url: null },
 ]
-
 
 export default async function HomePage() {
   const supabase = await createClient()
-  const { data: products } = await supabase
-    .from('products').select('*').eq('published', true).order('position').limit(8)
+  const [{ data: products }, { data: partnersData }] = await Promise.all([
+    supabase.from('products').select('*').eq('published', true).order('position').limit(8),
+    supabase.from('partners').select('slug,name,city,phone,cover_image,logo_url').eq('published', true).order('position').limit(6),
+  ])
+  const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
 
   return (
     <>
@@ -97,10 +99,14 @@ export default async function HomePage() {
             {PARTNERS.map(p => (
               <Link key={p.slug} href={`/partners/${p.slug}`} className="bg-background border border-border rounded-xl p-5 hover:border-accent transition-colors group block">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all shrink-0">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                  <div className="w-10 h-10 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all shrink-0 overflow-hidden">
+                    {(p.logo_url || p.cover_image) ? (
+                      <img src={(p.logo_url ?? p.cover_image)!} alt={p.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
                   </div>
                   <span className="text-xs bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded-full font-medium">Партньор</span>
                 </div>
