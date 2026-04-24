@@ -21,10 +21,10 @@ export default async function HomePage() {
   const [{ data: products }, { data: partnersData }, { data: categoriesData }] = await Promise.all([
     supabase.from('products').select('*').eq('published', true).order('position').limit(8),
     supabase.from('partners').select('slug,name,city,phone,cover_image,logo_url').eq('published', true).order('position').limit(6),
-    supabase.from('categories').select('id,name,slug,parent_id').order('name'),
+    supabase.from('categories').select('id,name,slug,parent_id,image_url').order('name'),
   ])
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
-  const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null }[]
+  const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null; image_url: string | null }[]
   const dbSubcategories = allDbCats.filter(c => c.parent_id)
 
   return (
@@ -44,7 +44,7 @@ export default async function HomePage() {
           <div className={`grid gap-4 ${dbSubcategories.length <= 2 ? 'grid-cols-2' : dbSubcategories.length === 3 ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-4'}`}>
             {dbSubcategories.map((cat, i) => {
               const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-              const img = `${supabaseUrl}/storage/v1/object/public/product-images/categories/${cat.slug}.webp`
+              const img = cat.image_url ?? `${supabaseUrl}/storage/v1/object/public/product-images/categories/${cat.slug}.webp`
               const hue = (i * 55 + 0) % 360
               return (
                 <Link
