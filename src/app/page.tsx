@@ -18,11 +18,14 @@ const STATIC_PARTNERS = [
 
 export default async function HomePage() {
   const supabase = await createClient()
-  const [{ data: products }, { data: partnersData }] = await Promise.all([
+  const [{ data: products }, { data: partnersData }, { data: categoriesData }] = await Promise.all([
     supabase.from('products').select('*').eq('published', true).order('position').limit(8),
     supabase.from('partners').select('slug,name,city,phone,cover_image,logo_url').eq('published', true).order('position').limit(6),
+    supabase.from('categories').select('id,name,slug,parent_id').order('name'),
   ])
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
+  const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null }[]
+  const dbSubcategories = allDbCats.filter(c => c.parent_id)
 
   return (
     <>
@@ -31,6 +34,38 @@ export default async function HomePage() {
 
       {/* ── Product series slider ─────────────────────────────────────── */}
       <ProductSlider />
+
+      {/* ── Subcategory shortcuts ─────────────────────────────────────── */}
+      {dbSubcategories.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 pt-14 pb-0">
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold tracking-[4px] uppercase text-accent mb-3 block">НАМЕРЕТЕ ЛЕД КРУШКИ ЗА:</span>
+          </div>
+          <div className={`grid gap-4 ${dbSubcategories.length <= 2 ? 'grid-cols-2' : dbSubcategories.length === 3 ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-4'}`}>
+            {dbSubcategories.map((cat, i) => {
+              const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+              const img = `${supabaseUrl}/storage/v1/object/public/product-images/categories/${cat.slug}.webp`
+              const hue = (i * 55 + 0) % 360
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/products?category=${cat.slug}`}
+                  className="group relative rounded-2xl overflow-hidden border border-border hover:border-accent transition-all duration-200 aspect-video flex items-end p-4"
+                >
+                  <div className="absolute inset-0"
+                    style={{ background: `linear-gradient(135deg, hsl(${hue} 60% 10%) 0%, #0d0d0d 100%)` }} />
+                  <div className="absolute inset-0 bg-cover bg-center opacity-60 group-hover:opacity-80 transition-opacity"
+                    style={{ backgroundImage: `url(${img})` }} />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                  <span className="relative z-10 text-sm font-black uppercase leading-tight group-hover:text-accent transition-colors tracking-wide">
+                    {cat.name.toUpperCase()}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
       {/* ── Categories ───────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 py-14">
