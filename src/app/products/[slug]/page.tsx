@@ -56,14 +56,14 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
 
-  const { data: product } = await supabase
+  const { data: product, error: productError } = await supabase
     .from('products')
-    .select('*, category:categories(name, slug)')
+    .select('*, category:categories!category_id(name, slug)')
     .eq('slug', slug)
     .eq('published', true)
     .single()
 
-  if (!product) notFound()
+  if (productError || !product) notFound()
 
   const p = product as Product & { category: { name: string; slug: string } | null }
 
