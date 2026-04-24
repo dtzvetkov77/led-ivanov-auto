@@ -6,6 +6,7 @@ import { getCart } from '@/lib/cart'
 import CartDrawer from './CartDrawer'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
 import LogoImage from './LogoImage'
+import SearchBar from './SearchBar'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -15,9 +16,7 @@ export default function Navbar() {
   const [productsOpen, setProductsOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [mobileSearchQuery, setMobileSearchQuery] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
   const servicesRef = useRef<HTMLDivElement>(null)
 
@@ -36,10 +35,6 @@ export default function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
-  useEffect(() => {
-    if (searchOpen) searchInputRef.current?.focus()
-  }, [searchOpen])
-
   // Close dropdowns on outside click
   useEffect(() => {
     const handle = (e: MouseEvent) => {
@@ -54,13 +49,12 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handle)
   }, [])
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleMobileSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const q = searchQuery.trim()
+    const q = mobileSearchQuery.trim()
     if (!q) return
-    setSearchOpen(false)
-    setSearchQuery('')
     setMobileOpen(false)
+    setMobileSearchQuery('')
     router.push(`/products?q=${encodeURIComponent(q)}`)
   }
 
@@ -194,29 +188,7 @@ export default function Navbar() {
           {/* Right actions – right column */}
           <div className="flex items-center justify-end gap-1">
             {/* Search */}
-            <form onSubmit={handleSearch} className="flex items-center">
-              {searchOpen && (
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onKeyDown={e => e.key === 'Escape' && (setSearchOpen(false), setSearchQuery(''))}
-                  placeholder="Търси продукт..."
-                  className="w-40 sm:w-56 bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-all mr-1"
-                />
-              )}
-              <button
-                type={searchOpen ? 'submit' : 'button'}
-                onClick={() => !searchOpen && setSearchOpen(true)}
-                className="p-2 text-muted hover:text-white transition-colors rounded-lg hover:bg-surface"
-                aria-label="Търсене"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
-                </svg>
-              </button>
-            </form>
+            <SearchBar />
 
             {/* Cart */}
             <button
@@ -261,11 +233,11 @@ export default function Navbar() {
             style={{ maxHeight: 'calc(100dvh - 6rem)' }}>
             <div className="pt-3 pb-6 space-y-1">
               {/* Mobile search */}
-              <form onSubmit={handleSearch} className="flex items-center gap-2 mb-3">
+              <form onSubmit={handleMobileSearch} className="flex items-center gap-2 mb-3">
                 <input
                   type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+                  value={mobileSearchQuery}
+                  onChange={e => setMobileSearchQuery(e.target.value)}
                   placeholder="Търси продукт..."
                   className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent"
                 />

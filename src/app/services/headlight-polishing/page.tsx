@@ -138,6 +138,26 @@ export default async function HeadlightPolishingPage() {
           ))}
         </div>
 
+        {/* ── Before / After ── */}
+        <div className="mb-20">
+          <div className="text-center mb-10">
+            <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
+            <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
+            <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
+          </div>
+
+          <div className="space-y-6">
+            {pairs.map(pair => (
+              <BeforeAfterPair
+                key={pair.id}
+                before={pair.before_url}
+                after={pair.after_url}
+                label={pair.label ?? ''}
+              />
+            ))}
+          </div>
+        </div>
+
         {/* ── Why section ── */}
         <div className="grid md:grid-cols-2 gap-10 items-center mb-20">
           <div className="space-y-4 text-muted leading-relaxed">
@@ -186,26 +206,6 @@ export default async function HeadlightPolishingPage() {
                 <h3 className="font-bold mb-2">{step.title}</h3>
                 <p className="text-muted text-sm leading-relaxed">{step.desc}</p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Before / After ── */}
-        <div className="mb-20">
-          <div className="text-center mb-10">
-            <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
-            <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
-            <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
-          </div>
-
-          <div className="space-y-6">
-            {pairs.map(pair => (
-              <BeforeAfterPair
-                key={pair.id}
-                before={pair.before_url}
-                after={pair.after_url}
-                label={pair.label ?? ''}
-              />
             ))}
           </div>
         </div>
