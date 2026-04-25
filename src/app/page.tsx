@@ -136,9 +136,9 @@ export default async function HomePage() {
               return (
                 <Link key={p.slug} href={`/partners/${p.slug}`} className="bg-background border border-border rounded-xl overflow-hidden hover:border-accent transition-colors group block">
                   {/* Banner */}
-                  <div className="relative w-full h-40 bg-accent/5">
+                  <div className="relative w-full h-40 bg-black">
                     {banner ? (
-                      <img src={banner} alt={p.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" />
+                      <img src={banner} alt={p.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <svg className="w-10 h-10 text-accent/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

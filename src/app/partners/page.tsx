@@ -109,9 +109,9 @@ export default async function PartnersPage() {
                 className="group block bg-surface border border-border hover:border-accent/50 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-lg hover:shadow-accent/5"
               >
                 {/* Banner image */}
-                <div className="relative w-full h-44 bg-accent/5">
+                <div className="relative w-full h-44 bg-black">
                   {banner ? (
-                    <img src={banner} alt={partner.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" />
+                    <img src={banner} alt={partner.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <svg className="w-12 h-12 text-accent/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
