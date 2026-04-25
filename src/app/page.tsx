@@ -131,38 +131,45 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {PARTNERS.map(p => (
-              <Link key={p.slug} href={`/partners/${p.slug}`} className="bg-background border border-border rounded-xl p-5 hover:border-accent transition-colors group block">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-accent/15 border border-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all shrink-0 overflow-hidden">
-                    {(p.logo_url || p.cover_image) ? (
-                      <img src={(p.logo_url ?? p.cover_image)!} alt={p.name} className="w-full h-full object-cover" />
+            {PARTNERS.map(p => {
+              const banner = p.cover_image ?? p.logo_url
+              return (
+                <Link key={p.slug} href={`/partners/${p.slug}`} className="bg-background border border-border rounded-xl overflow-hidden hover:border-accent transition-colors group block">
+                  {/* Banner */}
+                  <div className="relative w-full h-40 bg-accent/5">
+                    {banner ? (
+                      <img src={banner} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <div className="w-full h-full flex items-center justify-center">
+                        <svg className="w-10 h-10 text-accent/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+                          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
                     )}
+                    <span className="absolute top-2.5 right-2.5 text-xs bg-accent text-white px-2 py-0.5 rounded-full font-medium">Партньор</span>
                   </div>
-                  <span className="text-xs bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded-full font-medium">Партньор</span>
-                </div>
-                <h3 className="font-bold text-sm mb-3">{p.name}</h3>
-                <div className="space-y-1.5 text-xs text-muted">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    <span>{p.city}</span>
+                  {/* Info */}
+                  <div className="p-4">
+                    <h3 className="font-bold text-sm mb-2 group-hover:text-accent transition-colors">{p.name}</h3>
+                    <div className="space-y-1.5 text-xs text-muted">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-3.5 h-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{p.city}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <svg className="w-3.5 h-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{p.phone}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    <span>{p.phone}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
             <p className="text-xs text-muted">
