@@ -6,7 +6,7 @@ import type { Product } from '@/lib/types'
 export default async function AdminProductsPage() {
   const supabase = await createClient()
   const { data: products } = await supabase
-    .from('products').select('*, category:categories(name)').order('position')
+    .from('products').select('*, category:categories!category_id(name)').order('position')
 
   return (
     <div>
