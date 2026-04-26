@@ -133,6 +133,28 @@ export default async function HeadlightAlignmentPage() {
           ))}
         </div>
 
+        {/* ── Gallery ── */}
+        {gallery.length > 0 && (
+          <div className="mb-20">
+            <div className="text-center mb-10">
+              <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
+              <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {gallery.map(img => (
+                <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
+                  <Image src={img.url} alt={img.caption ?? 'Регулиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                  {img.caption && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-xs text-white px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform">
+                      {img.caption}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ── Why section ── */}
         <div className="grid md:grid-cols-2 gap-10 items-center mb-20">
           <div className="space-y-4 text-muted leading-relaxed">
@@ -184,28 +206,6 @@ export default async function HeadlightAlignmentPage() {
             ))}
           </div>
         </div>
-
-        {/* ── Gallery ── */}
-        {gallery.length > 0 && (
-          <div className="mb-20">
-            <div className="text-center mb-10">
-              <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
-              <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {gallery.map(img => (
-                <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
-                  <Image src={img.url} alt={img.caption ?? 'Регулиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
-                  {img.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-xs text-white px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform">
-                      {img.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* ── CTA ── */}
         <div className="bg-accent/10 border border-accent/20 rounded-2xl p-8 text-center">
