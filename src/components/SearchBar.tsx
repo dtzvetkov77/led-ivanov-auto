@@ -141,8 +141,9 @@ export default function SearchBar() {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium line-clamp-2 text-white leading-snug">{hit.name}</p>
                       <p className="text-xs text-accent font-bold mt-0.5">
-                        {price.toFixed(2)} лв.
-                        {hit.sale_price && <span className="text-muted line-through ml-2 font-normal">{hit.price.toFixed(2)} лв.</span>}
+                        {price.toFixed(2)} €
+                        <span className="text-muted font-normal ml-1">/ {(price * 1.95583).toFixed(2)} лв.</span>
+                        {hit.sale_price && <span className="text-muted line-through ml-2 font-normal">{hit.price.toFixed(2)} €</span>}
                       </p>
                     </div>
                     <svg className="w-3 h-3 shrink-0 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -179,7 +180,7 @@ export default function SearchBar() {
         </button>
 
         {open && (
-          <div className="fixed inset-0 z-60 flex flex-col bg-background">
+          <div className="fixed inset-x-0 top-0 z-60 flex flex-col bg-background" style={{ height: '100dvh' }}>
             {/* Header bar */}
             <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface shrink-0">
               <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
