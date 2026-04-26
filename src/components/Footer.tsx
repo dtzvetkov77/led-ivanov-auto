@@ -109,7 +109,7 @@ export default function Footer() {
               href="https://www.digitalagencynexus.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-muted/60 transition-colors"
+              className="text-accent hover:text-accent/80 transition-colors"
             >
               Nexus Digital Agency
             </a>
