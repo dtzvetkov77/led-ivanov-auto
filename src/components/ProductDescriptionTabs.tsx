@@ -37,15 +37,18 @@ export default function ProductDescriptionTabs({ description, attributes }: Prop
       </div>
 
       {tab === 'description' && (
-        <div
-          className="prose prose-invert prose-sm max-w-none text-muted leading-relaxed
-            prose-headings:text-white prose-headings:font-bold
-            prose-strong:text-white prose-li:marker:text-accent
-            prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-            prose-table:border-collapse prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2
-            prose-th:border prose-th:border-border prose-th:px-3 prose-th:py-2 prose-th:bg-surface"
-          dangerouslySetInnerHTML={{ __html: description }}
-        />
+        <div className="overflow-x-auto">
+          <div
+            className="prose prose-invert prose-sm max-w-none text-muted leading-relaxed
+              prose-headings:text-white prose-headings:font-bold
+              prose-strong:text-white prose-li:marker:text-accent
+              prose-a:text-accent prose-a:no-underline hover:prose-a:underline
+              prose-table:border-collapse prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2
+              prose-th:border prose-th:border-border prose-th:px-3 prose-th:py-2 prose-th:bg-surface
+              [&_img]:max-w-full [&_img]:h-auto **:wrap-break-word"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        </div>
       )}
 
       {tab === 'specs' && (

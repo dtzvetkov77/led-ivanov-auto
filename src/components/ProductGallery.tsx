@@ -17,7 +17,7 @@ export default function ProductGallery({ images, name }: Props) {
 
   return (
     <div>
-      <div className="relative aspect-square rounded-lg overflow-hidden bg-surface-2 mb-3">
+      <div className="relative aspect-4/3 md:aspect-square rounded-lg overflow-hidden bg-surface-2 mb-3">
         <Image src={images[active]} alt={name} fill className="object-contain" unoptimized />
       </div>
       {images.length > 1 && (
