@@ -92,7 +92,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted/50">
-            © {new Date().getFullYear()} LED Ivanov Auto. Всички права запазени. 
+            © {new Date().getFullYear()} LED Ivanov Auto. Всички права запазени.
           </p>
           <div className="flex items-center gap-3 text-xs text-muted/40 flex-wrap justify-center">
             <Link href="/privacy-policy" className="hover:text-muted transition-colors">Поверителност</Link>
@@ -101,6 +101,19 @@ export default function Footer() {
             <span>·</span>
             <Link href="/cookies" className="hover:text-muted transition-colors">Бисквитки</Link>
           </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-border/40 text-center">
+          <p className="text-[11px] text-muted/30">
+            Дизайн и изработка:{' '}
+            <a
+              href="https://www.digitalagencynexus.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-muted/60 transition-colors"
+            >
+              Nexus Digital Agency
+            </a>
+          </p>
         </div>
       </div>
     </footer>
