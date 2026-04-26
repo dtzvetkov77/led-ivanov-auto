@@ -87,16 +87,24 @@ export default function SearchBar() {
     if (e.key === 'ArrowUp') { e.preventDefault(); setActive(a => Math.max(a - 1, -1)) }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (active >= 0 && results[active]) { router.push(`/products/${results[active].slug}`); closeSearch() }
+      if (active >= 0 && results[active]) { navigateTo(`/products/${results[active].slug}`) }
       else submitSearch()
     }
+  }
+
+  const navigateTo = (href: string) => {
+    // Blur input first so iOS keyboard dismisses and restores viewport before navigation
+    inputRef.current?.blur()
+    setTimeout(() => {
+      closeSearch()
+      router.push(href)
+    }, 100)
   }
 
   const submitSearch = () => {
     const q = query.trim()
     if (!q) return
-    router.push(`/products?q=${encodeURIComponent(q)}`)
-    closeSearch()
+    navigateTo(`/products?q=${encodeURIComponent(q)}`)
   }
 
   const showResults = open && (loading || results.length > 0 || query.trim().length >= 2)
@@ -123,7 +131,7 @@ export default function SearchBar() {
                 <li key={hit.id}>
                   <Link
                     href={`/products/${hit.slug}`}
-                    onClick={closeSearch}
+                    onClick={e => { e.preventDefault(); navigateTo(`/products/${hit.slug}`) }}
                     onMouseEnter={() => setActive(i)}
                     className={`flex items-center gap-3 px-5 py-3 transition-colors ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
                   >
