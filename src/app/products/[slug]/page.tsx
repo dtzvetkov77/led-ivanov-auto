@@ -102,10 +102,12 @@ export default async function ProductPage({ params }: Props) {
       <div className="grid md:grid-cols-2 gap-6 md:gap-10 mb-12">
 
         {/* Gallery */}
-        <ProductGallery images={p.images} name={p.name} />
+        <div className="min-w-0">
+          <ProductGallery images={p.images} name={p.name} />
+        </div>
 
         {/* Info */}
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-0">
           {p.category && (
             <Link
               href={`/products?category=${p.category.slug}`}
