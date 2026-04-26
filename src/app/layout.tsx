@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Oswald } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
@@ -11,6 +11,13 @@ const inter  = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' 
 const oswald = Oswald({ subsets: ['latin', 'cyrillic'], variable: '--font-oswald', weight: ['400', '500', '600', '700'] })
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
