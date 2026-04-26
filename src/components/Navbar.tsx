@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { getCart } from '@/lib/cart'
 import CartDrawer from './CartDrawer'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
@@ -10,13 +10,11 @@ import SearchBar from './SearchBar'
 
 export default function Navbar() {
   const pathname = usePathname()
-  const router = useRouter()
   const [cartCount, setCartCount] = useState<number | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [mobileSearchQuery, setMobileSearchQuery] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
   const servicesRef = useRef<HTMLDivElement>(null)
 
@@ -48,15 +46,6 @@ export default function Navbar() {
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [])
-
-  const handleMobileSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const q = mobileSearchQuery.trim()
-    if (!q) return
-    setMobileOpen(false)
-    setMobileSearchQuery('')
-    router.push(`/products?q=${encodeURIComponent(q)}`)
-  }
 
   const navLinks = [
     { href: '/about',    label: 'За нас' },
@@ -232,21 +221,6 @@ export default function Navbar() {
           <div className="md:hidden border-t border-border bg-surface px-4 overflow-y-auto"
             style={{ maxHeight: 'calc(100dvh - 6rem)' }}>
             <div className="pt-3 pb-6 space-y-1">
-              {/* Mobile search */}
-              <form onSubmit={handleMobileSearch} className="flex items-center gap-2 mb-3">
-                <input
-                  type="text"
-                  value={mobileSearchQuery}
-                  onChange={e => setMobileSearchQuery(e.target.value)}
-                  placeholder="Търси продукт..."
-                  className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent"
-                />
-                <button type="submit" className="p-2 bg-accent rounded-lg text-white">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </form>
               <p className="text-xs text-muted uppercase tracking-widest px-3 py-2">Продукти</p>
               <Link href="/products" className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
                 onClick={() => setMobileOpen(false)}>

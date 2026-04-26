@@ -44,37 +44,26 @@ export default function SearchBar() {
     setActive(-1)
   }, [])
 
-  // Close on outside click (desktop only — mobile has backdrop)
+  // Close on outside click — desktop only
   useEffect(() => {
     if (isMobile) return
     const handle = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        closeSearch()
-      }
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) closeSearch()
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [closeSearch, isMobile])
 
-  // Lock body scroll when mobile drawer open
+  // Lock body scroll when mobile overlay open
   useEffect(() => {
-    if (isMobile && open) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = (isMobile && open) ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [isMobile, open])
 
   // Debounced search
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (query.trim().length < 2) {
-      setResults([])
-      setLoading(false)
-      setActive(-1)
-      return
-    }
+    if (query.trim().length < 2) { setResults([]); setLoading(false); setActive(-1); return }
     setLoading(true)
     debounceRef.current = setTimeout(async () => {
       const supabase = createClient()
@@ -98,12 +87,8 @@ export default function SearchBar() {
     if (e.key === 'ArrowUp') { e.preventDefault(); setActive(a => Math.max(a - 1, -1)) }
     if (e.key === 'Enter') {
       e.preventDefault()
-      if (active >= 0 && results[active]) {
-        router.push(`/products/${results[active].slug}`)
-        closeSearch()
-      } else {
-        submitSearch()
-      }
+      if (active >= 0 && results[active]) { router.push(`/products/${results[active].slug}`); closeSearch() }
+      else submitSearch()
     }
   }
 
@@ -119,7 +104,7 @@ export default function SearchBar() {
   const ResultsList = () => (
     <>
       {loading && (
-        <div className="flex items-center gap-3 px-4 py-3 text-muted text-xs">
+        <div className="flex items-center gap-2 px-5 py-4 text-muted text-xs">
           <svg className="w-4 h-4 animate-spin shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
           </svg>
@@ -127,27 +112,24 @@ export default function SearchBar() {
         </div>
       )}
       {!loading && results.length === 0 && query.trim().length >= 2 && (
-        <div className="px-4 py-5 text-center text-muted text-xs">
-          Няма резултати за „{query.trim()}"
-        </div>
+        <p className="px-5 py-6 text-center text-muted text-xs">Няма резултати за „{query.trim()}"</p>
       )}
       {!loading && results.length > 0 && (
         <>
           <ul>
             {results.map((hit, i) => {
-              const displayPrice = hit.sale_price ?? hit.price
-              const img = hit.images?.[0]
+              const price = hit.sale_price ?? hit.price
               return (
                 <li key={hit.id}>
                   <Link
                     href={`/products/${hit.slug}`}
                     onClick={closeSearch}
-                    className={`flex items-center gap-3 px-4 py-2.5 transition-colors ${i === active ? 'bg-accent/10 text-white' : 'hover:bg-border text-muted hover:text-white'}`}
                     onMouseEnter={() => setActive(i)}
+                    className={`flex items-center gap-3 px-5 py-3 transition-colors ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
                   >
-                    <div className="w-9 h-9 rounded-lg bg-background border border-border overflow-hidden shrink-0">
-                      {img ? (
-                        <img src={img} alt={hit.name} className="w-full h-full object-cover" />
+                    <div className="w-10 h-10 rounded-lg bg-background border border-border overflow-hidden shrink-0">
+                      {hit.images?.[0] ? (
+                        <img src={hit.images[0]} alt={hit.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted/30">
                           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -159,13 +141,11 @@ export default function SearchBar() {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium line-clamp-2 text-white leading-snug">{hit.name}</p>
                       <p className="text-xs text-accent font-bold mt-0.5">
-                        {displayPrice.toFixed(2)} лв.
-                        {hit.sale_price && (
-                          <span className="text-muted line-through ml-2 font-normal">{hit.price.toFixed(2)} лв.</span>
-                        )}
+                        {price.toFixed(2)} лв.
+                        {hit.sale_price && <span className="text-muted line-through ml-2 font-normal">{hit.price.toFixed(2)} лв.</span>}
                       </p>
                     </div>
-                    <svg className="w-3 h-3 shrink-0 text-muted/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3 h-3 shrink-0 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </Link>
@@ -174,10 +154,8 @@ export default function SearchBar() {
             })}
           </ul>
           <div className="border-t border-border">
-            <button
-              onClick={submitSearch}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs text-accent hover:bg-accent/10 transition-colors font-semibold"
-            >
+            <button onClick={submitSearch}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-xs text-accent hover:bg-accent/10 transition-colors font-semibold">
               Виж всички за „{query.trim()}"
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M17 8l4 4m0 0l-4 4m4-4H3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -189,44 +167,22 @@ export default function SearchBar() {
     </>
   )
 
-  // ── Mobile: full-width drawer below navbar ────────────────────────────
+  // ── Mobile: full-screen overlay ───────────────────────────────────────
   if (isMobile) {
     return (
       <>
-        {/* Trigger */}
-        <button
-          type="button"
-          onClick={open ? closeSearch : openSearch}
-          className="p-2 text-muted hover:text-white transition-colors rounded-lg hover:bg-surface"
-          aria-label="Търсене"
-        >
-          {open ? (
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
-            </svg>
-          )}
+        <button type="button" onClick={openSearch}
+          className="p-2 text-muted hover:text-white transition-colors rounded-lg hover:bg-surface" aria-label="Търсене">
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+          </svg>
         </button>
 
-        {/* Backdrop */}
         {open && (
-          <div
-            className="fixed inset-0 z-40 bg-black/50"
-            style={{ top: '96px' }}
-            onClick={closeSearch}
-          />
-        )}
-
-        {/* Drawer */}
-        {open && (
-          <div className="fixed inset-x-0 z-50 bg-background border-b border-border shadow-2xl shadow-black/60"
-            style={{ top: '96px' }}>
-            {/* Search input */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-              <svg className="w-4 h-4 text-muted shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="fixed inset-0 z-60 flex flex-col bg-background">
+            {/* Header bar */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface shrink-0">
+              <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
               </svg>
               <input
@@ -236,22 +192,36 @@ export default function SearchBar() {
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Търси продукт..."
-                className="flex-1 bg-transparent text-sm text-white placeholder:text-muted focus:outline-none"
+                className="flex-1 bg-transparent text-sm text-white placeholder:text-muted/60 focus:outline-none"
               />
-              {query && (
-                <button type="button" onClick={() => setQuery('')} className="text-muted hover:text-white p-1">
+              {query ? (
+                <button type="button" onClick={() => setQuery('')}
+                  className="p-1.5 text-muted hover:text-white rounded-lg hover:bg-border transition-colors shrink-0">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              ) : (
+                <button type="button" onClick={closeSearch}
+                  className="p-1.5 text-muted hover:text-white rounded-lg hover:bg-border transition-colors shrink-0">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
                   </svg>
                 </button>
               )}
             </div>
+
             {/* Results */}
-            {showResults && (
-              <div className="overflow-y-auto max-h-[60vh]">
-                <ResultsList />
-              </div>
-            )}
+            <div className="flex-1 overflow-y-auto">
+              {showResults ? <ResultsList /> : (
+                <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/30 px-8 text-center">
+                  <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+                  </svg>
+                  <p className="text-xs">Напиши поне 2 символа за търсене</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </>
@@ -263,12 +233,8 @@ export default function SearchBar() {
     <div ref={containerRef} className="relative">
       {open ? (
         <div className="flex items-center gap-1">
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
+          <input ref={inputRef} type="text" value={query}
+            onChange={e => setQuery(e.target.value)} onKeyDown={handleKeyDown}
             placeholder="Търси продукт..."
             className="w-44 sm:w-60 bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-all"
           />
