@@ -78,6 +78,28 @@ export default async function HeadlightAlignmentPage() {
     <div className="bg-background min-h-screen text-white">
       <JsonLd data={serviceSchema} />
 
+      {/* ── Gallery (top) ── */}
+      {gallery.length > 0 && (
+        <div className="max-w-5xl mx-auto px-4 pt-28 pb-8">
+          <div className="text-center mb-8">
+            <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
+            <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {gallery.map(img => (
+              <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
+                <Image src={img.url} alt={img.caption ?? 'Регулиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                {img.caption && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-xs text-white px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform">
+                    {img.caption}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── Hero ── */}
       <section className="relative min-h-[60vh] flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-background" />
@@ -122,28 +144,6 @@ export default async function HeadlightAlignmentPage() {
       </section>
 
       <div className="max-w-5xl mx-auto px-4 pb-20">
-
-        {/* ── Gallery ── */}
-        {gallery.length > 0 && (
-          <div className="mb-12 -mt-4">
-            <div className="text-center mb-10">
-              <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
-              <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {gallery.map(img => (
-                <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
-                  <Image src={img.url} alt={img.caption ?? 'Регулиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
-                  {img.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-xs text-white px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform">
-                      {img.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* ── Stats ── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">

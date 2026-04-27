@@ -83,6 +83,25 @@ export default async function HeadlightPolishingPage() {
     <div className="bg-background min-h-screen text-white">
       <JsonLd data={serviceSchema} />
 
+      {/* ── Before / After (top) ── */}
+      <div className="max-w-5xl mx-auto px-4 pt-28 pb-8">
+        <div className="text-center mb-8">
+          <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
+          <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
+          <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
+        </div>
+        <div className="space-y-6">
+          {pairs.map(pair => (
+            <BeforeAfterPair
+              key={pair.id}
+              before={pair.before_url}
+              after={pair.after_url}
+              label={pair.label ?? ''}
+            />
+          ))}
+        </div>
+      </div>
+
       {/* ── Hero ── */}
       <section className="relative min-h-[60vh] flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-background" />
@@ -136,26 +155,6 @@ export default async function HeadlightPolishingPage() {
               <p className="text-xs text-muted leading-snug">{s.label}</p>
             </div>
           ))}
-        </div>
-
-        {/* ── Before / After ── */}
-        <div className="mb-20">
-          <div className="text-center mb-10">
-            <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
-            <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
-            <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
-          </div>
-
-          <div className="space-y-6">
-            {pairs.map(pair => (
-              <BeforeAfterPair
-                key={pair.id}
-                before={pair.before_url}
-                after={pair.after_url}
-                label={pair.label ?? ''}
-              />
-            ))}
-          </div>
         </div>
 
         {/* ── Why section ── */}
