@@ -25,7 +25,16 @@ export default async function HomePage() {
   ])
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
   const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null; image_url: string | null }[]
-  const dbSubcategories = allDbCats.filter(c => c.parent_id)
+  const dbSubcategories = allDbCats
+    .filter(c => c.parent_id)
+    .sort((a, b) => {
+      const rank = (slug: string) => {
+        if (slug.includes('kusi') || slug.includes('къс')) return 0
+        if (slug.includes('dalgi') || slug.includes('дълг')) return 1
+        return 2
+      }
+      return rank(a.slug) - rank(b.slug)
+    })
 
   return (
     <>

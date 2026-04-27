@@ -123,19 +123,9 @@ export default async function HeadlightAlignmentPage() {
 
       <div className="max-w-5xl mx-auto px-4 pb-20">
 
-        {/* ── Stats ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 -mt-8 mb-16 relative z-10">
-          {STATS.map(s => (
-            <div key={s.label} className="bg-surface border border-border rounded-2xl p-6 text-center hover:border-accent/40 transition-colors">
-              <p className="font-display font-black text-3xl text-accent mb-1">{s.value}</p>
-              <p className="text-xs text-muted leading-snug">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
         {/* ── Gallery ── */}
         {gallery.length > 0 && (
-          <div className="mb-20">
+          <div className="mb-12 -mt-4">
             <div className="text-center mb-10">
               <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
               <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
@@ -154,6 +144,16 @@ export default async function HeadlightAlignmentPage() {
             </div>
           </div>
         )}
+
+        {/* ── Stats ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
+          {STATS.map(s => (
+            <div key={s.label} className="bg-surface border border-border rounded-2xl p-6 text-center hover:border-accent/40 transition-colors">
+              <p className="font-display font-black text-3xl text-accent mb-1">{s.value}</p>
+              <p className="text-xs text-muted leading-snug">{s.label}</p>
+            </div>
+          ))}
+        </div>
 
         {/* ── Why section ── */}
         <div className="grid md:grid-cols-2 gap-10 items-center mb-20">

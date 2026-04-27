@@ -221,39 +221,39 @@ export default function Navbar() {
           <div className="md:hidden border-t border-border bg-surface px-4 overflow-y-auto"
             style={{ maxHeight: 'calc(100dvh - 6rem)' }}>
             <div className="pt-3 pb-6 space-y-1">
-              <p className="text-xs text-muted uppercase tracking-widest px-3 py-2">Продукти</p>
-              <Link href="/products" className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
+              <p className="text-xs text-accent font-bold uppercase tracking-widest px-3 py-2">Продукти</p>
+              <Link href="/products" className="block px-3 py-2 text-sm text-white hover:bg-border rounded-lg transition-colors"
                 onClick={() => setMobileOpen(false)}>
                 Всички продукти
               </Link>
               {PRODUCT_CATEGORIES.map(cat => (
                 <Link key={cat.slug} href={`/products?category=${cat.slug}`}
-                  className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                  className="block px-3 py-2 text-sm text-white hover:bg-border rounded-lg transition-colors pl-5"
                   onClick={() => setMobileOpen(false)}>
                   {cat.name}
                 </Link>
               ))}
               <div className="h-px bg-border mx-3 my-2" />
-              <p className="text-xs text-muted uppercase tracking-widest px-3 py-2">Услуги</p>
+              <p className="text-xs text-accent font-bold uppercase tracking-widest px-3 py-2">Услуги</p>
               <Link href="/services/headlight-polishing"
-                className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                className="block px-3 py-2 text-sm text-white hover:bg-border rounded-lg transition-colors pl-5"
                 onClick={() => setMobileOpen(false)}>
                 Полиране на фарове
               </Link>
               <Link href="/services/headlight-tinting"
-                className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                className="block px-3 py-2 text-sm text-white hover:bg-border rounded-lg transition-colors pl-5"
                 onClick={() => setMobileOpen(false)}>
                 Фолиране на фарове
               </Link>
               <Link href="/services/headlight-alignment"
-                className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors pl-5"
+                className="block px-3 py-2 text-sm text-white hover:bg-border rounded-lg transition-colors pl-5"
                 onClick={() => setMobileOpen(false)}>
                 Регулиране на фарове
               </Link>
               <div className="h-px bg-border mx-3 my-2" />
               {navLinks.map(l => (
                 <Link key={l.href} href={l.href}
-                  className="block px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
+                  className="block px-3 py-2 text-sm text-white hover:bg-border rounded-lg transition-colors"
                   onClick={() => setMobileOpen(false)}>
                   {l.label}
                 </Link>
