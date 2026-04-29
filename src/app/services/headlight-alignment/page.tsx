@@ -218,7 +218,7 @@ export default async function HeadlightAlignmentPage() {
               className="bg-accent hover:bg-accent-hover text-white px-8 py-3 rounded-xl font-bold transition-colors">
               Запази час
             </Link>
-            <a href="tel:+35999999796"
+            <a href="tel:+359999997996"
               className="border border-accent text-accent hover:bg-accent hover:text-white px-8 py-3 rounded-xl font-bold transition-colors">
               Обади се сега
             </a>
