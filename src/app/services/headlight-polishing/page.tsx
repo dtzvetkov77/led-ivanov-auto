@@ -37,7 +37,7 @@ const STEPS = [
 const STATS = [
   { value: 'до 80%', label: 'по-малко светлина при пожълтели фарове' },
   { value: '~ 1 ч.', label: 'средно време за обработка' },
-  { value: 'до 2г.', label: 'UV защита след запечатване' },
+  { value: 'до 7г.', label: 'UV защита след запечатване' },
 ]
 
 const serviceSchema = {
