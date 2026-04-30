@@ -50,7 +50,7 @@ const serviceSchema = {
     '@type': 'LocalBusiness',
     name: 'LED Ivanov Auto',
     url: SITE,
-    telephone: '+35999999796',
+    telephone: '+359999997996',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'ул. Георги Русев 2',
