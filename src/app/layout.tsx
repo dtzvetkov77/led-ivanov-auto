@@ -162,7 +162,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h1.172a2 2 0 011.414.586l2.828 2.828A2 2 0 0121 13.172V17a2 2 0 01-2 2h-1m-6 0a2 2 0 100 4 2 2 0 000-4zm6 0a2 2 0 100 4 2 2 0 000-4z" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <span className="hidden sm:inline">Безплатна доставка над 150 €</span>
-            <span className="sm:hidden">Доставка над 150 €</span>
+            <span className="sm:hidden">0€ Доставка над 150 €</span>
           </span>
         </div>
         <Navbar />
