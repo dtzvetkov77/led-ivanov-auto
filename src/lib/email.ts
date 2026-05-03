@@ -16,9 +16,10 @@ export async function sendOrderEmails(order: Order) {
     .map(i => `<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${i.price.toFixed(2)} €</td></tr>`)
     .join('')
 
+  console.log('[email] sendOrderEmails called, order=', order.order_number, 'adminTo=', ADMIN_EMAIL)
   const adminEmailPromise = resend.emails.send({
-    from: 'onboarding@resend.dev',
-    to: ADMIN_EMAIL ?? 'admin@ivanov-auto.com',
+    from: 'LED Ivanov Auto <orders@ledivanov.bg>',
+    to: ADMIN_EMAIL ?? 'admin@ledivanov.bg',
     subject: `Нова поръчка ${esc(order.order_number)}`,
     html: `
       <h2>Нова поръчка ${esc(order.order_number)}</h2>
