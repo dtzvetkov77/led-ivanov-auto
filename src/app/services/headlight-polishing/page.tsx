@@ -235,6 +235,11 @@ export default async function HeadlightPolishingPage() {
 function BeforeAfterPair({ before, after, label }: { before: string; after: string; label: string }) {
   return (
     <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      {label && (
+        <div className="px-5 py-3 border-b border-border">
+          <p className="text-xs text-muted">{label}</p>
+        </div>
+      )}
       <div className="grid grid-cols-2">
         {/* Before */}
         <div className="relative aspect-[4/3] border-r border-border group">
@@ -250,9 +255,6 @@ function BeforeAfterPair({ before, after, label }: { before: string; after: stri
             СЛЕД
           </div>
         </div>
-      </div>
-      <div className="px-5 py-3 border-t border-border">
-        <p className="text-xs text-muted">{label}</p>
       </div>
     </div>
   )

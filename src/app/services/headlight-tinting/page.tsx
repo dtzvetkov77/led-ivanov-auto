@@ -87,13 +87,13 @@ export default async function HeadlightTintingPage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {gallery.map(img => (
-              <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
-                <Image src={img.url} alt={img.caption ?? 'Фолиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+              <div key={img.id} className="flex flex-col gap-1">
                 {img.caption && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm text-xs text-white px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform">
-                    {img.caption}
-                  </div>
+                  <p className="text-xs text-muted px-1">{img.caption}</p>
                 )}
+                <div className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
+                  <Image src={img.url} alt={img.caption ?? 'Фолиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                </div>
               </div>
             ))}
           </div>

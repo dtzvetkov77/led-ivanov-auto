@@ -2,6 +2,34 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 
+type Stat = { icon: React.ReactNode; label: string }
+
+const iconLight = (c: string) => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" style={{ color: c }}>
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  </svg>
+)
+const iconWatt = (c: string) => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2">
+    <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" strokeLinecap="round"/>
+  </svg>
+)
+const iconPlug = (c: string) => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2">
+    <path d="M18 6L6 18M9 3v4m6-4v4M3 9h18M3 15h18M9 17v4m6-4v4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+const iconChip = (c: string) => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2">
+    <rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 7V4m6 3V4M9 20v-3m6 3v-3M7 9H4m3 6H4m16-6h-3m3 6h-3" strokeLinecap="round"/>
+  </svg>
+)
+const iconShield = (c: string) => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 const SLIDES = [
   {
     badge: 'ULTIMATE BLACK',
@@ -9,7 +37,12 @@ const SLIDES = [
     highlight: 'ULTIMATE\nBLACK',
     tagline: '+500% ПОВЕЧЕ СВЕТЛИНА',
     sub: 'По-силна светлина. По-дълъг живот. Без компромиси.',
-    stats: ['+500% светлина', '200W', 'Plug & Play', 'Без CanBus грешки'],
+    stats: (c: string): Stat[] => [
+      { icon: iconLight(c), label: '+500% светлина' },
+      { icon: iconWatt(c),  label: '200W' },
+      { icon: iconPlug(c),  label: 'Plug & Play' },
+      { icon: iconChip(c),  label: 'Без CanBus грешки' },
+    ],
     href: '/products/led-krushki-h7-200w-60000lm-580-yarkost',
     img: '/images/products/ultimate-black.png',
     bg: 'linear-gradient(135deg, #0a0a0a 0%, #020a1a 100%)',
@@ -22,7 +55,12 @@ const SLIDES = [
     highlight: 'SPORT\nRED',
     tagline: '+500% ПОВЕЧЕ СВЕТЛИНА',
     sub: 'Стил и мощност в едно. Агресивен дизайн.',
-    stats: ['+500% светлина', '180W', 'Plug & Play', 'Без CanBus грешки'],
+    stats: (c: string): Stat[] => [
+      { icon: iconLight(c), label: '+500% светлина' },
+      { icon: iconWatt(c),  label: '180W' },
+      { icon: iconPlug(c),  label: 'Plug & Play' },
+      { icon: iconChip(c),  label: 'Без CanBus грешки' },
+    ],
     href: '/products/180w-led-krushki',
     img: '/images/products/sport-red.png',
     bg: 'linear-gradient(135deg, #0a0a0a 0%, #200505 100%)',
@@ -35,7 +73,12 @@ const SLIDES = [
     highlight: 'ЕВОЛЮЦИЯТА\nНА КСЕНОНА',
     tagline: '+380% ПОВЕЧЕ СВЕТЛИНА',
     sub: 'Директна смяна без преработки. Plug & Play монтаж.',
-    stats: ['+380% светлина', '110W', 'Plug & Play', '4 год. гаранция'],
+    stats: (c: string): Stat[] => [
+      { icon: iconLight(c),  label: '+380% светлина' },
+      { icon: iconWatt(c),   label: '110W' },
+      { icon: iconPlug(c),   label: 'Plug & Play' },
+      { icon: iconShield(c), label: '4 год. гаранция' },
+    ],
     href: '/products/led-zamestitel-na-ksenon-d1sd2s-rd3sd4sd5sd8s-110w-6000k',
     img: '/images/products/d-series.png',
     bg: 'linear-gradient(135deg, #0a0a0a 0%, #041204 100%)',
@@ -109,9 +152,10 @@ export default function ProductSlider() {
             <p className="text-muted text-sm mb-4 leading-relaxed">{s.sub}</p>
 
             <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-6">
-              {s.stats.map(st => (
-                <span key={st} className="bg-white/5 border border-white/10 text-xs text-muted-2 px-3 py-1.5 rounded-lg">
-                  {st}
+              {s.stats(s.accent).map(st => (
+                <span key={st.label} className="flex items-center gap-1.5 bg-black/60 border border-white/10 text-xs text-white px-3 py-1.5 rounded-xl">
+                  {st.icon}
+                  {st.label}
                 </span>
               ))}
             </div>

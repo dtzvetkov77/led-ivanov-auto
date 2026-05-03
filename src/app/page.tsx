@@ -29,8 +29,8 @@ export default async function HomePage() {
     .filter(c => c.parent_id)
     .sort((a, b) => {
       const rank = (name: string) => {
-        if (name.toLowerCase().includes('габарит')) return 0
-        if (name.toLowerCase().includes('към') || name.toLowerCase().includes('дълг')) return 1
+        if (name.toLowerCase().includes('към') || name.toLowerCase().includes('дълг')) return 0
+        if (name.toLowerCase().includes('габарит')) return 1
         return 2
       }
       return rank(a.name) - rank(b.name)
