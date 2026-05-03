@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 type GalleryImage = { id: string; url: string; caption?: string | null }
 
-export default function LightboxGallery({ images, alt }: { images: GalleryImage[]; alt: string }) {
+export default function LightboxGallery({ images, alt, cols = 'grid-cols-2 sm:grid-cols-3' }: { images: GalleryImage[]; alt: string; cols?: string }) {
   const [active, setActive] = useState<number | null>(null)
 
   const close = useCallback(() => setActive(null), [])
@@ -28,7 +28,7 @@ export default function LightboxGallery({ images, alt }: { images: GalleryImage[
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className={`grid ${cols} gap-3`}>
         {images.map((img, i) => (
           <div key={img.id} className="flex flex-col gap-1">
             {img.caption && <p className="text-xs text-muted px-1">{img.caption}</p>}
