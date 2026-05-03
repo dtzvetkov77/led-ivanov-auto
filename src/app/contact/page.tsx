@@ -3,7 +3,7 @@ import { useState } from 'react'
 import type { Metadata } from 'next'
 
 const PHONE = '+359 99 999 7996'
-const PHONE_RAW = '+35999999796'
+const PHONE_RAW = '+359999997996'
 const FACEBOOK = 'https://www.facebook.com/p/LED-Ivanov-Auto-%D0%9A%D1%80%D1%83%D1%88%D0%BA%D0%B8-%D0%B8-%D0%90%D0%B2%D1%82%D0%BE%D0%B0%D0%BA%D1%81%D0%B5%D1%81%D0%BE%D0%B0%D1%80%D0%B8-100065233232609/'
 const TIKTOK = 'https://www.tiktok.com/@ivanov_auto'
 const YOUTUBE = 'https://www.youtube.com/@Ivanov-Auto'

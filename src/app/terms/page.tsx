@@ -96,7 +96,7 @@ export default function TermsPage() {
             При дефект в гаранционния период:
           </p>
           <ul className="list-disc list-inside space-y-1.5 pl-2">
-            <li>Свържете се с нас на <a href="tel:+35999999796" className="text-accent hover:underline">+359 99 999 7996</a></li>
+            <li>Свържете се с нас на <a href="tel:+359999997996" className="text-accent hover:underline">+359 99 999 7996</a></li>
             <li>Предоставете доказателство за покупка (снимка на стикер/опаковка, дата и номер на поръчка)</li>
             <li>Ще организираме замяна на продукта без допълнителни разходи за вас</li>
           </ul>

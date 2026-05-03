@@ -78,7 +78,7 @@ const globalSchema = {
       name: 'LED Ivanov Auto',
       description: 'Висококачествени LED крушки за фарове и авто аксесоари. Plug & Play монтаж, до 2 години гаранция, безплатна доставка над 150 €.',
       url: SITE,
-      telephone: '+35999999796',
+      telephone: '+359999997996',
       image: `${SITE}/images/hero.webp`,
       logo: {
         '@type': 'ImageObject',

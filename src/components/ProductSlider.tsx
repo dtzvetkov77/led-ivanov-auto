@@ -29,6 +29,12 @@ const iconShield = (c: string) => (
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
+const iconBulb = (c: string) => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2">
+    <path d="M9 21h6M12 3a6 6 0 016 6c0 2.5-1.5 4.5-3 6H9c-1.5-1.5-3-3.5-3-6a6 6 0 016-6z" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 17h6" strokeLinecap="round"/>
+  </svg>
+)
 
 const SLIDES = [
   {
@@ -60,6 +66,7 @@ const SLIDES = [
       { icon: iconWatt(c),  label: '180W' },
       { icon: iconPlug(c),  label: 'Plug & Play' },
       { icon: iconChip(c),  label: 'Без CanBus грешки' },
+      { icon: iconBulb(c),  label: 'H1 H4 H6 H8 H9 H11' },
     ],
     href: '/products/180w-led-krushki',
     img: '/images/products/sport-red.png',

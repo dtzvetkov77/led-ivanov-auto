@@ -148,10 +148,10 @@ export default function SearchBar() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium line-clamp-2 text-white leading-snug">{hit.name}</p>
-                      <p className="text-xs text-accent font-bold mt-0.5">
+                      <p className="text-[11px] text-accent font-bold mt-0.5 leading-snug">
                         {price.toFixed(2)} €
                         <span className="text-muted font-normal ml-1">/ {(price * 1.95583).toFixed(2)} лв.</span>
-                        {hit.sale_price && <span className="text-muted line-through ml-2 font-normal">{hit.price.toFixed(2)} €</span>}
+                        {hit.sale_price && <span className="text-muted line-through ml-1.5 font-normal">{hit.price.toFixed(2)} €</span>}
                       </p>
                     </div>
                     <svg className="w-3 h-3 shrink-0 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           <p>
             <strong className="text-white">LED Ivanov Auto</strong><br />
             Адрес: ж.к. Малинова долина, ул. „Георги Русев" 2, 1734 София, България<br />
-            Телефон: <a href="tel:+35999999796" className="text-accent hover:underline">+359 99 999 7996</a>
+            Телефон: <a href="tel:+359999997996" className="text-accent hover:underline">+359 99 999 7996</a>
           </p>
         </Section>
 
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
           </ul>
           <p>
             За упражняване на права се свържете с нас на телефон{' '}
-            <a href="tel:+35999999796" className="text-accent hover:underline">+359 99 999 7996</a>.
+            <a href="tel:+359999997996" className="text-accent hover:underline">+359 99 999 7996</a>.
             Имате право да подадете жалба до{' '}
             <strong className="text-white">Комисията за защита на личните данни (КЗЛД)</strong>{' '}
             — <a href="https://www.cpdp.bg" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">www.cpdp.bg</a>.
@@ -111,7 +111,7 @@ export default function PrivacyPage() {
         </Section>
 
         <div className="mt-10 p-5 bg-surface border border-border rounded-xl text-sm text-muted">
-          За въпроси относно защитата на личните ви данни: <a href="tel:+35999999796" className="text-accent hover:underline">+359 99 999 7996</a>
+          За въпроси относно защитата на личните ви данни: <a href="tel:+359999997996" className="text-accent hover:underline">+359 99 999 7996</a>
         </div>
 
       </article>
