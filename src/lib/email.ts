@@ -38,7 +38,7 @@ export async function sendOrderEmails(order: Order) {
 
   const customerEmailPromise = order.customer_email
     ? resend.emails.send({
-        from: 'LED Ivanov Auto <onboarding@resend.dev>',
+        from: 'LED Ivanov Auto <orders@ledivanov.bg>',
         to: order.customer_email,
         subject: `Вашата поръчка ${esc(order.order_number)} е получена`,
         html: `
