@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs cat *)",
+      "Bash(node scripts/fix-broken-images.mjs)"
+    ],
+    "additionalDirectories": [
+      "/Users/daniel/Developer/Led ivanov /src/app/api/admin/orders"
+    ]
+  }
+}

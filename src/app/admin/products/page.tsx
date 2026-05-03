@@ -42,7 +42,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
       </Suspense>
 
       <AdminTable<Row>
-        rows={(products ?? []) as Row[]}
+        rows={(products ?? []) as unknown as Row[]}
         columns={[
           {
             key: 'images',
