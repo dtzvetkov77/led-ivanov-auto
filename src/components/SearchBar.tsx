@@ -176,7 +176,7 @@ export default function SearchBar() {
     </>
   )
 
-  // ── Mobile: full-screen overlay ───────────────────────────────────────
+  // ── Mobile: right-side drawer (70% width) ────────────────────────────
   if (isMobile) {
     return (
       <>
@@ -187,52 +187,51 @@ export default function SearchBar() {
           </svg>
         </button>
 
-        {open && (
-          <div className="fixed inset-x-0 top-0 z-60 flex flex-col bg-background" style={{ height: '100dvh' }}>
-            {/* Header bar */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface shrink-0">
-              <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
-              </svg>
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Търси продукт..."
-                className="flex-1 bg-transparent text-sm text-white placeholder:text-muted/60 focus:outline-none"
-              />
-              {query ? (
-                <button type="button" onClick={() => setQuery('')}
-                  className="p-1.5 text-muted hover:text-white rounded-lg hover:bg-border transition-colors shrink-0">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              ) : (
-                <button type="button" onClick={closeSearch}
-                  className="p-1.5 text-muted hover:text-white rounded-lg hover:bg-border transition-colors shrink-0">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              )}
-            </div>
+        {/* Backdrop */}
+        <div
+          className={`fixed inset-0 z-[59] bg-black/60 transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+          onClick={closeSearch}
+        />
 
-            {/* Results */}
-            <div className="flex-1 overflow-y-auto">
-              {showResults ? <ResultsList /> : (
-                <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/30 px-8 text-center">
-                  <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
-                  </svg>
-                  <p className="text-xs">Напиши поне 2 символа за търсене</p>
-                </div>
-              )}
-            </div>
+        {/* Drawer */}
+        <div
+          className={`fixed right-0 top-0 z-60 flex flex-col bg-background border-l border-border transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
+          style={{ width: '70vw', height: '100dvh' }}
+        >
+          {/* Header bar */}
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface shrink-0">
+            <svg className="w-4 h-4 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+            </svg>
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Търси..."
+              className="flex-1 bg-transparent text-sm text-white placeholder:text-muted/60 focus:outline-none min-w-0"
+            />
+            <button type="button" onClick={query ? () => setQuery('') : closeSearch}
+              className="p-1 text-muted hover:text-white rounded-lg hover:bg-border transition-colors shrink-0">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
+              </svg>
+            </button>
           </div>
-        )}
+
+          {/* Results */}
+          <div className="flex-1 overflow-y-auto">
+            {showResults ? <ResultsList /> : (
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/30 px-6 text-center">
+                <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
+                </svg>
+                <p className="text-xs">Напиши поне 2 символа</p>
+              </div>
+            )}
+          </div>
+        </div>
       </>
     )
   }
