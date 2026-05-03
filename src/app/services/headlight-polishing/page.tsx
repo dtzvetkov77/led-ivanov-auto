@@ -148,7 +148,7 @@ export default async function HeadlightPolishingPage() {
       <div className="max-w-5xl mx-auto px-4 pb-20">
 
         {/* ── Stats ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 -mt-8 mb-16 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
           {STATS.map(s => (
             <div key={s.label} className="bg-surface border border-border rounded-2xl p-6 text-center hover:border-accent/40 transition-colors">
               <p className="font-display font-black text-3xl text-accent mb-1">{s.value}</p>
