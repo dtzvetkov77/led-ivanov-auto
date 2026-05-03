@@ -27,6 +27,7 @@ export default async function AdminOrdersPage() {
           { key: 'order_number', label: 'Номер', render: o => <Link href={`/admin/orders/${o.id}`} className="text-accent hover:underline font-mono">{o.order_number}</Link> },
           { key: 'customer_name', label: 'Клиент' },
           { key: 'customer_phone', label: 'Телефон' },
+          { key: 'delivery_city', label: 'Град' },
           { key: 'total', label: 'Сума', render: o => `${Number(o.total).toFixed(2)} €` },
           { key: 'status', label: 'Статус', render: o => <span className={statusColors[o.status]}>{statusLabels[o.status]}</span> },
           { key: 'created_at', label: 'Дата', render: o => new Date(o.created_at).toLocaleDateString('bg-BG') },
