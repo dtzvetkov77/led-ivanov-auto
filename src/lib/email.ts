@@ -18,8 +18,8 @@ export async function sendOrderEmails(order: Order) {
 
   console.log('[email] sendOrderEmails called, order=', order.order_number, 'adminTo=', ADMIN_EMAIL)
   const adminEmailPromise = resend.emails.send({
-    from: 'LED Ivanov Auto <orders@ledivanov.bg>',
-    to: ADMIN_EMAIL ?? 'admin@ledivanov.bg',
+    from: 'LED Ivanov Auto <orders@ledivanovauto.com>',
+    to: ADMIN_EMAIL ?? 'admin@ledivanovauto.com',
     subject: `Нова поръчка ${esc(order.order_number)}`,
     html: `
       <h2>Нова поръчка ${esc(order.order_number)}</h2>
@@ -39,7 +39,7 @@ export async function sendOrderEmails(order: Order) {
 
   const customerEmailPromise = order.customer_email
     ? resend.emails.send({
-        from: 'LED Ivanov Auto <orders@ledivanov.bg>',
+        from: 'LED Ivanov Auto <orders@ledivanovauto.com>',
         to: order.customer_email,
         subject: `Вашата поръчка ${esc(order.order_number)} е получена`,
         html: `
