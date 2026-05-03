@@ -17,7 +17,7 @@ export async function sendOrderEmails(order: Order) {
     .join('')
 
   const adminEmailPromise = resend.emails.send({
-    from: 'orders@ivanov-auto.com',
+    from: 'onboarding@resend.dev',
     to: ADMIN_EMAIL ?? 'admin@ivanov-auto.com',
     subject: `Нова поръчка ${esc(order.order_number)}`,
     html: `
