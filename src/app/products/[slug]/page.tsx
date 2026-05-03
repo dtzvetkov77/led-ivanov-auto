@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import ProductGallery from '@/components/ProductGallery'
 import ProductActions from '@/components/ProductActions'
 import ProductDescriptionTabs from '@/components/ProductDescriptionTabs'
+import AdminBar from '@/components/AdminBar'
 import Link from 'next/link'
 function sanitize(html: string) {
   return html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '')
@@ -190,6 +191,7 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </section>
       )}
+      <AdminBar productId={p.id} />
     </div>
   )
 }
