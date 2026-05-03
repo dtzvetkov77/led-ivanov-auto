@@ -60,7 +60,7 @@ export async function sendOrderEmails(order: Order) {
     if (r.status === 'rejected') {
       console.error(`[email] ${label} REJECTED:`, r.reason)
     } else {
-      const val = r.value as { data?: { id?: string }; error?: { message?: string; name?: string } }
+      const val = r.value as unknown as { data?: { id?: string }; error?: { message?: string; name?: string } } | null
       if (val?.error) {
         console.error(`[email] ${label} ERROR:`, JSON.stringify(val.error))
       } else {
