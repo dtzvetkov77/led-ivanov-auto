@@ -79,7 +79,7 @@ export default async function HeadlightAlignmentPage() {
       <JsonLd data={serviceSchema} />
 
       {/* ── Hero ── */}
-      <section className="relative min-h-[60vh] flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative md:min-h-[60vh] flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-background" />
         <div className="hidden md:block absolute inset-0 bg-cover bg-center opacity-30"
           style={{ backgroundImage: 'url(/images/hero.webp)' }} />
