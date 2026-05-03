@@ -90,7 +90,7 @@ export default async function HeadlightAlignmentPage() {
         <div className="absolute inset-0"
           style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(180,0,0,0.2) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 text-center px-4 py-20 max-w-3xl mx-auto">
+        <div className="relative z-10 text-center px-4 pt-16 pb-8 md:py-20 max-w-3xl mx-auto">
           <span className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs px-4 py-1.5 rounded-full font-semibold tracking-widest uppercase mb-6">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" strokeLinecap="round"/>

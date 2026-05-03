@@ -95,7 +95,7 @@ export default async function HeadlightPolishingPage() {
         <div className="absolute inset-0"
           style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(180,0,0,0.2) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 text-center px-4 py-20 max-w-3xl mx-auto">
+        <div className="relative z-10 text-center px-4 pt-16 pb-8 md:py-20 max-w-3xl mx-auto">
           <span className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs px-4 py-1.5 rounded-full font-semibold tracking-widest uppercase mb-6">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" strokeLinecap="round"/>

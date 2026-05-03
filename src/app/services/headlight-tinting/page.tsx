@@ -90,7 +90,7 @@ export default async function HeadlightTintingPage() {
         <div className="absolute inset-0"
           style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(180,0,0,0.2) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 text-center px-4 py-20 max-w-3xl mx-auto">
+        <div className="relative z-10 text-center px-4 pt-16 pb-8 md:py-20 max-w-3xl mx-auto">
           <span className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs px-4 py-1.5 rounded-full font-semibold tracking-widest uppercase mb-6">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" strokeLinecap="round" strokeLinejoin="round"/>
