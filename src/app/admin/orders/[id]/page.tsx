@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import OrderStatusForm from '@/components/OrderStatusForm'
+import DeleteOrderButton from '@/components/DeleteOrderButton'
 import type { Order } from '@/lib/types'
 
 type Props = { params: Promise<{ id: string }> }
@@ -14,7 +15,10 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   const o = order as Order
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">{o.order_number}</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">{o.order_number}</h1>
+        <DeleteOrderButton orderId={o.id} redirectAfter />
+      </div>
       <div className="bg-surface border border-border rounded-lg p-6 space-y-3 mb-6 text-sm">
         <div className="grid grid-cols-2 gap-3">
           <div><span className="text-muted">Клиент:</span> {o.customer_name}</div>

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import AdminTable from '@/components/AdminTable'
 import Link from 'next/link'
+import DeleteOrderButton from '@/components/DeleteOrderButton'
 import type { Order } from '@/lib/types'
 
 export default async function AdminOrdersPage() {
@@ -31,6 +32,7 @@ export default async function AdminOrdersPage() {
           { key: 'total', label: 'Сума', render: o => `${Number(o.total).toFixed(2)} €` },
           { key: 'status', label: 'Статус', render: o => <span className={statusColors[o.status]}>{statusLabels[o.status]}</span> },
           { key: 'created_at', label: 'Дата', render: o => new Date(o.created_at).toLocaleDateString('bg-BG') },
+          { key: 'id', label: '', render: o => <DeleteOrderButton orderId={o.id} /> },
         ]}
       />
     </div>
