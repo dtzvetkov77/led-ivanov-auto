@@ -56,8 +56,16 @@ export async function sendOrderEmails(order: Order) {
 
   const results = await Promise.allSettled([adminEmailPromise, customerEmailPromise])
   results.forEach((r, i) => {
+    const label = i === 0 ? 'admin' : 'customer'
     if (r.status === 'rejected') {
-      console.error(`Email send failed (${i === 0 ? 'admin' : 'customer'}):`, r.reason)
+      console.error(`[email] ${label} REJECTED:`, r.reason)
+    } else {
+      const val = r.value as { data?: { id?: string }; error?: { message?: string; name?: string } }
+      if (val?.error) {
+        console.error(`[email] ${label} ERROR:`, JSON.stringify(val.error))
+      } else {
+        console.log(`[email] ${label} sent OK, id=${val?.data?.id}`)
+      }
     }
   })
 }
