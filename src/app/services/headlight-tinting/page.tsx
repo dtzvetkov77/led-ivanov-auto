@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
 import { createClient } from '@/lib/supabase/server'
+import LightboxGallery from '@/components/LightboxGallery'
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
 
@@ -128,18 +129,7 @@ export default async function HeadlightTintingPage() {
             <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Галерия</p>
             <h2 className="text-3xl font-black">НАШАТА РАБОТА</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {gallery.map(img => (
-              <div key={img.id} className="flex flex-col gap-1">
-                {img.caption && (
-                  <p className="text-xs text-muted px-1">{img.caption}</p>
-                )}
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-surface border border-border group">
-                  <Image src={img.url} alt={img.caption ?? 'Фолиране на фарове'} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
-                </div>
-              </div>
-            ))}
-          </div>
+          <LightboxGallery images={gallery} alt="Фолиране на фарове" />
         </div>
       )}
 
