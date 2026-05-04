@@ -56,7 +56,7 @@ export default function ProductActions({ product }: Props) {
         /* Price display for simple products */
         <div className="mb-6">
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-black text-accent">
+            <span className="text-3xl font-medium text-accent">
               {Number(effectivePrice).toFixed(2)} €
             </span>
             {product.sale_price && (
