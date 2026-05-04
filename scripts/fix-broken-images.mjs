@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-const SUPABASE_URL = 'https://fxirokrndjapkkfvowzv.supabase.co'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4aXJva3JuZGphcGtrZnZvd3p2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjI5MTU5NCwiZXhwIjoyMDkxODY3NTk0fQ.lzI--Jk_rBZY6sTm86Fa2BLcGrPyNQqfLdMxvqFZyJg'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const BUCKET = 'product-images'
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY)

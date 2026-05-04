@@ -2,7 +2,28 @@
   "permissions": {
     "allow": [
       "Bash(xargs cat *)",
-      "Bash(node scripts/fix-broken-images.mjs)"
+      "Bash(node scripts/fix-broken-images.mjs)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ivanovau@185.45.66.212 \"find /home/ivanovau -name 'wp-content' -type d 2>/dev/null | head -5; find /var/www -name 'wp-content' -type d 2>/dev/null | head -5\")",
+      "Bash(nc -z -w5 185.45.66.212 21)",
+      "Bash(nc -z -w5 185.45.66.212 2083)",
+      "Bash(nc -z -w5 185.45.66.212 2087)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ivanov-auto.com/wp-content/uploads/2024/01/sample.jpg\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ivanov-auto.com/\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(curl -sL -o /dev/null -w \"%{http_code} %{url_effective}\" \"https://ivanov-auto.com/\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(curl -s --ftp-ssl-reqd ftp://ivanovau:freeSite@777@185.45.66.212/)",
+      "Bash(curl -s ftp://ivanovau:freeSite@777@185.45.66.212/)",
+      "Bash(curl -v ftp://ivanovau:freeSite@777@185.45.66.212/)",
+      "Bash(curl -v \"ftp://ivanovau:freeSite%40777@185.45.66.212/\")",
+      "Bash(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p 22 ivanovau@185.45.66.212 \"echo connected\")",
+      "Bash(chmod 600 /tmp/ivanov_id_rsa)",
+      "Bash(curl -v \"ftp://ivanovau:\\)F0Ykk2T0cTO4%21i4h0@185.45.66.212/\")",
+      "Bash(curl -u \"ivanovau:\\)F0Ykk2T0cTO4!i4h0\" \"ftp://185.45.66.212/\")",
+      "Bash(ssh-keygen -y -P \"\\)F0Ykk2T0cTO4!i4h0\" -f /tmp/ivanov_id_rsa)",
+      "Bash(curl -u \"ivanovau:\\)F0Ykk2T0cTO4!i4h0\" --ssl \"ftp://185.45.66.212/\")",
+      "Bash(curl -u \"ivanovau:\\)F0Ykk2T0cTO4!i4h0\" --ssl -v \"ftp://185.45.66.212/\")",
+      "Bash(curl -u \"ivanovau:\\)F0Ykk2T0cTO4!i4h0\" --ssl -k -v \"ftp://185.45.66.212/\")",
+      "Bash(curl -u \"ivanovau:freeSite@777\" --ssl -k -v \"ftp://185.45.66.212/\")",
+      "Bash(curl -sk -u \"ivanovau:freeSite@777\" \"https://185.45.66.212:2083/execute/Fileman/list?dir=%2Fpublic_html%2Fwp-content%2Fuploads\")"
     ],
     "additionalDirectories": [
       "/Users/daniel/Developer/Led ivanov /src/app/api/admin/orders"

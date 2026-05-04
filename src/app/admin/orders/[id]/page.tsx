@@ -32,9 +32,14 @@ export default async function AdminOrderDetailPage({ params }: Props) {
       <div className="bg-surface border border-border rounded-lg p-4 mb-6">
         <h2 className="font-semibold mb-3">Артикули</h2>
         {o.items.map((item, i) => (
-          <div key={i} className="flex justify-between py-2 border-b border-border last:border-0 text-sm">
-            <span>{item.name} × {item.qty}</span>
-            <span className="text-accent">{(item.price * item.qty).toFixed(2)} €</span>
+          <div key={i} className="flex items-center gap-3 py-2 border-b border-border last:border-0 text-sm">
+            {item.image ? (
+              <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover bg-surface-2 shrink-0" />
+            ) : (
+              <div className="w-12 h-12 rounded-lg bg-surface-2 shrink-0" />
+            )}
+            <span className="flex-1 line-clamp-2">{item.name} × {item.qty}</span>
+            <span className="text-accent shrink-0">{(item.price * item.qty).toFixed(2)} €</span>
           </div>
         ))}
         <div className="flex justify-between pt-3 font-bold">
