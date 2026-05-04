@@ -22,6 +22,7 @@ export default function CheckoutForm() {
     customer_email: '',
     delivery_address: '',
     delivery_city: '',
+    delivery_region: '',
     courier_office: '',
     courier: 'ekont' as 'ekont' | 'speedy',
     notes: '',
@@ -46,10 +47,13 @@ export default function CheckoutForm() {
       return
     }
 
+    const cityWithRegion = form.delivery_region
+      ? `${form.delivery_city}, обл. ${form.delivery_region}`
+      : form.delivery_city
     const delivery_address = deliveryType === 'address'
       ? form.delivery_address
       : `Офис ${form.courier.charAt(0).toUpperCase() + form.courier.slice(1)}: ${form.courier_office}`
-    const delivery_city = deliveryType === 'address' ? form.delivery_city : form.courier.toUpperCase()
+    const delivery_city = cityWithRegion
 
     setLoading(true)
     try {
@@ -171,24 +175,45 @@ export default function CheckoutForm() {
 
           {/* Address fields */}
           {deliveryType === 'address' ? (
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
               <Field label="Адрес" error={errors.delivery_address}>
                 <input type="text" value={form.delivery_address} onChange={set('delivery_address')} required
                   placeholder="ул. Примерна 10, ет. 3"
                   className="field-input" />
               </Field>
-              <Field label="Град" error={errors.delivery_city}>
-                <input type="text" value={form.delivery_city} onChange={set('delivery_city')} required
-                  placeholder="София"
-                  className="field-input" />
-              </Field>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <Field label="Населено място" error={errors.delivery_city}>
+                  <input type="text" value={form.delivery_city} onChange={set('delivery_city')} required
+                    placeholder="София"
+                    className="field-input" />
+                </Field>
+                <Field label="Област" error={errors.delivery_region}>
+                  <input type="text" value={form.delivery_region} onChange={set('delivery_region')}
+                    placeholder="Софийска"
+                    className="field-input" />
+                </Field>
+              </div>
             </div>
           ) : (
-            <Field label={`Офис на ${form.courier === 'ekont' ? 'Еконт' : 'Спиди'}`} error={errors.courier_office}>
-              <input type="text" value={form.courier_office} onChange={set('courier_office')} required
-                placeholder="напр. Офис Витоша, София или населено място"
-                className="field-input" />
-            </Field>
+            <div className="space-y-4">
+              <Field label={`Офис на ${form.courier === 'ekont' ? 'Еконт' : 'Спиди'}`} error={errors.courier_office}>
+                <input type="text" value={form.courier_office} onChange={set('courier_office')} required
+                  placeholder="напр. Офис Витоша"
+                  className="field-input" />
+              </Field>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <Field label="Населено място" error={errors.delivery_city}>
+                  <input type="text" value={form.delivery_city} onChange={set('delivery_city')} required
+                    placeholder="София"
+                    className="field-input" />
+                </Field>
+                <Field label="Област" error={errors.delivery_region}>
+                  <input type="text" value={form.delivery_region} onChange={set('delivery_region')}
+                    placeholder="Софийска"
+                    className="field-input" />
+                </Field>
+              </div>
+            </div>
           )}
         </fieldset>
 
@@ -258,7 +283,7 @@ export default function CheckoutForm() {
             { icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 22s8-4.5 8-11.8A8 8 0 0012 2a8 8 0 00-8 8.2c0 7.3 8 11.8 8 11.8z"/><path d="M9 12l2 2 4-4"/></svg>, label: 'Сигурна форма' },
             { icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>, label: 'Наложен платеж' },
             { icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h1.172a2 2 0 011.414.586l2.828 2.828A2 2 0 0121 13.172V17a2 2 0 01-2 2h-1m-6 0a2 2 0 100 4 2 2 0 000-4zm6 0a2 2 0 100 4 2 2 0 000-4z" strokeLinecap="round" strokeLinejoin="round"/></svg>, label: 'Еконт / Спиди' },
-            { icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg>, label: '2 год. гаранция' },
+            { icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg>, label: 'до 2 год. гаранция' },
           ].map(b => (
             <div key={b.label} className="flex items-center gap-1.5 text-xs text-muted">
               <span className="text-accent">{b.icon}</span>
@@ -340,7 +365,7 @@ export default function CheckoutForm() {
           {[
             { icon: <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 22s8-4.5 8-11.8A8 8 0 0012 2a8 8 0 00-8 8.2c0 7.3 8 11.8 8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>, text: 'Данните ви са защитени и криптирани' },
             { icon: <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h1.172a2 2 0 011.414.586l2.828 2.828A2 2 0 0121 13.172V17a2 2 0 01-2 2h-1m-6 0a2 2 0 100 4 2 2 0 000-4zm6 0a2 2 0 100 4 2 2 0 000-4z" strokeLinecap="round" strokeLinejoin="round"/></svg>, text: 'Доставка 1–2 работни дни' },
-            { icon: <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg>, text: '2 години гаранция на всички продукти' },
+            { icon: <svg className="w-5 h-5 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg>, text: 'до 2 години гаранция на всички продукти' },
           ].map(b => (
             <div key={b.text} className="flex items-start gap-2.5 text-xs text-muted">{b.icon}{b.text}</div>
           ))}
