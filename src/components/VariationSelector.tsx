@@ -54,7 +54,7 @@ export default function VariationSelector({
       {/* Price display */}
       <div>
         <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-black text-accent">{displayPrice.toFixed(2)} €</span>
+          <span className="text-3xl font-medium text-accent">{displayPrice.toFixed(2)} €</span>
           {hasSale && (
             <span className="text-muted line-through text-lg">{originalPrice.toFixed(2)} €</span>
           )}
