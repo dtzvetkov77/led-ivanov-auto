@@ -95,13 +95,13 @@ export default async function ProductsPage({ searchParams }: Props) {
 
       const { data: pc } = await supabase
         .from('product_categories').select('product_id').in('category_id', catIds)
-      let catProductIds = (pc ?? []).map(r => r.product_id)
+      let catProductIds = [...new Set((pc ?? []).map(r => r.product_id))]
 
       // Fallback: product_categories table missing or empty → try direct category_id column
       if (catProductIds.length === 0) {
         const { data: direct } = await supabase
           .from('products').select('id').in('category_id', catIds).eq('published', true)
-        catProductIds = (direct ?? []).map(r => r.id)
+        catProductIds = [...new Set((direct ?? []).map(r => r.id))]
       }
 
       if (catProductIds.length === 0) {
