@@ -23,7 +23,6 @@ const nextConfig: NextConfig = {
       { source: '/katalog', destination: '/products', permanent: true },
       // WooCommerce misc pages
       { source: '/koshnica', destination: '/cart', permanent: true },
-      { source: '/checkout', destination: '/checkout', permanent: false },
       { source: '/zhelani-produkti', destination: '/', permanent: true },
       { source: '/moy-akount', destination: '/', permanent: true },
       { source: '/moy-akount/:path*', destination: '/', permanent: true },
