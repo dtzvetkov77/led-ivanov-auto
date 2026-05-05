@@ -12,6 +12,24 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*.supabase.co' },
     ],
   },
+  async redirects() {
+    return [
+      // WooCommerce product URLs → new product URLs
+      { source: '/product/:slug', destination: '/products/:slug', permanent: true },
+      { source: '/products-category/:cat', destination: '/products', permanent: true },
+      // Old catalog URLs
+      { source: '/katalog/:make', destination: '/products?make=:make', permanent: true },
+      { source: '/katalog', destination: '/products', permanent: true },
+      // WooCommerce misc pages
+      { source: '/koshnica', destination: '/cart', permanent: true },
+      { source: '/checkout', destination: '/checkout', permanent: false },
+      { source: '/zhelani-produkti', destination: '/', permanent: true },
+      { source: '/moy-akount', destination: '/', permanent: true },
+      { source: '/moy-akount/:path*', destination: '/', permanent: true },
+      { source: '/shop', destination: '/products', permanent: true },
+      { source: '/shop/:path*', destination: '/products', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {
