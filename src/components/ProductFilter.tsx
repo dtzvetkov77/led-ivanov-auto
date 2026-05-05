@@ -62,7 +62,8 @@ export default function ProductFilter({
 
   function selectBrand(slug: string | undefined) {
     if (useMakesTable) {
-      navigate({ make: slug, model: undefined, category: undefined })
+      // keep category — AND logic with make
+      navigate({ make: slug, model: undefined })
     } else {
       // fallback: categories-as-makes, use `category` param
       navigate({ category: slug, make: undefined, model: undefined })

@@ -135,15 +135,18 @@ export default async function ProductsPage({ searchParams }: Props) {
   let title = 'Всички продукти'
   if (params.q) {
     title = `Търсене: "${params.q}"`
-  } else if (params.make && hasMakesTable) {
-    const make = makesData.find(m => m.slug === params.make)
-    if (make) title = make.name
-  } else if (effectiveCategory) {
-    const cat = catsData.find(c => c.slug === effectiveCategory)
-    if (cat) title = cat.name
-  } else if (categoryFallbackSlug) {
-    const cat = catsData.find(c => c.slug === categoryFallbackSlug)
-    if (cat) title = cat.name
+  } else {
+    const makePart = (params.make && hasMakesTable)
+      ? (makesData.find(m => m.slug === params.make)?.name ?? null)
+      : null
+    const catPart = effectiveCategory
+      ? (catsData.find(c => c.slug === effectiveCategory)?.name ?? null)
+      : categoryFallbackSlug
+        ? (catsData.find(c => c.slug === categoryFallbackSlug)?.name ?? null)
+        : null
+    if (makePart && catPart) title = `${catPart} — ${makePart}`
+    else if (makePart) title = makePart
+    else if (catPart) title = catPart
   }
 
   const activeFiltersCount = [params.make, params.model, effectiveCategory, params.q].filter(Boolean).length
