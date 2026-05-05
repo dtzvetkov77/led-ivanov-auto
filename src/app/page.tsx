@@ -58,7 +58,7 @@ export default async function HomePage() {
               return (
                 <Link
                   key={cat.slug}
-                  href={`/products?category=${cat.slug}`}
+                  href={`/products?category=${cat.slug === 'migachi' ? 'byagashti-migachi' : cat.slug}`}
                   className="group relative rounded-2xl overflow-hidden border border-border hover:border-accent transition-all duration-200 aspect-video flex items-end p-4"
                 >
                   <div className="absolute inset-0"
