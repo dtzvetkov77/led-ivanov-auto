@@ -26,11 +26,11 @@ export default async function ProductsPage({ searchParams }: Props) {
   const [{ data: makes }, { data: allModels }, { data: categories }] = await Promise.all([
     supabase.from('makes').select('id, name, slug').order('name'),
     supabase.from('models').select('id, make_id, name').order('name'),
-    supabase.from('categories').select('id, name, slug').order('name'),
+    supabase.from('categories').select('id, name, slug, parent_id').order('name'),
   ])
 
   const makesData  = makes ?? []
-  const catsData   = categories ?? []
+  const catsData   = (categories ?? []) as { id: string; name: string; slug: string; parent_id: string | null }[]
   const modelsData = allModels ?? []
 
   // ── Detect mode: real makes table vs categories-as-makes fallback ─────────
@@ -90,14 +90,17 @@ export default async function ProductsPage({ searchParams }: Props) {
   if (effectiveCategory) {
     const cat = catsData.find(c => c.slug === effectiveCategory)
     if (cat) {
+      // Include children categories (subcategory inheritance)
+      const catIds = [cat.id, ...catsData.filter(c => c.parent_id === cat.id).map(c => c.id)]
+
       const { data: pc } = await supabase
-        .from('product_categories').select('product_id').eq('category_id', cat.id)
+        .from('product_categories').select('product_id').in('category_id', catIds)
       let catProductIds = (pc ?? []).map(r => r.product_id)
 
       // Fallback: product_categories table missing or empty → try direct category_id column
       if (catProductIds.length === 0) {
         const { data: direct } = await supabase
-          .from('products').select('id').eq('category_id', cat.id).eq('published', true)
+          .from('products').select('id').in('category_id', catIds).eq('published', true)
         catProductIds = (direct ?? []).map(r => r.id)
       }
 
@@ -192,7 +195,7 @@ function renderPage(
   { makes, models, categories, params }: {
     makes: { id: string; name: string; slug: string }[]
     models: { id: string; make_id: string; name: string }[]
-    categories: { id: string; name: string; slug: string }[]
+    categories: { id: string; name: string; slug: string; parent_id: string | null }[]
     params: { make?: string; model?: string; category?: string; sort?: string }
   }
 ) {
