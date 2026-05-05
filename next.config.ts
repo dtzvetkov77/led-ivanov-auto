@@ -29,6 +29,8 @@ const nextConfig: NextConfig = {
       { source: '/moy-akount/:path*', destination: '/', permanent: true },
       { source: '/shop', destination: '/products', permanent: true },
       { source: '/shop/:path*', destination: '/products', permanent: true },
+      { source: '/magazin', destination: '/products', permanent: true },
+      { source: '/magazin/:path*', destination: '/products', permanent: true },
     ]
   },
   async headers() {
