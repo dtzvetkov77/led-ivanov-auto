@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     return [
       // WooCommerce product URLs → new product URLs
       { source: '/product/:slug', destination: '/products/:slug', permanent: true },
+      { source: '/produkt/:slug', destination: '/products/:slug', permanent: true },
       { source: '/products-category/:cat', destination: '/products', permanent: true },
       // Old catalog URLs
       { source: '/katalog/:make', destination: '/products?make=:make', permanent: true },
