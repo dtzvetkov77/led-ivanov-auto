@@ -81,7 +81,7 @@ export default async function HomePage() {
         <div className="text-center mb-10">
           <span className="text-xs font-bold tracking-[4px] uppercase text-accent mb-3 block">ПРОДУКТИ</span>
           <h2 className="text-2xl md:text-3xl font-black mb-2">КАТЕГОРИИ</h2>
-          <p className="text-muted text-sm">Разгледай нашата гама от LED продукти за автомобили</p>
+          <p className="text-muted text-sm">LED крушки, ксенон лампи и авто аксесоари за всяка марка и модел</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
           {PRODUCT_CATEGORIES.map((cat, i) => {

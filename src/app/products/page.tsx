@@ -3,7 +3,10 @@ import ProductGrid from '@/components/ProductGrid'
 import ProductFilter from '@/components/ProductFilter'
 import { Suspense } from 'react'
 
-export const metadata = { title: 'Продукти | LED Ivanov Auto' }
+export const metadata = {
+  title: 'LED крушки и ксенон за автомобили | LED Ivanov Auto',
+  description: 'Купете LED и ксенон крушки за фарове онлайн — широк избор от H1, H4, H7, H11 и др. Plug & Play монтаж, без CanBus грешки, до 2 год. гаранция. Безплатна доставка над 150 €.',
+}
 
 type Props = {
   searchParams: Promise<{
@@ -151,6 +154,12 @@ export default async function ProductsPage({ searchParams }: Props) {
         <h1 className="text-2xl font-black">{title}</h1>
         <span className="text-muted text-sm">{products?.length ?? 0} продукта</span>
       </div>
+
+      {activeFiltersCount === 0 && (
+        <p className="text-muted text-sm leading-relaxed mb-5 max-w-3xl">
+          Открийте нашия пълен каталог от <strong className="text-white">LED и ксенон крушки за автомобили</strong> — халогени H1, H4, H7, H8, H9, H11, D1S, D2S и много други. Всички крушки са с Plug &amp; Play монтаж, без CanBus грешки и до 2 год. гаранция. Доставяме с Еконт и Спиди до целта България — безплатно при поръчка над 150 €.
+        </p>
+      )}
 
       <Suspense>
         <ProductFilter

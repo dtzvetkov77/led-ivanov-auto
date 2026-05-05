@@ -10,7 +10,7 @@ import { JsonLd } from '@/components/JsonLd'
 const inter  = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
 const oswald = Oswald({ subsets: ['latin', 'cyrillic'], variable: '--font-oswald', weight: ['400', '500', '600', '700'] })
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -22,11 +22,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: 'LED Ivanov Auto — LED крушки и авто осветление',
+    default: 'LED Ivanov Auto — LED и ксенон крушки, полиране и фолиране на фарове',
     template: '%s | LED Ivanov Auto',
   },
-  description: 'Висококачествени LED крушки за фарове — Plug & Play монтаж, без CanBus грешки, до 2 години гаранция. Безплатна доставка над 150 €. Онлайн магазин и сервиз в София.',
-  keywords: ['LED крушки', 'LED фарове', 'авто LED', 'крушки за кола', 'авто осветление', 'LED Ivanov Auto', 'полиране фарове', 'LED крушки България', 'купи LED', 'plug and play LED'],
+  description: 'LED и ксенон крушки за автомобили — Plug & Play, без CanBus грешки, до 2 год. гаранция. Полиране, фолиране и регулиране на фарове в София. Безплатна доставка над 150 €.',
+  keywords: ['LED крушки', 'ксенон крушки', 'LED фарове', 'авто LED', 'крушки за кола', 'авто осветление', 'LED Ivanov Auto', 'полиране на фарове', 'фолиране на фарове', 'регулиране на фарове', 'LED крушки България', 'купи LED крушки', 'plug and play LED', 'ксенон лампи', 'биксенон'],
   authors: [{ name: 'LED Ivanov Auto', url: SITE }],
   creator: 'LED Ivanov Auto',
   publisher: 'LED Ivanov Auto',
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'bg_BG',
     siteName: 'LED Ivanov Auto',
-    title: 'LED Ivanov Auto — LED крушки и авто осветление',
-    description: 'Висококачествени LED крушки за фарове — Plug & Play монтаж, без CanBus грешки, до 2 години гаранция.',
+    title: 'LED Ivanov Auto — LED и ксенон крушки, полиране и фолиране на фарове',
+    description: 'LED и ксенон крушки за автомобили — Plug & Play, без CanBus грешки, до 2 год. гаранция. Полиране, фолиране и регулиране на фарове в София.',
     url: SITE,
     images: [
       {
@@ -49,8 +49,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LED Ivanov Auto — LED крушки и авто осветление',
-    description: 'Висококачествени LED крушки за фарове — Plug & Play монтаж, без CanBus грешки, до 2 години гаранция.',
+    title: 'LED Ivanov Auto — LED и ксенон крушки, полиране и фолиране на фарове',
+    description: 'LED и ксенон крушки за автомобили — Plug & Play, без CanBus грешки, до 2 год. гаранция. Полиране, фолиране и регулиране на фарове в София.',
     images: [`${SITE}/images/hero.webp`],
   },
   robots: {
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // google: 'YOUR_GOOGLE_SEARCH_CONSOLE_TOKEN',
+    google: process.env.NEXT_PUBLIC_GSC_VERIFICATION ?? undefined,
   },
 }
 
@@ -76,7 +76,7 @@ const globalSchema = {
       '@type': ['AutoPartsStore', 'LocalBusiness'],
       '@id': `${SITE}/#business`,
       name: 'LED Ivanov Auto',
-      description: 'Висококачествени LED крушки за фарове и авто аксесоари. Plug & Play монтаж, до 2 години гаранция, безплатна доставка над 150 €.',
+      description: 'LED и ксенон крушки за фарове, полиране, фолиране и регулиране на фарове в София. Plug & Play монтаж, до 2 год. гаранция, безплатна доставка над 150 €.',
       url: SITE,
       telephone: '+359999997996',
       image: `${SITE}/images/hero.webp`,

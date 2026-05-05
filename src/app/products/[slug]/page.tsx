@@ -5,10 +5,13 @@ import ProductActions from '@/components/ProductActions'
 import ProductDescriptionTabs from '@/components/ProductDescriptionTabs'
 import AdminBar from '@/components/AdminBar'
 import Link from 'next/link'
+import { JsonLd } from '@/components/JsonLd'
 function sanitize(html: string) {
   return html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '')
 }
 import type { Product } from '@/lib/types'
+
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -81,8 +84,27 @@ export default async function ProductPage({ params }: Props) {
 
   const cleanDescription = p.description ? sanitize(p.description) : null
 
+  const effectivePrice = Number(p.sale_price ?? p.price)
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: p.name,
+    description: p.short_description ? p.short_description.replace(/<[^>]+>/g, '') : undefined,
+    image: p.images ?? [],
+    brand: { '@type': 'Brand', name: 'LED Ivanov Auto' },
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE}/products/${p.slug}`,
+      priceCurrency: 'EUR',
+      price: effectivePrice.toFixed(2),
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: 'LED Ivanov Auto' },
+    },
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
+      <JsonLd data={productSchema} />
 
       {/* Breadcrumb */}
       <nav className="text-xs text-muted mb-6 flex items-center gap-1.5 flex-wrap">

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
 import { createClient } from '@/lib/supabase/server'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export const metadata: Metadata = {
   title: 'Полиране на фарове | LED Ivanov Auto',

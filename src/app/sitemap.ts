@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ledivanov.bg'
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
@@ -21,6 +21,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE,                                     lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
     { url: `${SITE}/products`,                       lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
     { url: `${SITE}/services/headlight-polishing`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE}/services/headlight-tinting`,     lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE}/services/headlight-alignment`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE}/partners`,                       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE}/about`,                          lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${SITE}/contact`,                        lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE}/gallery`,                        lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
