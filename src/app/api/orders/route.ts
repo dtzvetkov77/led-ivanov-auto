@@ -5,7 +5,7 @@ import { generateOrderNumber } from '@/lib/order-number'
 import { sendOrderEmails } from '@/lib/email'
 
 const CartItemSchema = z.object({
-  product_id: z.string().uuid(),
+  product_id: z.string().min(1), // may be "uuid__variantAttrs" for variation products
   name: z.string().min(1),
   slug: z.string(),
   price: z.number().positive(),
@@ -39,12 +39,13 @@ export async function POST(req: NextRequest) {
   const data = parsed.data
 
   // Validate and replace prices with authoritative values from DB
-  const productIds = data.items.map(i => i.product_id)
+  // product_id may be "uuid__variantAttrs" — extract base UUID for DB lookup
+  const baseIds = [...new Set(data.items.map(i => i.product_id.split('__')[0]))]
   const supabase = createServiceClient()
   const { data: dbProducts, error: productsError } = await supabase
     .from('products')
     .select('id, price, sale_price, published')
-    .in('id', productIds)
+    .in('id', baseIds)
     .eq('published', true)
 
   if (productsError || !dbProducts) {
@@ -53,9 +54,10 @@ export async function POST(req: NextRequest) {
 
   const priceMap = new Map(dbProducts.map(p => [p.id, Number(p.sale_price ?? p.price)]))
 
-  // Reject if any product_id is not found (unpublished or doesn't exist)
+  // Reject if any base product_id not found (unpublished or doesn't exist)
   for (const item of data.items) {
-    if (!priceMap.has(item.product_id)) {
+    const baseId = item.product_id.split('__')[0]
+    if (!priceMap.has(baseId)) {
       return NextResponse.json({ error: 'Невалиден продукт в количката' }, { status: 400 })
     }
   }
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
   // Replace client prices with DB prices
   const validatedItems = data.items.map(item => ({
     ...item,
-    price: priceMap.get(item.product_id)!,
+    price: priceMap.get(item.product_id.split('__')[0])!,
   }))
 
   const total = validatedItems.reduce((s, i) => s + i.price * i.qty, 0)
