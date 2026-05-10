@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
     { count: todayVisits },
     { count: last7Visits },
     { count: last30Visits },
-    { data: newOrders },
+    { count: newOrderCount },
   ] = await Promise.all([
     supabase.from('orders').select('*', { count: 'exact', head: true }),
     supabase.from('products').select('*', { count: 'exact', head: true }),
@@ -46,7 +46,7 @@ export default async function AdminDashboard() {
     service.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', today),
     service.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last7),
     service.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last30),
-    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'new'),
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'new') as Promise<{ count: number | null }>,
   ])
 
   const thisMonthRevenue = (thisMonthOrders ?? []).reduce((s, o) => s + Number(o.total), 0)
@@ -72,10 +72,10 @@ export default async function AdminDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Начало</h1>
-        {(newOrders?.count ?? 0) > 0 && (
+        {(newOrderCount ?? 0) > 0 && (
           <Link href="/admin/orders?status=new" className="flex items-center gap-2 bg-accent/10 border border-accent/30 text-accent text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-accent/20 transition-colors">
             <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            {newOrders?.count} нови поръчки
+            {newOrderCount} нови поръчки
           </Link>
         )}
       </div>
