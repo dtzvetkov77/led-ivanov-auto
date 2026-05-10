@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   const supabase = createServiceClient()
   const { data: dbProducts, error: productsError } = await supabase
     .from('products')
-    .select('id, price, sale_price, published')
+    .select('id, price, sale_price, variations, published')
     .in('id', baseIds)
     .eq('published', true)
 
@@ -52,21 +52,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Грешка при запис' }, { status: 500 })
   }
 
-  const priceMap = new Map(dbProducts.map(p => [p.id, Number(p.sale_price ?? p.price)]))
+  const productMap = new Map(dbProducts.map(p => [p.id, p]))
 
   // Reject if any base product_id not found (unpublished or doesn't exist)
   for (const item of data.items) {
     const baseId = item.product_id.split('__')[0]
-    if (!priceMap.has(baseId)) {
+    if (!productMap.has(baseId)) {
       return NextResponse.json({ error: 'Невалиден продукт в количката' }, { status: 400 })
     }
   }
 
-  // Replace client prices with DB prices
-  const validatedItems = data.items.map(item => ({
-    ...item,
-    price: priceMap.get(item.product_id.split('__')[0])!,
-  }))
+  // Replace client prices with DB prices — use variation price when applicable
+  const validatedItems = data.items.map(item => {
+    const baseId = item.product_id.split('__')[0]
+    const dbProduct = productMap.get(baseId)!
+    let price = Number(dbProduct.sale_price ?? dbProduct.price)
+
+    if (item.product_id.includes('__')) {
+      const attrsJson = item.product_id.slice(baseId.length + 2)
+      try {
+        const attrs = JSON.parse(attrsJson)
+        const variation = (dbProduct.variations as Array<{ attributes: Record<string, string>; price: number; sale_price: number | null }> | null)
+          ?.find(v => Object.entries(attrs).every(([k, val]) => v.attributes[k] === val))
+        if (variation) price = Number(variation.sale_price ?? variation.price)
+      } catch { /* malformed attrs — fall back to base price */ }
+    }
+
+    return { ...item, price }
+  })
 
   const total = validatedItems.reduce((s, i) => s + i.price * i.qty, 0)
 
