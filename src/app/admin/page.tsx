@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
     { count: todayVisits },
     { count: last7Visits },
     { count: last30Visits },
-    { count: newOrderCount },
+    newOrdersResult,
   ] = await Promise.all([
     supabase.from('orders').select('*', { count: 'exact', head: true }),
     supabase.from('products').select('*', { count: 'exact', head: true }),
@@ -46,8 +46,10 @@ export default async function AdminDashboard() {
     service.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', today),
     service.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last7),
     service.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last30),
-    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'new') as Promise<{ count: number | null }>,
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'new'),
   ])
+
+  const newOrderCount = newOrdersResult.count ?? 0
 
   const thisMonthRevenue = (thisMonthOrders ?? []).reduce((s, o) => s + Number(o.total), 0)
   const lastMonthRevenue = (lastMonthOrders ?? []).reduce((s, o) => s + Number(o.total), 0)
