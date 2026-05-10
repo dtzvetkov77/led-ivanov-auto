@@ -7,6 +7,7 @@ const PHONE_RAW = '+359999997996'
 const FACEBOOK = 'https://www.facebook.com/p/LED-Ivanov-Auto-%D0%9A%D1%80%D1%83%D1%88%D0%BA%D0%B8-%D0%B8-%D0%90%D0%B2%D1%82%D0%BE%D0%B0%D0%BA%D1%81%D0%B5%D1%81%D0%BE%D0%B0%D1%80%D0%B8-100065233232609/'
 const TIKTOK = 'https://www.tiktok.com/@ivanov_auto'
 const YOUTUBE = 'https://www.youtube.com/@Ivanov-Auto'
+const INSTAGRAM = 'https://www.instagram.com/ivanov.auto/'
 
 const FAQ = [
   {
@@ -137,6 +138,21 @@ export default function ContactPage() {
               <div>
                 <p className="text-xs text-muted uppercase tracking-wide mb-0.5">YouTube</p>
                 <p className="font-bold group-hover:text-accent transition-colors">@Ivanov-Auto</p>
+              </div>
+            </a>
+
+            <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-4 bg-surface border border-border hover:border-accent rounded-xl p-5 transition-all group">
+              <span className="w-11 h-11 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center text-accent shrink-0 group-hover:bg-accent group-hover:text-white transition-all">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+              </span>
+              <div>
+                <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Instagram</p>
+                <p className="font-bold group-hover:text-accent transition-colors">@ivanov.auto</p>
               </div>
             </a>
 
