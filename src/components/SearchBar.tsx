@@ -67,13 +67,18 @@ export default function SearchBar() {
     setLoading(true)
     debounceRef.current = setTimeout(async () => {
       const supabase = createClient()
-      const { data } = await supabase
+      const words = query.trim().split(/\s+/).filter(Boolean)
+      let q = supabase
         .from('products')
         .select('id, slug, name, price, sale_price, images')
         .eq('published', true)
-        .ilike('name', `%${query.trim()}%`)
         .order('position')
-        .limit(6)
+        .limit(8)
+      for (const word of words) {
+        const safe = word.replace(/[%_]/g, '\\$&')
+        q = q.or(`name.ilike.%${safe}%,short_description.ilike.%${safe}%,description.ilike.%${safe}%`)
+      }
+      const { data } = await q
       setResults((data ?? []) as Hit[])
       setLoading(false)
       setActive(-1)
