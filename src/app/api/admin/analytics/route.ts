@@ -40,5 +40,8 @@ export async function GET(req: NextRequest) {
     devicesRes.json(),
   ])
 
+  const debug = searchParams.get('debug') === '1'
+  if (debug) return NextResponse.json({ _raw: { overview, pages, referrers, devices } })
+
   return NextResponse.json({ overview, pages, referrers, devices, from, to: now, days })
 }
