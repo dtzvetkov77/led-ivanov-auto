@@ -1,47 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
-
-const VERCEL_API = 'https://api.vercel.com'
 
 export async function GET(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const token = process.env.VERCEL_TOKEN
-  const projectId = process.env.VERCEL_PROJECT_ID
-  const teamId = process.env.VERCEL_TEAM_ID
-
-  if (!token) return NextResponse.json({ error: 'NO_TOKEN' }, { status: 503 })
-  if (!projectId) return NextResponse.json({ error: 'NO_PROJECT_ID' }, { status: 503 })
-
   const { searchParams } = new URL(req.url)
   const days = Math.min(parseInt(searchParams.get('days') ?? '30'), 90)
-  const now = Date.now()
-  const from = now - days * 24 * 60 * 60 * 1000
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
 
-  const headers = { Authorization: `Bearer ${token}` }
-  const team = teamId ? `&teamId=${teamId}` : ''
-  const base = `${VERCEL_API}/v1/web/analytics?projectId=${projectId}&from=${from}&to=${now}&environment=production${team}`
+  const service = createServiceClient()
+  const { data: events, error } = await service
+    .from('analytics_events')
+    .select('path, referrer, device, country, created_at')
+    .gte('created_at', since)
+    .order('created_at', { ascending: true })
 
-  const [overviewRes, pagesRes, referrersRes, devicesRes] = await Promise.all([
-    fetch(`${base}&granularity=day`, { headers }),
-    fetch(`${VERCEL_API}/v1/web/analytics/pages?projectId=${projectId}&from=${from}&to=${now}&limit=10${team}`, { headers }),
-    fetch(`${VERCEL_API}/v1/web/analytics/referrers?projectId=${projectId}&from=${from}&to=${now}&limit=10${team}`, { headers }),
-    fetch(`${VERCEL_API}/v1/web/analytics/devices?projectId=${projectId}&from=${from}&to=${now}${team}`, { headers }),
-  ])
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  const [overview, pages, referrers, devices] = await Promise.all([
-    overviewRes.json(),
-    pagesRes.json(),
-    referrersRes.json(),
-    devicesRes.json(),
-  ])
+  const rows = events ?? []
 
-  const debug = searchParams.get('debug') === '1'
-  if (debug) return NextResponse.json({ _raw: { overview, pages, referrers, devices } })
+  // Aggregate
+  const byDay: Record<string, number> = {}
+  const byPath: Record<string, number> = {}
+  const byRef: Record<string, number> = {}
+  const byDevice: Record<string, number> = {}
+  const byCountry: Record<string, number> = {}
 
-  return NextResponse.json({ overview, pages, referrers, devices, from, to: now, days })
+  for (const e of rows) {
+    const day = e.created_at.slice(0, 10)
+    byDay[day] = (byDay[day] ?? 0) + 1
+    byPath[e.path] = (byPath[e.path] ?? 0) + 1
+    const ref = e.referrer ? new URL(e.referrer).hostname.replace('www.', '') : 'Директен'
+    byRef[ref] = (byRef[ref] ?? 0) + 1
+    if (e.device) byDevice[e.device] = (byDevice[e.device] ?? 0) + 1
+    if (e.country) byCountry[e.country] = (byCountry[e.country] ?? 0) + 1
+  }
+
+  const sort = (obj: Record<string, number>) =>
+    Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([key, total]) => ({ key, total }))
+
+  return NextResponse.json({
+    total: rows.length,
+    days,
+    series: sort(byDay),
+    pages: sort(byPath).slice(0, 10),
+    referrers: sort(byRef).slice(0, 10),
+    devices: sort(byDevice),
+    countries: sort(byCountry).slice(0, 10),
+  })
 }

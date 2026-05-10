@@ -1,17 +1,15 @@
 'use client'
 import { useEffect, useState, useCallback } from 'react'
 
-type PageRow  = { key: string; total: number }
-type RefRow   = { key: string; total: number }
-type DevRow   = { key: string; total: number }
-type DayRow   = { key: string; total: number; devices?: Record<string, number> }
-
+type Row = { key: string; total: number }
 type Data = {
-  overview:  { data: DayRow[] }
-  pages:     { data: PageRow[] }
-  referrers: { data: RefRow[] }
-  devices:   { data: DevRow[] }
-  from: number; to: number; days: number
+  total: number
+  days: number
+  series: Row[]
+  pages: Row[]
+  referrers: Row[]
+  devices: Row[]
+  countries: Row[]
 }
 
 const RANGES = [
@@ -20,15 +18,22 @@ const RANGES = [
   { label: '90 дни', value: 90 },
 ]
 
-function Bar({ value, max, label }: { value: number; max: number; label: string }) {
-  const pct = max > 0 ? (value / max) * 100 : 0
+function Bars({ rows }: { rows: Row[] }) {
+  const max = rows.reduce((m, r) => Math.max(m, r.total), 0)
   return (
-    <div className="flex items-center gap-3 py-1.5">
-      <div className="w-40 sm:w-56 shrink-0 truncate text-xs text-muted">{label}</div>
-      <div className="flex-1 h-5 bg-border rounded-md overflow-hidden">
-        <div className="h-full bg-accent/70 rounded-md transition-all duration-500" style={{ width: `${pct}%` }} />
-      </div>
-      <div className="w-12 text-right text-xs font-semibold">{value.toLocaleString()}</div>
+    <div className="space-y-1">
+      {rows.map(r => (
+        <div key={r.key} className="flex items-center gap-3 py-1">
+          <div className="w-36 sm:w-52 shrink-0 truncate text-xs text-muted">{r.key}</div>
+          <div className="flex-1 h-5 bg-border rounded overflow-hidden">
+            <div
+              className="h-full bg-accent/70 rounded transition-all duration-500"
+              style={{ width: max > 0 ? `${(r.total / max) * 100}%` : '0%' }}
+            />
+          </div>
+          <div className="w-10 text-right text-xs font-semibold shrink-0">{r.total}</div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -45,11 +50,8 @@ export default function AdminAnalyticsPage() {
     try {
       const res = await fetch(`/api/admin/analytics?days=${d}`, { cache: 'no-store' })
       const json = await res.json()
-      if (!res.ok) {
-        setError(json.error ?? 'Грешка')
-      } else {
-        setData(json)
-      }
+      if (!res.ok) setError(json.error ?? 'Грешка')
+      else setData(json)
     } catch (e) {
       setError(String(e))
     } finally {
@@ -59,49 +61,7 @@ export default function AdminAnalyticsPage() {
 
   useEffect(() => { load(days) }, [days, load])
 
-  const totalViews   = data?.overview?.data?.reduce((s, d) => s + (d.total ?? 0), 0) ?? 0
-  const topPages     = data?.pages?.data ?? []
-  const topReferrers = data?.referrers?.data ?? []
-  const deviceRows   = data?.devices?.data ?? []
-  const maxPage = topPages.reduce((m, r) => Math.max(m, r.total), 0)
-  const maxRef  = topReferrers.reduce((m, r) => Math.max(m, r.total), 0)
-  const maxDev  = deviceRows.reduce((m, r) => Math.max(m, r.total), 0)
-
-  // Build chart series from overview time series
-  const series = data?.overview?.data ?? []
-  const maxDay = series.reduce((m, d) => Math.max(m, d.total ?? 0), 0)
-
-  if (error === 'NO_TOKEN') {
-    return (
-      <div className="max-w-xl mx-auto py-16 px-4 text-center space-y-4">
-        <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto">
-          <svg className="w-7 h-7 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
-        </div>
-        <h1 className="text-xl font-bold">Нужен е Vercel API Token</h1>
-        <p className="text-sm text-muted leading-relaxed">
-          За да видиш статистиките в админа, добави <code className="bg-border px-1.5 py-0.5 rounded text-accent text-xs">VERCEL_TOKEN</code> в environment variables.
-        </p>
-        <div className="bg-surface border border-border rounded-xl p-4 text-left space-y-2 text-xs text-muted">
-          <p className="font-semibold text-white">Стъпки:</p>
-          <ol className="list-decimal list-inside space-y-1.5">
-            <li>Отиди на <span className="text-accent">vercel.com/account/tokens</span></li>
-            <li>Създай нов token с name <em>ledivanov-admin</em></li>
-            <li>Добави го в Vercel Dashboard → Settings → Environment Variables → <code className="bg-border px-1 rounded text-accent">VERCEL_TOKEN</code></li>
-            <li>Redeploy проекта</li>
-          </ol>
-        </div>
-        <a href="https://vercel.com/account/tokens" target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
-          Отвори Vercel Tokens
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </a>
-      </div>
-    )
-  }
+  const maxDay = data?.series.reduce((m, r) => Math.max(m, r.total), 0) ?? 0
 
   return (
     <div className="space-y-6">
@@ -109,9 +69,9 @@ export default function AdminAnalyticsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold">Статистики</h1>
-          <p className="text-xs text-muted mt-0.5">Vercel Web Analytics</p>
+          <p className="text-xs text-muted mt-0.5">Посещения на сайта</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
           {RANGES.map(r => (
             <button
               key={r.value}
@@ -121,13 +81,6 @@ export default function AdminAnalyticsPage() {
               {r.label}
             </button>
           ))}
-          <a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-border text-muted hover:text-white text-xs font-semibold transition-colors">
-            Vercel
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </a>
         </div>
       </div>
 
@@ -140,50 +93,51 @@ export default function AdminAnalyticsPage() {
         </div>
       )}
 
-      {error && error !== 'NO_TOKEN' && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-400">
-          Грешка при зареждане: {error}
-        </div>
-      )}
+      {error && <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-400">{error}</div>}
 
       {!loading && !error && data && (
         <>
-          {/* KPI cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="bg-surface border border-border rounded-xl p-4">
-              <p className="text-xs text-muted mb-1">Прегледи</p>
-              <p className="text-2xl font-black">{totalViews.toLocaleString()}</p>
+          {/* KPI */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
+              <p className="text-xs text-muted mb-1">Общо прегледи</p>
+              <p className="text-3xl font-black">{data.total.toLocaleString()}</p>
               <p className="text-xs text-muted/50 mt-0.5">последните {days} дни</p>
             </div>
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs text-muted mb-1">Топ страница</p>
-              <p className="text-sm font-bold truncate">{topPages[0]?.key ?? '—'}</p>
-              <p className="text-xs text-accent mt-0.5">{topPages[0]?.total?.toLocaleString() ?? '—'} прег.</p>
+              <p className="text-sm font-bold truncate">{data.pages[0]?.key ?? '—'}</p>
+              <p className="text-xs text-accent mt-0.5">{data.pages[0]?.total ?? 0} прег.</p>
             </div>
-            <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
+            <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs text-muted mb-1">Топ источник</p>
-              <p className="text-sm font-bold truncate">{topReferrers[0]?.key || 'Директен'}</p>
-              <p className="text-xs text-accent mt-0.5">{topReferrers[0]?.total?.toLocaleString() ?? '—'} посещ.</p>
+              <p className="text-sm font-bold truncate">{data.referrers[0]?.key ?? '—'}</p>
+              <p className="text-xs text-accent mt-0.5">{data.referrers[0]?.total ?? 0} посещ.</p>
+            </div>
+            <div className="bg-surface border border-border rounded-xl p-4">
+              <p className="text-xs text-muted mb-1">Мобилни</p>
+              <p className="text-3xl font-black">
+                {data.total > 0
+                  ? Math.round(((data.devices.find(d => d.key === 'mobile')?.total ?? 0) / data.total) * 100)
+                  : 0}%
+              </p>
+              <p className="text-xs text-muted/50 mt-0.5">от всички</p>
             </div>
           </div>
 
-          {/* Time series chart */}
-          {series.length > 0 && (
+          {/* Chart */}
+          {data.series.length > 0 && (
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Прегледи по дни</p>
-              <div className="flex items-end gap-1 h-28">
-                {series.map(d => {
-                  const h = maxDay > 0 ? Math.max(4, (d.total / maxDay) * 100) : 4
-                  const date = new Date(d.key)
-                  const label = `${date.getDate()}/${date.getMonth() + 1}`
+              <div className="flex items-end gap-0.5 h-28">
+                {data.series.map(d => {
+                  const h = maxDay > 0 ? Math.max(3, (d.total / maxDay) * 100) : 3
+                  const [, mm, dd] = d.key.split('-')
                   return (
-                    <div key={d.key} className="flex-1 flex flex-col items-center gap-1 group" title={`${label}: ${d.total}`}>
-                      <div
-                        className="w-full bg-accent/60 hover:bg-accent rounded-t transition-all duration-300"
-                        style={{ height: `${h}%` }}
-                      />
-                      {series.length <= 14 && (
-                        <span className="text-[9px] text-muted/50 hidden sm:block">{label}</span>
+                    <div key={d.key} className="flex-1 flex flex-col items-center gap-1 group cursor-default" title={`${dd}/${mm}: ${d.total}`}>
+                      <div className="w-full bg-accent/60 hover:bg-accent rounded-sm transition-colors" style={{ height: `${h}%` }} />
+                      {data.series.length <= 14 && (
+                        <span className="text-[9px] text-muted/40 hidden sm:block">{dd}/{mm}</span>
                       )}
                     </div>
                   )
@@ -192,31 +146,36 @@ export default function AdminAnalyticsPage() {
             </div>
           )}
 
-          {/* Top pages + referrers */}
+          {/* Tables */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Топ страници</p>
-              {topPages.length === 0
-                ? <p className="text-xs text-muted/50">Няма данни</p>
-                : topPages.map(r => <Bar key={r.key} label={r.key} value={r.total} max={maxPage} />)
-              }
+              {data.pages.length === 0
+                ? <p className="text-xs text-muted/40">Няма данни</p>
+                : <Bars rows={data.pages} />}
             </div>
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Източници</p>
-              {topReferrers.length === 0
-                ? <p className="text-xs text-muted/50">Няма данни</p>
-                : topReferrers.map(r => <Bar key={r.key} label={r.key || 'Директен'} value={r.total} max={maxRef} />)
-              }
+              {data.referrers.length === 0
+                ? <p className="text-xs text-muted/40">Няма данни</p>
+                : <Bars rows={data.referrers} />}
             </div>
           </div>
 
-          {/* Devices */}
-          {deviceRows.length > 0 && (
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Устройства</p>
-              {deviceRows.map(r => <Bar key={r.key} label={r.key} value={r.total} max={maxDev} />)}
+              {data.devices.length === 0
+                ? <p className="text-xs text-muted/40">Няма данни</p>
+                : <Bars rows={data.devices} />}
             </div>
-          )}
+            {data.countries.length > 0 && (
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Държави</p>
+                <Bars rows={data.countries} />
+              </div>
+            )}
+          </div>
         </>
       )}
     </div>
