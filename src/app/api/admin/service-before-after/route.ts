@@ -29,34 +29,39 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const form = await req.formData()
-  const beforeFile = form.get('before') as File | null
-  const afterFile = form.get('after') as File | null
-  const label = form.get('label') as string | null
-  const service = (form.get('service') as string) || 'headlight-polishing'
-  const position = parseInt(form.get('position') as string ?? '0', 10)
+    const form = await req.formData()
+    const beforeFile = form.get('before') as File | null
+    const afterFile = form.get('after') as File | null
+    const label = form.get('label') as string | null
+    const service = (form.get('service') as string) || 'headlight-polishing'
+    const position = parseInt(form.get('position') as string ?? '0', 10)
 
-  if (!beforeFile || !afterFile) {
-    return NextResponse.json({ error: 'Missing before or after file' }, { status: 400 })
+    if (!beforeFile || !afterFile) {
+      return NextResponse.json({ error: 'Missing before or after file' }, { status: 400 })
+    }
+
+    const [before_url, after_url] = await Promise.all([
+      uploadImage(beforeFile, service, 'before'),
+      uploadImage(afterFile, service, 'after'),
+    ])
+
+    const { data, error } = await supabase
+      .from('service_before_after')
+      .insert({ service, before_url, after_url, label: label || null, position })
+      .select()
+      .single()
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data)
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Server error'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
-
-  const [before_url, after_url] = await Promise.all([
-    uploadImage(beforeFile, service, 'before'),
-    uploadImage(afterFile, service, 'after'),
-  ])
-
-  const { data, error } = await supabase
-    .from('service_before_after')
-    .insert({ service, before_url, after_url, label: label || null, position })
-    .select()
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
 }
 
 export async function DELETE(req: NextRequest) {
