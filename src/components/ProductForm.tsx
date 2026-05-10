@@ -24,6 +24,7 @@ export default function ProductForm({ product, categories, makes, selectedCatego
     short_description: product?.short_description ?? '',
     price: String(product?.price ?? ''),
     sale_price: String(product?.sale_price ?? ''),
+    stock_quantity: product?.stock_quantity != null ? String(product.stock_quantity) : '',
     published: product?.published ?? true,
     position: String(product?.position ?? 0),
   })
@@ -90,6 +91,7 @@ export default function ProductForm({ product, categories, makes, selectedCatego
       short_description: form.short_description || null,
       price: parseFloat(form.price),
       sale_price: form.sale_price ? parseFloat(form.sale_price) : null,
+      stock_quantity: form.stock_quantity !== '' ? parseInt(form.stock_quantity, 10) : null,
       category_id: categoryIds[0] ?? null,
       images,
       published: form.published,
@@ -149,6 +151,11 @@ export default function ProductForm({ product, categories, makes, selectedCatego
         <div>
           <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Позиция</label>
           <input type="number" value={form.position} onChange={set('position')} min="0" className={inputCls} />
+        </div>
+        <div>
+          <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Наличност (бр.)</label>
+          <input type="number" value={form.stock_quantity} onChange={set('stock_quantity')} min="0" placeholder="Неограничена" className={inputCls} />
+          <p className="text-xs text-muted mt-1">Оставете празно = неограничена наличност</p>
         </div>
       </div>
 

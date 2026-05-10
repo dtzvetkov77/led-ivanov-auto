@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ProductForm from '@/components/ProductForm'
+import VariationStockEditor from '@/components/VariationStockEditor'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -25,6 +26,8 @@ export default async function EditProductPage({ params }: Props) {
   }
   const selectedMakeIds = (pm ?? []).map(r => r.make_id)
 
+  const variations = (product.variations ?? []) as import('@/lib/types').ProductVariation[]
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Редактирай продукт</h1>
@@ -35,6 +38,11 @@ export default async function EditProductPage({ params }: Props) {
         selectedCategoryIds={selectedCategoryIds}
         selectedMakeIds={selectedMakeIds}
       />
+      {variations.length > 0 && (
+        <div className="max-w-2xl mt-6">
+          <VariationStockEditor productId={product.id} variations={variations} />
+        </div>
+      )}
     </div>
   )
 }

@@ -19,7 +19,11 @@ export default function ProductActions({ product }: Props) {
     ? (selectedVariation.sale_price ?? selectedVariation.price)
     : (product.sale_price ?? product.price)
 
-  const canAddToCart = !hasVariations || variationAttrs.length === 0 || selectedVariation !== null
+  const simpleOutOfStock = !hasVariations && product.stock_quantity === 0
+  const variationOutOfStock = selectedVariation !== null && selectedVariation.stock_quantity === 0
+  const isOutOfStock = simpleOutOfStock || variationOutOfStock
+
+  const canAddToCart = !isOutOfStock && (!hasVariations || variationAttrs.length === 0 || selectedVariation !== null)
 
   const handleAddToCart = () => {
     const name = selectedVariation
@@ -72,10 +76,12 @@ export default function ProductActions({ product }: Props) {
       <button
         onClick={handleAddToCart}
         disabled={!canAddToCart}
-        className={`w-full flex items-center justify-center gap-3 font-bold py-4 rounded-xl text-base transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
+        className={`w-full flex items-center justify-center gap-3 font-bold py-4 rounded-xl text-base transition-all duration-200 disabled:cursor-not-allowed ${
           added
             ? 'bg-green-600 text-white scale-[0.98]'
-            : 'bg-accent hover:bg-accent-hover text-white'
+            : isOutOfStock
+              ? 'bg-surface border border-border text-muted cursor-not-allowed'
+              : 'bg-accent hover:bg-accent-hover text-white'
         }`}
       >
         {added ? (
@@ -84,6 +90,13 @@ export default function ProductActions({ product }: Props) {
               <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Добавено в количката!
+          </>
+        ) : isOutOfStock ? (
+          <>
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" strokeLinecap="round"/>
+            </svg>
+            Изчерпан
           </>
         ) : !canAddToCart ? (
           <>

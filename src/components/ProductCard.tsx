@@ -13,9 +13,11 @@ export default function ProductCard({ product }: Props) {
   const displayPrice = product.sale_price ?? product.price
   const [added, setAdded] = useState(false)
 
+  const isOutOfStock = product.stock_quantity === 0
+
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (added) return
+    if (added || isOutOfStock) return
     addToCart({
       product_id: product.id,
       name: product.name,
@@ -45,7 +47,11 @@ export default function ProductCard({ product }: Props) {
         ) : (
           <ProductImagePlaceholder name={product.name} />
         )}
-        {product.sale_price && (
+        {isOutOfStock ? (
+          <span className="absolute top-2 left-2 bg-zinc-700 text-white text-xs px-2 py-0.5 rounded font-semibold z-10">
+            Изчерпан
+          </span>
+        ) : product.sale_price && (
           <span className="absolute top-2 left-2 bg-accent text-white text-xs px-2 py-0.5 rounded font-semibold z-10">
             Промо
           </span>
@@ -67,10 +73,13 @@ export default function ProductCard({ product }: Props) {
           </div>
           <button
             onClick={handleAdd}
-            className={`relative z-10 flex items-center gap-1.5 text-white text-xs px-3 py-2 rounded-lg transition-all font-semibold ${
+            disabled={isOutOfStock}
+            className={`relative z-10 flex items-center gap-1.5 text-white text-xs px-3 py-2 rounded-lg transition-all font-semibold disabled:cursor-not-allowed ${
               added
                 ? 'bg-green-600 scale-95'
-                : 'bg-accent hover:bg-accent-hover'
+                : isOutOfStock
+                  ? 'bg-zinc-700 opacity-60'
+                  : 'bg-accent hover:bg-accent-hover'
             }`}
             aria-label={`Добави ${product.name} в количка`}
           >

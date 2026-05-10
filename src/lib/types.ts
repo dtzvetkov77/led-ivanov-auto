@@ -27,6 +27,7 @@ export type Product = {
   short_description: string | null
   price: number
   sale_price: number | null
+  stock_quantity: number | null
   category_id: string | null
   images: string[]
   published: boolean
@@ -49,6 +50,7 @@ export type ProductVariation = {
   sale_price: number | null
   sku: string | null
   images: string[]
+  stock_quantity: number | null  // null = unlimited
 }
 
 export type CartItem = {

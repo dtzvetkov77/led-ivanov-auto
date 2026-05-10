@@ -75,7 +75,11 @@ export default async function ProductsPage({ searchParams }: Props) {
   let query = supabase.from('products').select('*').eq('published', true)
 
   if (params.q) {
-    query = query.ilike('name', `%${params.q}%`)
+    const words = params.q.trim().split(/\s+/).filter(Boolean)
+    for (const word of words) {
+      const safe = word.replace(/[%_]/g, '\\$&')
+      query = query.or(`name.ilike.%${safe}%,short_description.ilike.%${safe}%,description.ilike.%${safe}%`)
+    }
   }
 
   switch (params.sort) {
