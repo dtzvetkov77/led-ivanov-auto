@@ -43,7 +43,7 @@ export default function AdminAnalyticsPage() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/admin/analytics?days=${d}`)
+      const res = await fetch(`/api/admin/analytics?days=${d}`, { cache: 'no-store' })
       const json = await res.json()
       if (!res.ok) {
         setError(json.error ?? 'Грешка')
