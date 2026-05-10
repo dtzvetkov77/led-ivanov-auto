@@ -82,7 +82,7 @@ export default function SearchBar() {
         .select('id, slug, name, price, sale_price, images')
         .eq('published', true)
         .order('position')
-        .limit(8)
+        .limit(20)
       for (const word of words) {
         const safe = word.replace(/[%_]/g, '\\$&')
         q = q.or(`name.ilike.%${safe}%,short_description.ilike.%${safe}%,description.ilike.%${safe}%`)
@@ -176,15 +176,6 @@ export default function SearchBar() {
               )
             })}
           </ul>
-          <div className="border-t border-border">
-            <button onClick={submitSearch}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-xs text-accent hover:bg-accent/10 transition-colors font-semibold">
-              Виж всички за „{query.trim()}"
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M17 8l4 4m0 0l-4 4m4-4H3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
         </>
       )}
     </>
