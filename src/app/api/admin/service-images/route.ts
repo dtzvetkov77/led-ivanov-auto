@@ -22,32 +22,15 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const form = await req.formData()
-    const file = form.get('file') as File | null
-    const service = form.get('service') as string | null
-    const caption = form.get('caption') as string | null
-    const position = parseInt(form.get('position') as string ?? '0', 10)
+    // Accept JSON payload with pre-uploaded URL (signed upload flow)
+    const body = await req.json()
+    const { url, service, caption, position } = body
 
-    if (!file || !service) return NextResponse.json({ error: 'Missing file or service' }, { status: 400 })
-
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-    const path = `services/${service}/${Date.now()}.${ext}`
-
-    const serviceClient = createServiceClient()
-    const { error: uploadError } = await serviceClient.storage
-      .from('product-images')
-      .upload(path, buffer, { contentType: file.type || 'image/jpeg', upsert: true })
-
-    if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 })
-
-    const { data: urlData } = serviceClient.storage.from('product-images').getPublicUrl(path)
-    const url = urlData.publicUrl
+    if (!url || !service) return NextResponse.json({ error: 'Missing url or service' }, { status: 400 })
 
     const { data, error } = await supabase
       .from('service_images')
-      .insert({ service, url, caption: caption || null, position })
+      .insert({ service, url, caption: caption || null, position: position ?? 0 })
       .select()
       .single()
 

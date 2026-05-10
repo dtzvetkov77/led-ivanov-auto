@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { uploadFileToStorage, makeStoragePath } from '@/lib/upload-service'
 
 type ServiceImage = {
   id: string
@@ -36,22 +37,21 @@ export default function AdminHeadlightTintingPage() {
     setUploading(true)
     setError(null)
 
-    const form = new FormData()
-    form.append('file', file)
-    form.append('service', SERVICE)
-    form.append('caption', caption)
-    form.append('position', String(images.length))
-
     try {
-      const res = await fetch('/api/admin/service-images', { method: 'POST', body: form })
+      const url = await uploadFileToStorage(file, makeStoragePath(`services/${SERVICE}`, file))
+      const res = await fetch('/api/admin/service-images', {
+        method: 'POST',
+        body: JSON.stringify({ url, service: SERVICE, caption, position: images.length }),
+        headers: { 'Content-Type': 'application/json' },
+      })
       const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Грешка при качване'); return }
+      if (!res.ok) { setError(data.error ?? 'Грешка при запис'); return }
       setImages(prev => [...prev, data])
       setCaption('')
       setFileName('')
       input.value = ''
-    } catch {
-      setError('Неуспешна връзка — опитай отново')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Неуспешно качване — опитай отново')
     } finally {
       setUploading(false)
     }

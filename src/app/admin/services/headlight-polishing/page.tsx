@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { uploadFileToStorage, makeStoragePath } from '@/lib/upload-service'
 
 type BeforeAfterPair = {
   id: string
@@ -40,25 +41,30 @@ export default function AdminHeadlightPolishingPage() {
 
     setUploading(true)
     setError(null)
-    const data = new FormData()
-    data.append('before', beforeFile)
-    data.append('after', afterFile)
-    data.append('service', SERVICE)
-    data.append('label', label)
-    data.append('position', String(pairs.length))
 
     try {
-      const res = await fetch('/api/admin/service-before-after', { method: 'POST', body: data })
+      // Upload both files directly to Supabase Storage (no Vercel body limit)
+      const [before_url, after_url] = await Promise.all([
+        uploadFileToStorage(beforeFile, makeStoragePath(`services/${SERVICE}/before-after`, beforeFile, 'before')),
+        uploadFileToStorage(afterFile, makeStoragePath(`services/${SERVICE}/before-after`, afterFile, 'after')),
+      ])
+
+      // Save metadata to DB
+      const res = await fetch('/api/admin/service-before-after', {
+        method: 'POST',
+        body: JSON.stringify({ before_url, after_url, label, service: SERVICE, position: pairs.length }),
+        headers: { 'Content-Type': 'application/json' },
+      })
       const result = await res.json()
-      if (!res.ok) { setError(result.error ?? 'Грешка при качване'); return }
+      if (!res.ok) { setError(result.error ?? 'Грешка при запис'); return }
       setPairs(prev => [...prev, result])
       setLabel('')
       setBeforeName('')
       setAfterName('')
       beforeInput.value = ''
       afterInput.value = ''
-    } catch {
-      setError('Неуспешна връзка — опитай отново')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Неуспешно качване — опитай отново')
     } finally {
       setUploading(false)
     }

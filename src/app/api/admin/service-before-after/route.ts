@@ -34,25 +34,23 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const form = await req.formData()
-    const beforeFile = form.get('before') as File | null
-    const afterFile = form.get('after') as File | null
-    const label = form.get('label') as string | null
-    const service = (form.get('service') as string) || 'headlight-polishing'
-    const position = parseInt(form.get('position') as string ?? '0', 10)
+    // Accept JSON payload with pre-uploaded URLs (signed upload flow)
+    const body = await req.json()
+    const { before_url, after_url, label, service, position } = body
 
-    if (!beforeFile || !afterFile) {
-      return NextResponse.json({ error: 'Missing before or after file' }, { status: 400 })
+    if (!before_url || !after_url) {
+      return NextResponse.json({ error: 'Missing before_url or after_url' }, { status: 400 })
     }
-
-    const [before_url, after_url] = await Promise.all([
-      uploadImage(beforeFile, service, 'before'),
-      uploadImage(afterFile, service, 'after'),
-    ])
 
     const { data, error } = await supabase
       .from('service_before_after')
-      .insert({ service, before_url, after_url, label: label || null, position })
+      .insert({
+        service: service || 'headlight-polishing',
+        before_url,
+        after_url,
+        label: label || null,
+        position: position ?? 0,
+      })
       .select()
       .single()
 
