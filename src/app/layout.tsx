@@ -6,6 +6,8 @@ import ToastContainer from '@/components/ToastContainer'
 import Footer from '@/components/Footer'
 import CookieBanner from '@/components/CookieBanner'
 import { JsonLd } from '@/components/JsonLd'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter  = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
 const oswald = Oswald({ subsets: ['latin', 'cyrillic'], variable: '--font-oswald', weight: ['400', '500', '600', '700'] })
@@ -171,6 +173,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <ToastContainer />
         <CookieBanner />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
