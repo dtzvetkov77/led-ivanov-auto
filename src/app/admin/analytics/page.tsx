@@ -129,15 +129,15 @@ export default function AdminAnalyticsPage() {
             return (
               <div className="bg-surface border border-border rounded-xl p-4">
                 <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Оборот по дни</p>
-                <div className="flex items-end gap-0.5 h-28">
+                <div className="relative h-28 flex items-end gap-0.5">
                   {data.revenueSeries.map(d => {
-                    const h = maxRev > 0 ? Math.max(3, (d.total / maxRev) * 100) : 3
+                    const pct = maxRev > 0 ? Math.max(3, (d.total / maxRev) * 100) : 3
                     const [, mm, dd] = d.key.split('-')
                     return (
-                      <div key={d.key} className="flex-1 flex flex-col items-center gap-1 group cursor-default" title={`${dd}/${mm}: ${d.total.toFixed(2)} €`}>
-                        <div className="w-full bg-green-500/50 hover:bg-green-500 rounded-sm transition-colors" style={{ height: `${h}%` }} />
+                      <div key={d.key} className="flex-1 flex flex-col justify-end h-full group cursor-default" title={`${dd}/${mm}: ${d.total.toFixed(2)} €`}>
+                        <div className="w-full bg-green-500/50 group-hover:bg-green-500 rounded-sm transition-colors" style={{ height: `${pct}%` }} />
                         {data.revenueSeries.length <= 14 && (
-                          <span className="text-[9px] text-muted/40 hidden sm:block">{dd}/{mm}</span>
+                          <span className="text-[9px] text-muted/40 hidden sm:block text-center mt-1">{dd}/{mm}</span>
                         )}
                       </div>
                     )
@@ -182,15 +182,15 @@ export default function AdminAnalyticsPage() {
           {data.series.length > 0 && (
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Прегледи по дни</p>
-              <div className="flex items-end gap-0.5 h-28">
+              <div className="relative h-28 flex items-end gap-0.5">
                 {data.series.map(d => {
-                  const h = maxDay > 0 ? Math.max(3, (d.total / maxDay) * 100) : 3
+                  const pct = maxDay > 0 ? Math.max(3, (d.total / maxDay) * 100) : 3
                   const [, mm, dd] = d.key.split('-')
                   return (
-                    <div key={d.key} className="flex-1 flex flex-col items-center gap-1 group cursor-default" title={`${dd}/${mm}: ${d.total}`}>
-                      <div className="w-full bg-accent/60 hover:bg-accent rounded-sm transition-colors" style={{ height: `${h}%` }} />
+                    <div key={d.key} className="flex-1 flex flex-col justify-end h-full group cursor-default" title={`${dd}/${mm}: ${d.total}`}>
+                      <div className="w-full bg-accent/60 group-hover:bg-accent rounded-sm transition-colors" style={{ height: `${pct}%` }} />
                       {data.series.length <= 14 && (
-                        <span className="text-[9px] text-muted/40 hidden sm:block">{dd}/{mm}</span>
+                        <span className="text-[9px] text-muted/40 hidden sm:block text-center mt-1">{dd}/{mm}</span>
                       )}
                     </div>
                   )
