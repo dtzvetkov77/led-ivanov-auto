@@ -54,10 +54,19 @@ export default function SearchBar() {
     return () => document.removeEventListener('mousedown', handle)
   }, [closeSearch, isMobile])
 
-  // Lock body scroll when mobile overlay open
+  // Lock body scroll when mobile overlay open (position:fixed needed for iOS Safari)
   useEffect(() => {
-    document.body.style.overflow = (isMobile && open) ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    if (!isMobile || !open) return
+    const scrollY = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, scrollY)
+    }
   }, [isMobile, open])
 
   // Debounced search
@@ -194,7 +203,7 @@ export default function SearchBar() {
 
         {/* Backdrop */}
         <div
-          className={`fixed inset-0 z-[59] bg-black/60 transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+          className={`fixed inset-0 z-59 bg-black/60 transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
           onClick={closeSearch}
         />
 
@@ -226,7 +235,7 @@ export default function SearchBar() {
           </div>
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
             {showResults ? <ResultsList /> : (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/30 px-6 text-center">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
