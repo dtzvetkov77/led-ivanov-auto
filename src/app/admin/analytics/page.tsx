@@ -4,8 +4,11 @@ import { useEffect, useState, useCallback } from 'react'
 type Row = { key: string; total: number }
 type Data = {
   total: number
+  totalRevenue: number
+  orderCount: number
   days: number
   series: Row[]
+  revenueSeries: Row[]
   pages: Row[]
   referrers: Row[]
   devices: Row[]
@@ -97,31 +100,81 @@ export default function AdminAnalyticsPage() {
 
       {!loading && !error && data && (
         <>
-          {/* KPI */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
-              <p className="text-xs text-muted mb-1">Общо прегледи</p>
-              <p className="text-3xl font-black">{data.total.toLocaleString()}</p>
-              <p className="text-xs text-muted/50 mt-0.5">последните {days} дни</p>
+          {/* Revenue KPI */}
+          <div>
+            <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-2">Оборот</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="bg-surface border border-accent/20 rounded-xl p-4">
+                <p className="text-xs text-muted mb-1">Приходи</p>
+                <p className="text-2xl font-black text-accent">{data.totalRevenue.toFixed(2)} €</p>
+                <p className="text-xs text-muted/50 mt-0.5">последните {days} дни</p>
+              </div>
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-xs text-muted mb-1">Поръчки</p>
+                <p className="text-2xl font-black">{data.orderCount}</p>
+                <p className="text-xs text-muted/50 mt-0.5">без отказани</p>
+              </div>
+              <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
+                <p className="text-xs text-muted mb-1">Средна поръчка</p>
+                <p className="text-2xl font-black">
+                  {data.orderCount > 0 ? (data.totalRevenue / data.orderCount).toFixed(2) : '0.00'} €
+                </p>
+              </div>
             </div>
-            <div className="bg-surface border border-border rounded-xl p-4">
-              <p className="text-xs text-muted mb-1">Топ страница</p>
-              <p className="text-sm font-bold truncate">{data.pages[0]?.key ?? '—'}</p>
-              <p className="text-xs text-accent mt-0.5">{data.pages[0]?.total ?? 0} прег.</p>
-            </div>
-            <div className="bg-surface border border-border rounded-xl p-4">
-              <p className="text-xs text-muted mb-1">Топ источник</p>
-              <p className="text-sm font-bold truncate">{data.referrers[0]?.key ?? '—'}</p>
-              <p className="text-xs text-accent mt-0.5">{data.referrers[0]?.total ?? 0} посещ.</p>
-            </div>
-            <div className="bg-surface border border-border rounded-xl p-4">
-              <p className="text-xs text-muted mb-1">Мобилни</p>
-              <p className="text-3xl font-black">
-                {data.total > 0
-                  ? Math.round(((data.devices.find(d => d.key === 'mobile')?.total ?? 0) / data.total) * 100)
-                  : 0}%
-              </p>
-              <p className="text-xs text-muted/50 mt-0.5">от всички</p>
+          </div>
+
+          {/* Revenue chart */}
+          {data.revenueSeries.length > 0 && (() => {
+            const maxRev = data.revenueSeries.reduce((m, r) => Math.max(m, r.total), 0)
+            return (
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Оборот по дни</p>
+                <div className="flex items-end gap-0.5 h-28">
+                  {data.revenueSeries.map(d => {
+                    const h = maxRev > 0 ? Math.max(3, (d.total / maxRev) * 100) : 3
+                    const [, mm, dd] = d.key.split('-')
+                    return (
+                      <div key={d.key} className="flex-1 flex flex-col items-center gap-1 group cursor-default" title={`${dd}/${mm}: ${d.total.toFixed(2)} €`}>
+                        <div className="w-full bg-green-500/50 hover:bg-green-500 rounded-sm transition-colors" style={{ height: `${h}%` }} />
+                        {data.revenueSeries.length <= 14 && (
+                          <span className="text-[9px] text-muted/40 hidden sm:block">{dd}/{mm}</span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* Traffic KPI */}
+          <div>
+            <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-2">Трафик</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
+                <p className="text-xs text-muted mb-1">Общо прегледи</p>
+                <p className="text-3xl font-black">{data.total.toLocaleString()}</p>
+                <p className="text-xs text-muted/50 mt-0.5">последните {days} дни</p>
+              </div>
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-xs text-muted mb-1">Топ страница</p>
+                <p className="text-sm font-bold truncate">{data.pages[0]?.key ?? '—'}</p>
+                <p className="text-xs text-accent mt-0.5">{data.pages[0]?.total ?? 0} прег.</p>
+              </div>
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-xs text-muted mb-1">Топ источник</p>
+                <p className="text-sm font-bold truncate">{data.referrers[0]?.key ?? '—'}</p>
+                <p className="text-xs text-accent mt-0.5">{data.referrers[0]?.total ?? 0} посещ.</p>
+              </div>
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-xs text-muted mb-1">Мобилни</p>
+                <p className="text-3xl font-black">
+                  {data.total > 0
+                    ? Math.round(((data.devices.find(d => d.key === 'mobile')?.total ?? 0) / data.total) * 100)
+                    : 0}%
+                </p>
+                <p className="text-xs text-muted/50 mt-0.5">от всички</p>
+              </div>
             </div>
           </div>
 

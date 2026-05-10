@@ -13,17 +13,27 @@ export async function GET(req: NextRequest) {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
 
   const service = createServiceClient()
-  const { data: events, error } = await service
-    .from('analytics_events')
-    .select('path, referrer, device, country, created_at')
-    .gte('created_at', since)
-    .order('created_at', { ascending: true })
+  const [
+    { data: events, error },
+    { data: orders },
+  ] = await Promise.all([
+    service
+      .from('analytics_events')
+      .select('path, referrer, device, country, created_at')
+      .gte('created_at', since)
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('orders')
+      .select('total, created_at')
+      .gte('created_at', since)
+      .neq('status', 'cancelled'),
+  ])
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   const rows = events ?? []
 
-  // Aggregate
+  // Aggregate visits
   const byDay: Record<string, number> = {}
   const byPath: Record<string, number> = {}
   const byRef: Record<string, number> = {}
@@ -34,19 +44,39 @@ export async function GET(req: NextRequest) {
     const day = e.created_at.slice(0, 10)
     byDay[day] = (byDay[day] ?? 0) + 1
     byPath[e.path] = (byPath[e.path] ?? 0) + 1
-    const ref = e.referrer ? new URL(e.referrer).hostname.replace('www.', '') : 'Директен'
+    let ref = 'Директен'
+    if (e.referrer) {
+      try { ref = new URL(e.referrer).hostname.replace('www.', '') } catch { ref = e.referrer }
+    }
     byRef[ref] = (byRef[ref] ?? 0) + 1
     if (e.device) byDevice[e.device] = (byDevice[e.device] ?? 0) + 1
     if (e.country) byCountry[e.country] = (byCountry[e.country] ?? 0) + 1
   }
 
+  // Aggregate revenue by day
+  const revenueByDay: Record<string, number> = {}
+  let totalRevenue = 0
+  for (const o of (orders ?? [])) {
+    const day = o.created_at.slice(0, 10)
+    const val = Number(o.total)
+    revenueByDay[day] = (revenueByDay[day] ?? 0) + val
+    totalRevenue += val
+  }
+
   const sort = (obj: Record<string, number>) =>
     Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([key, total]) => ({ key, total }))
 
+  const revenueSeries = Object.entries(revenueByDay)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, total]) => ({ key, total }))
+
   return NextResponse.json({
     total: rows.length,
+    totalRevenue,
+    orderCount: (orders ?? []).length,
     days,
     series: sort(byDay),
+    revenueSeries,
     pages: sort(byPath).slice(0, 10),
     referrers: sort(byRef).slice(0, 10),
     devices: sort(byDevice),
