@@ -21,7 +21,7 @@ export default function Footer() {
             <p className="text-muted text-sm leading-relaxed max-w-xs mb-4">
               Висококачествени LED крушки и авто аксесоари. Кристално ясна картина, по-бърза реакция и пълна безопасност на пътя.
             </p>
-            <p className="text-xs text-muted/60 mb-5">Безплатна доставка над 150 €</p>
+            <p className="text-xs text-muted/60 mb-5">Безплатна доставка над 199 €</p>
 
             {/* Social links */}
             <div className="flex items-center gap-3">

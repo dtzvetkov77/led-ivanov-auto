@@ -6,7 +6,7 @@ import { getCart, updateQty, removeFromCart, cartTotal, addToCart } from '@/lib/
 import { dispatchToast } from '@/lib/toast'
 import type { CartItem } from '@/lib/types'
 
-const FREE_SHIPPING = 150
+const FREE_SHIPPING = 199
 
 type UP = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[] }
 type Props = { open: boolean; onClose: () => void }
