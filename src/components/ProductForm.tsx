@@ -11,9 +11,10 @@ type Props = {
   makes: Make[]
   selectedCategoryIds?: string[]
   selectedMakeIds?: string[]
+  hasVariations?: boolean
 }
 
-export default function ProductForm({ product, categories, makes, selectedCategoryIds = [], selectedMakeIds = [] }: Props) {
+export default function ProductForm({ product, categories, makes, selectedCategoryIds = [], selectedMakeIds = [], hasVariations = false }: Props) {
   const router = useRouter()
   const isNew = !product
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -84,18 +85,20 @@ export default function ProductForm({ product, categories, makes, selectedCatego
     setError('')
     const supabase = createClient()
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       name: form.name.trim(),
       slug: product?.slug ?? slugify(form.name),
       description: form.description || null,
       short_description: form.short_description || null,
-      price: parseFloat(form.price),
-      sale_price: form.sale_price ? parseFloat(form.sale_price) : null,
       stock_quantity: form.stock_quantity !== '' ? parseInt(form.stock_quantity, 10) : null,
       category_id: categoryIds[0] ?? null,
       images,
       published: form.published,
       position: parseInt(form.position, 10),
+    }
+    if (!hasVariations) {
+      payload.price = parseFloat(form.price)
+      payload.sale_price = form.sale_price ? parseFloat(form.sale_price) : null
     }
 
     let productId = product?.id
@@ -141,12 +144,32 @@ export default function ProductForm({ product, categories, makes, selectedCatego
           <input type="text" value={form.name} onChange={set('name')} required className={inputCls} />
         </div>
         <div>
-          <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Цена *</label>
-          <input type="number" value={form.price} onChange={set('price')} required step="0.01" min="0" className={inputCls} />
+          <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">
+            Цена {hasVariations ? <span className="normal-case text-muted/60">(от вариации)</span> : '*'}
+          </label>
+          <input
+            type="number"
+            value={form.price}
+            onChange={set('price')}
+            required={!hasVariations}
+            disabled={hasVariations}
+            step="0.01" min="0"
+            className={`${inputCls} ${hasVariations ? 'opacity-40 cursor-not-allowed' : ''}`}
+          />
+          {hasVariations && <p className="text-[11px] text-muted/60 mt-1">Задава се автоматично от вариациите</p>}
         </div>
         <div>
-          <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Промо цена</label>
-          <input type="number" value={form.sale_price} onChange={set('sale_price')} step="0.01" min="0" className={inputCls} />
+          <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">
+            Промо цена {hasVariations && <span className="normal-case text-muted/60">(от вариации)</span>}
+          </label>
+          <input
+            type="number"
+            value={form.sale_price}
+            onChange={set('sale_price')}
+            disabled={hasVariations}
+            step="0.01" min="0"
+            className={`${inputCls} ${hasVariations ? 'opacity-40 cursor-not-allowed' : ''}`}
+          />
         </div>
         <div>
           <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Позиция</label>

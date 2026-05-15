@@ -29,9 +29,22 @@ export default function VariationStockEditor({ productId, variations: initial }:
     setSaving(true)
     setError('')
     const supabase = createClient()
+
+    // Sync base price to min variation price so product cards show correct price
+    const minPrice = Math.min(...variations.map(v => v.price).filter(p => p > 0))
+    const hasSale = variations.some(v => v.sale_price != null && v.sale_price > 0)
+    const minSalePrice = hasSale
+      ? Math.min(...variations.filter(v => v.sale_price != null && v.sale_price! > 0).map(v => v.sale_price!))
+      : null
+
     const { error: err } = await supabase
       .from('products')
-      .update({ variations, updated_at: new Date().toISOString() })
+      .update({
+        variations,
+        price: isFinite(minPrice) ? minPrice : 0,
+        sale_price: minSalePrice,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', productId)
     setSaving(false)
     if (err) { setError(err.message); return }

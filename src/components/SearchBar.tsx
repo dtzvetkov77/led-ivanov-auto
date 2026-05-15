@@ -145,11 +145,11 @@ export default function SearchBar() {
                 <li key={hit.id}>
                   <Link
                     href={`/products/${hit.slug}`}
-                    onClick={e => { e.preventDefault(); navigateTo(`/products/${hit.slug}`) }}
+                    onClick={() => { inputRef.current?.blur(); closeSearch() }}
                     onMouseEnter={() => setActive(i)}
-                    className={`flex items-center gap-3 px-5 py-3 transition-colors ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
+                    className={`flex items-center gap-3 px-4 py-3.5 transition-colors active:bg-accent/20 ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
                   >
-                    <div className="w-10 h-10 rounded-lg bg-background border border-border overflow-hidden shrink-0">
+                    <div className="w-12 h-12 rounded-lg bg-background border border-border overflow-hidden shrink-0">
                       {hit.images?.[0] ? (
                         <img src={hit.images[0]} alt={hit.name} className="w-full h-full object-cover" />
                       ) : (
@@ -161,14 +161,14 @@ export default function SearchBar() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium line-clamp-2 text-white leading-snug">{hit.name}</p>
-                      <p className="text-[11px] text-accent font-bold mt-0.5 leading-snug">
+                      <p className="text-sm font-medium line-clamp-2 text-white leading-snug">{hit.name}</p>
+                      <p className="text-xs text-accent font-bold mt-0.5 leading-snug">
                         {price.toFixed(2)} €
                         <span className="text-muted font-normal ml-1">/ {(price * 1.95583).toFixed(2)} лв.</span>
                         {hit.sale_price && <span className="text-muted line-through ml-1.5 font-normal">{hit.price.toFixed(2)} €</span>}
                       </p>
                     </div>
-                    <svg className="w-3 h-3 shrink-0 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3.5 h-3.5 shrink-0 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </Link>

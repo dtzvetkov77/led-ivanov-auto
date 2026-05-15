@@ -37,6 +37,7 @@ export default async function EditProductPage({ params }: Props) {
         makes={makes ?? []}
         selectedCategoryIds={selectedCategoryIds}
         selectedMakeIds={selectedMakeIds}
+        hasVariations={variations.length > 0}
       />
       {variations.length > 0 && (
         <div className="max-w-2xl mt-6">
