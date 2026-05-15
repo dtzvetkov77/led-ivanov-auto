@@ -91,6 +91,8 @@ export default function SearchBar() {
       setResults((data ?? []) as Hit[])
       setLoading(false)
       setActive(-1)
+      // Dismiss iOS keyboard so first tap on result navigates immediately
+      if (isMobile) inputRef.current?.blur()
     }, 300)
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
   }, [query])
@@ -145,7 +147,7 @@ export default function SearchBar() {
                 <li key={hit.id}>
                   <Link
                     href={`/products/${hit.slug}`}
-                    onClick={() => { inputRef.current?.blur(); closeSearch() }}
+                    onClick={() => closeSearch()}
                     onMouseEnter={() => setActive(i)}
                     className={`flex items-center gap-3 px-4 py-3.5 transition-colors active:bg-accent/20 ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
                   >
