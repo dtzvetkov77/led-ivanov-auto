@@ -27,7 +27,7 @@ function Bars({ rows }: { rows: Row[] }) {
     <div className="space-y-1">
       {rows.map(r => (
         <div key={r.key} className="flex items-center gap-3 py-1">
-          <div className="w-36 sm:w-52 shrink-0 truncate text-xs text-muted">{r.key}</div>
+          <div className="w-24 sm:w-44 shrink-0 truncate text-xs text-muted">{r.key}</div>
           <div className="flex-1 h-5 bg-border rounded overflow-hidden">
             <div
               className="h-full bg-accent/70 rounded transition-all duration-500"

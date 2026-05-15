@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
       .from('analytics_events')
       .select('path, referrer, device, country, created_at')
       .gte('created_at', since)
-      .order('created_at', { ascending: true }),
+      .order('created_at', { ascending: true })
+      .limit(100000),
     supabase
       .from('orders')
       .select('total, created_at')
@@ -70,12 +71,16 @@ export async function GET(req: NextRequest) {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, total]) => ({ key, total }))
 
+  const dateSeries = Object.entries(byDay)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, total]) => ({ key, total }))
+
   return NextResponse.json({
     total: rows.length,
     totalRevenue,
     orderCount: (orders ?? []).length,
     days,
-    series: sort(byDay),
+    series: dateSeries,
     revenueSeries,
     pages: sort(byPath).slice(0, 10),
     referrers: sort(byRef).slice(0, 10),
