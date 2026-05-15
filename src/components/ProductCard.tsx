@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
@@ -38,11 +39,12 @@ export default function ProductCard({ product }: Props) {
     >
       <div className="relative aspect-square bg-surface-2 overflow-hidden">
         {image ? (
-          <img
+          <Image
             src={image}
             alt={product.name}
-            loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <ProductImagePlaceholder name={product.name} />
