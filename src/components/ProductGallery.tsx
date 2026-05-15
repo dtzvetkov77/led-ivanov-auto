@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
 
 type Props = { images: string[]; name: string }
@@ -41,15 +40,14 @@ export default function ProductGallery({ images, name }: Props) {
         {/* Main image */}
         <button
           onClick={() => setLightbox(true)}
-          className="relative w-full aspect-square rounded-xl overflow-hidden bg-surface-2 group cursor-zoom-in focus:outline-none"
+          className="w-full aspect-square rounded-xl overflow-hidden bg-surface-2 group cursor-zoom-in focus:outline-none relative"
         >
-          <Image
+          <img
             src={images[active]}
             alt={name}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-contain"
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-contain block"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors flex items-center justify-center">
             <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity drop-shadow-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -68,7 +66,7 @@ export default function ProductGallery({ images, name }: Props) {
                 aria-label={`Снимка ${i + 1}`}
                 className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${i === active ? 'border-accent' : 'border-border hover:border-muted'}`}
               >
-                <Image src={img} alt="" width={64} height={64} className="w-full h-full object-cover block" />
+                <img src={img} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover block" />
               </button>
             ))}
           </div>
@@ -115,10 +113,10 @@ export default function ProductGallery({ images, name }: Props) {
             className="relative w-full h-full max-w-5xl max-h-[90vh] mx-16 flex items-center justify-center"
             onClick={e => e.stopPropagation()}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={images[active]}
               alt={name}
+              decoding="async"
               className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
             />
           </div>
