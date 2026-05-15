@@ -55,12 +55,10 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
           <p className="text-muted text-sm text-center py-8">Няма поръчки</p>
         )}
         {(orders ?? []).map(o => (
-          <div key={o.id} className="bg-surface border border-border rounded-xl p-4">
+          <Link key={o.id} href={`/admin/orders/${o.id}`} className="block bg-surface border border-border rounded-xl p-4 hover:border-accent/50 transition-colors active:bg-surface/80">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div>
-                <Link href={`/admin/orders/${o.id}`} className="font-mono text-xs text-accent hover:underline">
-                  #{o.order_number}
-                </Link>
+                <span className="font-mono text-xs text-accent">#{o.order_number}</span>
                 <p className="font-semibold text-sm mt-0.5">{o.customer_name}</p>
                 <p className="text-xs text-muted">{o.customer_phone}</p>
               </div>
@@ -75,15 +73,11 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               <span className="text-xs text-muted/60">
                 {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')}
               </span>
-              <div className="flex items-center gap-2">
-                <Link href={`/admin/orders/${o.id}`}
-                  className="text-xs text-accent hover:underline">
-                  Детайли
-                </Link>
+              <div onClick={e => e.preventDefault()}>
                 <DeleteOrderButton orderId={o.id} />
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

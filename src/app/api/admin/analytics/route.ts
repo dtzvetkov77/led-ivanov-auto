@@ -3,6 +3,16 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+type Row = { key: string; total: number }
+type Summary = {
+  total: number
+  by_day: Row[]
+  by_path: Row[]
+  by_referrer: Row[]
+  by_device: Row[]
+  by_country: Row[]
+}
+
 export async function GET(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -13,16 +23,9 @@ export async function GET(req: NextRequest) {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
 
   const service = createServiceClient()
-  const [
-    { data: events, error },
-    { data: orders },
-  ] = await Promise.all([
-    service
-      .from('analytics_events')
-      .select('path, referrer, device, country, created_at')
-      .gte('created_at', since)
-      .order('created_at', { ascending: true })
-      .limit(100000),
+
+  const [{ data: summary, error }, { data: orders }] = await Promise.all([
+    service.rpc('analytics_summary', { since_ts: since }) as unknown as Promise<{ data: Summary | null; error: unknown }>,
     supabase
       .from('orders')
       .select('total, created_at')
@@ -30,31 +33,27 @@ export async function GET(req: NextRequest) {
       .neq('status', 'cancelled'),
   ])
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: String(error) }, { status: 500 })
 
-  const rows = events ?? []
+  const s = summary ?? { total: 0, by_day: [], by_path: [], by_referrer: [], by_device: [], by_country: [] }
 
-  // Aggregate visits
-  const byDay: Record<string, number> = {}
-  const byPath: Record<string, number> = {}
-  const byRef: Record<string, number> = {}
-  const byDevice: Record<string, number> = {}
-  const byCountry: Record<string, number> = {}
-
-  for (const e of rows) {
-    const day = e.created_at.slice(0, 10)
-    byDay[day] = (byDay[day] ?? 0) + 1
-    byPath[e.path] = (byPath[e.path] ?? 0) + 1
-    let ref = 'Директен'
-    if (e.referrer) {
-      try { ref = new URL(e.referrer).hostname.replace('www.', '') } catch { ref = e.referrer }
+  // Process referrers: extract hostname from full URL
+  const referrers: Row[] = (s.by_referrer ?? []).map(r => {
+    let key = 'Директен'
+    if (r.key) {
+      try { key = new URL(r.key).hostname.replace('www.', '') } catch { key = r.key }
     }
-    byRef[ref] = (byRef[ref] ?? 0) + 1
-    if (e.device) byDevice[e.device] = (byDevice[e.device] ?? 0) + 1
-    if (e.country) byCountry[e.country] = (byCountry[e.country] ?? 0) + 1
-  }
+    return { key, total: r.total }
+  })
+  // Merge duplicates after hostname extraction
+  const refMap: Record<string, number> = {}
+  for (const r of referrers) refMap[r.key] = (refMap[r.key] ?? 0) + r.total
+  const mergedReferrers = Object.entries(refMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([key, total]) => ({ key, total }))
 
-  // Aggregate revenue by day
+  // Revenue by day
   const revenueByDay: Record<string, number> = {}
   let totalRevenue = 0
   for (const o of (orders ?? [])) {
@@ -63,28 +62,20 @@ export async function GET(req: NextRequest) {
     revenueByDay[day] = (revenueByDay[day] ?? 0) + val
     totalRevenue += val
   }
-
-  const sort = (obj: Record<string, number>) =>
-    Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([key, total]) => ({ key, total }))
-
   const revenueSeries = Object.entries(revenueByDay)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, total]) => ({ key, total }))
 
-  const dateSeries = Object.entries(byDay)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, total]) => ({ key, total }))
-
   return NextResponse.json({
-    total: rows.length,
+    total: s.total,
     totalRevenue,
     orderCount: (orders ?? []).length,
     days,
-    series: dateSeries,
+    series: s.by_day ?? [],
     revenueSeries,
-    pages: sort(byPath).slice(0, 10),
-    referrers: sort(byRef).slice(0, 10),
-    devices: sort(byDevice),
-    countries: sort(byCountry).slice(0, 10),
+    pages: s.by_path ?? [],
+    referrers: mergedReferrers,
+    devices: s.by_device ?? [],
+    countries: s.by_country ?? [],
   })
 }

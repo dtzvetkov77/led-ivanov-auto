@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 type Row = { key: string; total: number }
 type Data = {
@@ -41,6 +41,53 @@ function Bars({ rows }: { rows: Row[] }) {
   )
 }
 
+function BarChart({ rows, color, formatValue }: { rows: Row[]; color: string; formatValue: (v: number) => string }) {
+  const [active, setActive] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const max = rows.reduce((m, r) => Math.max(m, r.total), 0)
+
+  useEffect(() => {
+    const handler = () => setActive(null)
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
+  }, [])
+
+  const showDates = rows.length <= 14
+  const showEveryN = rows.length > 14 ? Math.ceil(rows.length / 10) : 1
+
+  return (
+    <div ref={containerRef} className="relative h-32 flex items-end gap-px">
+      {rows.map((d, i) => {
+        const pct = max > 0 ? Math.max(4, (d.total / max) * 100) : 4
+        const [, mm, dd] = d.key.split('-')
+        const isActive = active === i
+        return (
+          <div
+            key={d.key}
+            className="flex-1 flex flex-col justify-end h-full group cursor-pointer relative"
+            onClick={e => { e.stopPropagation(); setActive(isActive ? null : i) }}
+          >
+            {/* Tooltip */}
+            {isActive && (
+              <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 z-10 bg-white text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap pointer-events-none">
+                {dd}/{mm}: {formatValue(d.total)}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white" />
+              </div>
+            )}
+            <div
+              className={`w-full rounded-sm transition-colors ${isActive ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}
+              style={{ height: `${pct}%`, background: color }}
+            />
+            {showDates && i % showEveryN === 0 && (
+              <span className="text-[8px] text-muted/50 text-center mt-0.5 leading-none">{dd}/{mm}</span>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function AdminAnalyticsPage() {
   const [days, setDays] = useState(30)
   const [data, setData] = useState<Data | null>(null)
@@ -63,8 +110,6 @@ export default function AdminAnalyticsPage() {
   }, [])
 
   useEffect(() => { load(days) }, [days, load])
-
-  const maxDay = data?.series.reduce((m, r) => Math.max(m, r.total), 0) ?? 0
 
   return (
     <div className="space-y-6">
@@ -124,28 +169,12 @@ export default function AdminAnalyticsPage() {
           </div>
 
           {/* Revenue chart */}
-          {data.revenueSeries.length > 0 && (() => {
-            const maxRev = data.revenueSeries.reduce((m, r) => Math.max(m, r.total), 0)
-            return (
-              <div className="bg-surface border border-border rounded-xl p-4">
-                <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Оборот по дни</p>
-                <div className="relative h-28 flex items-end gap-0.5">
-                  {data.revenueSeries.map(d => {
-                    const pct = maxRev > 0 ? Math.max(3, (d.total / maxRev) * 100) : 3
-                    const [, mm, dd] = d.key.split('-')
-                    return (
-                      <div key={d.key} className="flex-1 flex flex-col justify-end h-full group cursor-default" title={`${dd}/${mm}: ${d.total.toFixed(2)} €`}>
-                        <div className="w-full bg-green-500/50 group-hover:bg-green-500 rounded-sm transition-colors" style={{ height: `${pct}%` }} />
-                        {data.revenueSeries.length <= 14 && (
-                          <span className="text-[9px] text-muted/40 hidden sm:block text-center mt-1">{dd}/{mm}</span>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })()}
+          {data.revenueSeries.length > 0 && (
+            <div className="bg-surface border border-border rounded-xl p-4">
+              <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Оборот по дни</p>
+              <BarChart rows={data.revenueSeries} color="#22c55e" formatValue={v => `${v.toFixed(2)} €`} />
+            </div>
+          )}
 
           {/* Traffic KPI */}
           <div>
@@ -182,20 +211,7 @@ export default function AdminAnalyticsPage() {
           {data.series.length > 0 && (
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Прегледи по дни</p>
-              <div className="relative h-28 flex items-end gap-0.5">
-                {data.series.map(d => {
-                  const pct = maxDay > 0 ? Math.max(3, (d.total / maxDay) * 100) : 3
-                  const [, mm, dd] = d.key.split('-')
-                  return (
-                    <div key={d.key} className="flex-1 flex flex-col justify-end h-full group cursor-default" title={`${dd}/${mm}: ${d.total}`}>
-                      <div className="w-full bg-accent/60 group-hover:bg-accent rounded-sm transition-colors" style={{ height: `${pct}%` }} />
-                      {data.series.length <= 14 && (
-                        <span className="text-[9px] text-muted/40 hidden sm:block text-center mt-1">{dd}/{mm}</span>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
+              <BarChart rows={data.series} color="var(--color-accent)" formatValue={v => `${v} прег.`} />
             </div>
           )}
 
