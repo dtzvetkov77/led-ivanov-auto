@@ -148,7 +148,6 @@ export default function SearchBar() {
                   <Link
                     href={`/products/${hit.slug}`}
                     onClick={() => closeSearch()}
-                    onMouseEnter={() => setActive(i)}
                     className={`flex items-center gap-3 px-4 py-3.5 transition-colors active:bg-accent/20 ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
                   >
                     <div className="w-12 h-12 rounded-lg bg-background border border-border overflow-hidden shrink-0">
