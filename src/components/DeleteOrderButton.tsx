@@ -20,19 +20,21 @@ export default function DeleteOrderButton({ orderId, redirectAfter = false }: { 
     }
   }
 
+  const stop = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation() }
+
   if (confirming) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" onClick={stop}>
         <span className="text-xs text-muted">Сигурен ли си?</span>
         <button
-          onClick={handleDelete}
+          onClick={e => { stop(e); handleDelete() }}
           disabled={loading}
           className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
         >
           {loading ? 'Изтриване...' : 'Да, изтрий'}
         </button>
         <button
-          onClick={() => setConfirming(false)}
+          onClick={e => { stop(e); setConfirming(false) }}
           className="text-xs text-muted hover:text-white px-3 py-1.5 rounded-lg border border-border transition-colors"
         >
           Откажи
@@ -43,7 +45,7 @@ export default function DeleteOrderButton({ orderId, redirectAfter = false }: { 
 
   return (
     <button
-      onClick={() => setConfirming(true)}
+      onClick={e => { stop(e); setConfirming(true) }}
       className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20 px-3 py-1.5 rounded-lg transition-colors border border-red-900/30"
     >
       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

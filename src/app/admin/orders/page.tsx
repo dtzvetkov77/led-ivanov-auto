@@ -73,9 +73,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               <span className="text-xs text-muted/60">
                 {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')}
               </span>
-              <div onClick={e => e.preventDefault()}>
-                <DeleteOrderButton orderId={o.id} />
-              </div>
+              <DeleteOrderButton orderId={o.id} />
             </div>
           </Link>
         ))}
