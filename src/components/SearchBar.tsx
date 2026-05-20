@@ -24,6 +24,7 @@ export default function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const touchStartY = useRef<number | null>(null)
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -146,9 +147,13 @@ export default function SearchBar() {
                   <Link
                     href={`/products/${hit.slug}`}
                     onClick={() => closeSearch()}
-                    onPointerDown={e => {
-                      // iOS: pointerdown fires before keyboard-dismiss sequence → single tap navigates
-                      e.preventDefault()
+                    onTouchStart={e => { touchStartY.current = e.touches[0].clientY }}
+                    onTouchEnd={e => {
+                      const start = touchStartY.current
+                      touchStartY.current = null
+                      if (start === null) return
+                      if (Math.abs(e.changedTouches[0].clientY - start) > 8) return // scroll, not tap
+                      e.preventDefault() // block iOS keyboard-dismiss delay
                       closeSearch()
                       router.push(`/products/${hit.slug}`)
                     }}
