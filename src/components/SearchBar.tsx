@@ -91,8 +91,6 @@ export default function SearchBar() {
       setResults((data ?? []) as Hit[])
       setLoading(false)
       setActive(-1)
-      // Dismiss iOS keyboard so first tap on result navigates immediately
-      if (isMobile) inputRef.current?.blur()
     }, 300)
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
   }, [query])
@@ -148,6 +146,12 @@ export default function SearchBar() {
                   <Link
                     href={`/products/${hit.slug}`}
                     onClick={() => closeSearch()}
+                    onPointerDown={e => {
+                      // iOS: pointerdown fires before keyboard-dismiss sequence → single tap navigates
+                      e.preventDefault()
+                      closeSearch()
+                      router.push(`/products/${hit.slug}`)
+                    }}
                     className={`flex items-center gap-3 px-4 py-3.5 transition-colors active:bg-accent/20 ${i === active ? 'bg-accent/10' : 'hover:bg-border'}`}
                   >
                     <div className="w-12 h-12 rounded-lg bg-background border border-border overflow-hidden shrink-0">
