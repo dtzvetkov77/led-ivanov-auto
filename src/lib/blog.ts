@@ -13,7 +13,7 @@ export type BlogPost = {
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'led-krushki-h7-naiden-naybdobriat-vibor',
-    title: 'LED Крушки H7 — Как да Изберем Правилно (Ръководство 2025)',
+    title: 'LED крушки H7 — как да изберем правилно (ръководство 2025)',
     metaDescription: 'Пълно ръководство за избор на LED крушки H7 — сравнение по яркост, CANBUS съвместимост, Plug & Play монтаж. Кои H7 крушки работят без грешки на таблото?',
     date: '2025-03-10',
     readingTime: 6,
@@ -50,7 +50,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
   {
     slug: 'canbus-led-krushki-obiasnienie',
-    title: 'LED Крушки с CANBUS — Какво Е и Защо Има Значение',
+    title: 'LED крушки с CANBUS — какво е и защо има значение',
     metaDescription: 'Обяснение на CANBUS съвместимостта при LED крушки — защо се появяват грешки на таблото, как работят CANBUS адаптерите, и кои коли задължително изискват CANBUS LED.',
     date: '2025-04-05',
     readingTime: 5,
@@ -86,7 +86,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
   {
     slug: 'kak-da-izbera-led-krushki-za-kola',
-    title: 'Как да Изберем LED Крушки за Кола — Пълен Наръчник',
+    title: 'Как да изберем LED крушки за кола — пълен наръчник',
     metaDescription: 'Практическо ръководство за избор на LED крушки — как да разберем типа цокъл, разлика между H1/H4/H7/H11, кога са нужни CANBUS адаптери, и как да монтираме безопасно.',
     date: '2025-05-01',
     readingTime: 7,
@@ -123,7 +123,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
   {
     slug: 'poliranje-na-farove-koga-i-zashto',
-    title: 'Полиране на Фарове — Кога е Необходимо и Какви са Ползите',
+    title: 'Полиране на фарове — кога е необходимо и какви са ползите',
     metaDescription: 'Полирането на фарове възстановява прозрачността на пожълтели и набраздени пластмасови фарове. Научете кога е нужно, как се прави и колко трае ефектът.',
     date: '2025-05-15',
     readingTime: 5,
