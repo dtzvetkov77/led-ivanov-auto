@@ -83,6 +83,16 @@ const links = [
     ),
   },
   {
+    href: '/admin/blog',
+    label: 'Блог',
+    icon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v10a2 2 0 01-2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14 2v6h6M8 13h8M8 17h6" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
     href: '/admin/analytics',
     label: 'Статистики',
     icon: (

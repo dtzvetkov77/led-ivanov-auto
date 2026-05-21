@@ -1,46 +1,61 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
-import { BLOG_POSTS, getBlogPost } from '@/lib/blog'
+
+export const dynamic = 'force-dynamic'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 type Props = { params: Promise<{ slug: string }> }
 
-export async function generateStaticParams() {
-  return BLOG_POSTS.map(p => ({ slug: p.slug }))
-}
-
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const supabase = await createClient()
+  const { data: post } = await supabase
+    .from('blog_posts')
+    .select('title, meta_description, created_at, updated_at')
+    .eq('slug', slug)
+    .eq('published', true)
+    .single()
+
   if (!post) return {}
+
   return {
     title: `${post.title} | LED Ivanov Auto`,
-    description: post.metaDescription,
+    description: post.meta_description ?? undefined,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title: `${post.title} | LED Ivanov Auto`,
-      description: post.metaDescription,
+      description: post.meta_description ?? undefined,
       url: `${SITE}/blog/${slug}`,
       type: 'article',
-      publishedTime: post.date,
+      publishedTime: post.created_at,
+      modifiedTime: post.updated_at,
     },
   }
 }
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const supabase = await createClient()
+  const { data: post } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', true)
+    .single()
+
   if (!post) notFound()
 
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
-    description: post.metaDescription,
-    datePublished: post.date,
-    dateModified: post.date,
+    description: post.meta_description ?? undefined,
+    datePublished: post.created_at,
+    dateModified: post.updated_at,
+    ...(post.cover_image ? { image: post.cover_image } : {}),
     author: {
       '@type': 'Organization',
       name: 'LED Ivanov Auto',
@@ -65,21 +80,10 @@ export default async function BlogPostPage({ params }: Props) {
     ],
   }
 
-  const faqSchema = post.faq && post.faq.length > 0 ? {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: post.faq.map(item => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a },
-    })),
-  } : null
-
   return (
     <article className="max-w-3xl mx-auto px-4 py-10">
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
-      {faqSchema && <JsonLd data={faqSchema} />}
 
       {/* Breadcrumb */}
       <nav className="text-xs text-muted mb-6 flex items-center gap-1.5 flex-wrap">
@@ -90,59 +94,44 @@ export default async function BlogPostPage({ params }: Props) {
         <span className="text-white line-clamp-1">{post.title}</span>
       </nav>
 
+      {/* Cover image */}
+      {post.cover_image && (
+        <div className="aspect-video w-full rounded-2xl overflow-hidden mb-8 bg-background">
+          <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+
       {/* Header */}
       <header className="mb-8">
         <div className="flex items-center gap-3 text-xs text-muted mb-4">
-          <time dateTime={post.date}>
-            {new Date(post.date).toLocaleDateString('bg-BG', { year: 'numeric', month: 'long', day: 'numeric' })}
+          <time dateTime={post.created_at}>
+            {new Date(post.created_at).toLocaleDateString('bg-BG', { year: 'numeric', month: 'long', day: 'numeric' })}
           </time>
           <span>·</span>
-          <span>{post.readingTime} мин. четене</span>
+          <span>{post.reading_time} мин. четене</span>
         </div>
-        <h1 className="text-3xl font-black leading-tight mb-4">{post.title}</h1>
-        <p className="text-muted leading-relaxed">{post.intro}</p>
+        <h1 className="text-3xl font-black leading-tight">{post.title}</h1>
+        {post.meta_description && (
+          <p className="text-muted leading-relaxed mt-4">{post.meta_description}</p>
+        )}
       </header>
 
-      {/* Divider */}
       <div className="h-px bg-border mb-8" />
 
-      {/* Sections */}
-      <div className="space-y-8">
-        {post.sections.map((section, i) => (
-          <section key={i}>
-            <h2 className="text-xl font-black mb-3">{section.heading}</h2>
-            <p className="text-muted leading-relaxed text-sm">{section.body}</p>
-          </section>
-        ))}
-      </div>
-
-      {/* FAQ */}
-      {post.faq && post.faq.length > 0 && (
-        <div className="mt-10 pt-8 border-t border-border">
-          <h2 className="text-xl font-black mb-6">Често задавани въпроси</h2>
-          <div className="space-y-4">
-            {post.faq.map((item, i) => (
-              <div key={i} className="bg-surface border border-border rounded-xl p-5">
-                <h3 className="font-bold text-sm mb-2">{item.q}</h3>
-                <p className="text-muted text-sm leading-relaxed">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Related category CTA */}
-      {post.relatedCategory && (
-        <div className="mt-10 bg-accent/10 border border-accent/20 rounded-2xl p-6 text-center">
-          <p className="text-sm text-muted mb-3">Разгледайте нашите продукти в тази категория</p>
-          <Link
-            href={`/c/${post.relatedCategory}`}
-            className="inline-block bg-accent hover:bg-accent-hover text-white px-6 py-3 rounded-lg font-bold text-sm transition-colors"
-          >
-            Разгледай продуктите →
-          </Link>
-        </div>
-      )}
+      {/* Content — rendered from rich text HTML */}
+      <div
+        className="prose prose-invert prose-sm max-w-none
+          prose-headings:font-black prose-headings:text-white
+          prose-p:text-muted prose-p:leading-relaxed
+          prose-strong:text-white prose-strong:font-semibold
+          prose-a:text-accent prose-a:no-underline hover:prose-a:underline
+          prose-blockquote:border-accent prose-blockquote:text-muted
+          prose-ul:text-muted prose-ol:text-muted
+          prose-li:marker:text-accent
+          prose-hr:border-border
+          prose-img:rounded-xl prose-img:w-full"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       {/* Back to blog */}
       <div className="mt-10 pt-6 border-t border-border">

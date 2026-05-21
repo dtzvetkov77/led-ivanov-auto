@@ -1,16 +1,15 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { CATEGORY_PAGE_CONFIGS } from '@/lib/categoryPages'
-import { BLOG_POSTS } from '@/lib/blog'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
-  const { data: products } = await supabase
-    .from('products')
-    .select('slug, updated_at')
-    .eq('published', true)
+  const [{ data: products }, { data: blogPosts }] = await Promise.all([
+    supabase.from('products').select('slug, updated_at').eq('published', true),
+    supabase.from('blog_posts').select('slug, updated_at').eq('published', true),
+  ])
 
   const productUrls: MetadataRoute.Sitemap = (products ?? []).map(p => ({
     url: `${SITE}/products/${p.slug}`,
@@ -26,9 +25,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }))
 
-  const blogUrls: MetadataRoute.Sitemap = BLOG_POSTS.map(post => ({
+  const blogUrls: MetadataRoute.Sitemap = (blogPosts ?? []).map(post => ({
     url: `${SITE}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: post.updated_at ? new Date(post.updated_at) : new Date(),
     changeFrequency: 'monthly',
     priority: 0.65,
   }))
