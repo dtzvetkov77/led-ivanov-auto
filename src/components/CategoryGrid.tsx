@@ -16,7 +16,7 @@ export default function CategoryGrid({ categories }: Props) {
             className="group relative rounded-lg overflow-hidden bg-surface border border-border hover:border-accent transition-colors aspect-[4/3]"
           >
             {cat.image_url ? (
-              <Image src={cat.image_url} alt={cat.name} fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity" unoptimized />
+              <Image src={cat.image_url} alt={cat.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover opacity-60 group-hover:opacity-80 transition-opacity" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-[#1a0000] to-surface-2" />
             )}

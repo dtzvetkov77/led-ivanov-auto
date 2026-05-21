@@ -315,7 +315,7 @@ export default function CheckoutForm() {
                   <div key={item.product_id} className="flex gap-3">
                     {item.image && (
                       <div className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-border">
-                        <Image src={item.image} alt={base} fill className="object-cover" unoptimized />
+                        <Image src={item.image} alt={base} fill sizes="56px" className="object-cover" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">

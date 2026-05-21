@@ -163,13 +163,13 @@ export default async function HeadlightAlignmentPage() {
             </p>
           </div>
 
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-surface border border-border">
+          <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-surface border border-border">
             <Image
               src="/images/hero.webp"
               alt="Регулиране на фарове — LED Ivanov Auto"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
-              unoptimized
             />
           </div>
         </div>

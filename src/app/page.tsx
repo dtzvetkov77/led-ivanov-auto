@@ -147,11 +147,11 @@ export default async function HomePage() {
             style={{ height: 340 }}
           >
             <Image
-              src="/images/about.webp"
+              src="/images/about.jpg"
               alt="LED Ivanov Auto — ж.к. Малинова долина, София"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover group-hover:scale-105 transition-transform duration-500"
-              unoptimized
             />
             <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
               <span className="inline-flex items-center gap-2 bg-black/70 backdrop-blur-sm text-white text-sm font-bold px-5 py-2.5 rounded-full border border-white/20">

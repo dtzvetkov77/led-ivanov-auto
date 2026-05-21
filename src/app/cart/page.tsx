@@ -45,7 +45,7 @@ export default function CartPage() {
           <div key={item.product_id} className="flex gap-4 bg-surface rounded-lg p-4">
             {item.image && (
               <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden">
-                <Image src={item.image} alt={item.name} fill className="object-cover" unoptimized />
+                <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
               </div>
             )}
             <div className="flex-1 min-w-0">

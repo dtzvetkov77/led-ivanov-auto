@@ -61,13 +61,9 @@ const serviceSchema = {
   },
   areaServed: { '@type': 'Country', name: 'Bulgaria' },
   url: `${SITE}/services/headlight-polishing`,
-  image: `${SITE}/images/services/headlight-polishing-hero.webp`,
+  image: `${SITE}/images/services/headlight-polishing-hero.jpg`,
 }
 
-const STATIC_PAIRS = [
-  { id: 's1', before_url: '/images/services/before-1.webp', after_url: '/images/services/after-1.webp', label: 'BMW 5 серия — пожълтели фарове след 8 години' },
-  { id: 's2', before_url: '/images/services/before-2.webp', after_url: '/images/services/after-2.webp', label: 'Toyota Corolla — мътни фарове след UV увреждане' },
-]
 
 export default async function HeadlightPolishingPage() {
   const supabase = await createClient()
@@ -77,7 +73,7 @@ export default async function HeadlightPolishingPage() {
     .eq('service', 'headlight-polishing')
     .eq('published', true)
     .order('position')
-  const pairs = (data && data.length > 0) ? data : STATIC_PAIRS
+  const pairs = data ?? []
 
   return (
     <div className="bg-background min-h-screen text-white">
@@ -127,23 +123,25 @@ export default async function HeadlightPolishingPage() {
       </section>
 
       {/* ── Before / After ── */}
-      <div className="max-w-5xl mx-auto px-4 pt-8 pb-8">
-        <div className="text-center mb-8">
-          <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
-          <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
-          <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
+      {pairs.length > 0 && (
+        <div className="max-w-5xl mx-auto px-4 pt-8 pb-8">
+          <div className="text-center mb-8">
+            <p className="text-accent text-xs tracking-[5px] uppercase font-medium mb-3">Резултати</p>
+            <h2 className="text-3xl font-black">ПРЕДИ И СЛЕД</h2>
+            <p className="text-muted text-sm mt-2">Реални резултати от нашия сервиз</p>
+          </div>
+          <div className="space-y-6">
+            {pairs.map(pair => (
+              <BeforeAfterPair
+                key={pair.id}
+                before={pair.before_url}
+                after={pair.after_url}
+                label={pair.label ?? ''}
+              />
+            ))}
+          </div>
         </div>
-        <div className="space-y-6">
-          {pairs.map(pair => (
-            <BeforeAfterPair
-              key={pair.id}
-              before={pair.before_url}
-              after={pair.after_url}
-              label={pair.label ?? ''}
-            />
-          ))}
-        </div>
-      </div>
+      )}
 
       <div className="max-w-5xl mx-auto px-4 pb-20">
 
@@ -175,13 +173,13 @@ export default async function HeadlightPolishingPage() {
             </p>
           </div>
 
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-surface border border-border">
+          <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-surface border border-border">
             <Image
-              src="/images/services/headlight-polishing-hero.webp"
+              src="/images/services/headlight-polishing-hero.jpg"
               alt="Полиране на фарове — LED Ivanov Auto"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
-              unoptimized
             />
           </div>
         </div>
@@ -273,8 +271,8 @@ function ImageSlot({ src, alt }: { src: string; alt: string }) {
         src={src}
         alt={alt}
         fill
+        sizes="(max-width: 768px) 50vw, 40vw"
         className="object-cover"
-        unoptimized
       />
     </>
   )
