@@ -120,16 +120,20 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Content — rendered from rich text HTML */}
       <div
-        className="prose prose-invert prose-sm max-w-none
-          prose-headings:font-black prose-headings:text-white
-          prose-p:text-muted prose-p:leading-relaxed
-          prose-strong:text-white prose-strong:font-semibold
-          prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-          prose-blockquote:border-accent prose-blockquote:text-muted
-          prose-ul:text-muted prose-ol:text-muted
-          prose-li:marker:text-accent
-          prose-hr:border-border
-          prose-img:rounded-xl prose-img:w-full"
+        className="
+          [&>h2]:text-xl [&>h2]:font-black [&>h2]:text-white
+          [&>h2]:mt-12 [&>h2]:mb-4 [&>h2]:pb-3
+          [&>h2]:border-b [&>h2]:border-border
+          [&>h3]:text-base [&>h3]:font-bold [&>h3]:text-white [&>h3]:mt-8 [&>h3]:mb-3
+          [&>p]:text-muted [&>p]:leading-relaxed [&>p]:text-sm [&>p]:mb-5
+          [&>ul]:text-muted [&>ul]:text-sm [&>ul]:mb-5 [&>ul]:pl-5 [&>ul]:list-disc [&>ul]:space-y-2
+          [&>ol]:text-muted [&>ol]:text-sm [&>ol]:mb-5 [&>ol]:pl-5 [&>ol]:list-decimal [&>ol]:space-y-2
+          [&>blockquote]:border-l-4 [&>blockquote]:border-accent [&>blockquote]:pl-4 [&>blockquote]:text-muted [&>blockquote]:italic [&>blockquote]:my-6
+          [&>hr]:border-border [&>hr]:my-8
+          [&>p>strong]:text-white [&>p>strong]:font-semibold
+          [&>p>a]:text-accent [&>p>a]:underline
+          [&_img]:rounded-xl [&_img]:w-full [&_img]:my-6
+        "
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
