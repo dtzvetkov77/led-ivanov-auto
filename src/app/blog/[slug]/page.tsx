@@ -103,12 +103,14 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Header */}
       <header className="mb-8">
-        <div className="flex items-center gap-3 text-xs text-muted mb-4">
+        <div className="flex items-center gap-3 text-xs text-muted mb-4 flex-wrap">
           <time dateTime={post.created_at}>
             {new Date(post.created_at).toLocaleDateString('bg-BG', { year: 'numeric', month: 'long', day: 'numeric' })}
           </time>
           <span>·</span>
           <span>{post.reading_time} мин. четене</span>
+          <span>·</span>
+          <span>от <strong className="text-white/70">екипа на LED Ivanov Auto</strong></span>
         </div>
         <h1 className="text-3xl font-black leading-tight">{post.title}</h1>
         {post.meta_description && (

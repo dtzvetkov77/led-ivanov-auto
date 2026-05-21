@@ -31,12 +31,18 @@ export async function generateMetadata({ params }: Props) {
     .eq('slug', slug)
     .single()
   if (!product) return { title: 'LED Ivanov Auto' }
+  const plainDesc = product.short_description
+    ? product.short_description.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 160)
+    : undefined
   return {
     title: `${product.name} | LED Ivanov Auto`,
-    description: product.short_description?.slice(0, 160) ?? undefined,
-    openGraph: product.images?.[0]
-      ? { images: [{ url: product.images[0] }] }
-      : undefined,
+    description: plainDesc,
+    alternates: { canonical: `/products/${slug}` },
+    openGraph: {
+      title: `${product.name} | LED Ivanov Auto`,
+      description: plainDesc,
+      ...(product.images?.[0] ? { images: [{ url: product.images[0] }] } : {}),
+    },
   }
 }
 
