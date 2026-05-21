@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { CATEGORY_PAGE_CONFIGS } from '@/lib/categoryPages'
+import { BLOG_POSTS } from '@/lib/blog'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
@@ -17,9 +19,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
+  const categoryUrls: MetadataRoute.Sitemap = Object.keys(CATEGORY_PAGE_CONFIGS).map(slug => ({
+    url: `${SITE}/c/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  }))
+
+  const blogUrls: MetadataRoute.Sitemap = BLOG_POSTS.map(post => ({
+    url: `${SITE}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly',
+    priority: 0.65,
+  }))
+
   return [
     { url: SITE,                                     lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
     { url: `${SITE}/products`,                       lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${SITE}/blog`,                           lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${SITE}/services/headlight-polishing`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/services/headlight-tinting`,     lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/services/headlight-alignment`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -31,6 +48,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/privacy-policy`,                 lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.2 },
     { url: `${SITE}/terms`,                          lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.2 },
     { url: `${SITE}/cookies`,                        lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.2 },
+    ...categoryUrls,
+    ...blogUrls,
     ...productUrls,
   ]
 }

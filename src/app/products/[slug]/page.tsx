@@ -104,14 +104,33 @@ export default async function ProductPage({ params }: Props) {
       url: `${SITE}/products/${p.slug}`,
       priceCurrency: 'EUR',
       price: effectivePrice.toFixed(2),
-      availability: 'https://schema.org/InStock',
+      availability: p.stock_quantity === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: 'LED Ivanov Auto' },
     },
+  }
+
+  const breadcrumbItems: { name: string; item: string }[] = [
+    { name: 'Начало', item: SITE },
+    { name: 'Продукти', item: `${SITE}/products` },
+  ]
+  if (p.category) breadcrumbItems.push({ name: p.category.name, item: `${SITE}/products?category=${p.category.slug}` })
+  breadcrumbItems.push({ name: p.name, item: `${SITE}/products/${p.slug}` })
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: item.item,
+    })),
   }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
       <JsonLd data={productSchema} />
+      <JsonLd data={breadcrumbSchema} />
 
       {/* Breadcrumb */}
       <nav className="text-xs text-muted mb-6 flex items-center gap-1.5 flex-wrap">
