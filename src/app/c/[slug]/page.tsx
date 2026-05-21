@@ -123,32 +123,17 @@ export default async function CategoryLandingPage({ params }: Props) {
         <span className="text-white">{config.breadcrumb}</span>
       </nav>
 
-      <h1 className="text-3xl font-black mb-4">{config.h1}</h1>
-      <p className="text-muted text-sm mb-8 max-w-3xl leading-relaxed">{config.metaDescription}</p>
+      <h1 className="text-3xl font-black mb-3">{config.h1}</h1>
+      <p className="text-muted text-sm mb-8 leading-relaxed">{config.metaDescription}</p>
 
-      {/* Products */}
-      {products.length > 0 ? (
-        <div className="mb-12">
-          <ProductGrid products={products} />
-        </div>
-      ) : (
-        <div className="mb-12 py-12 text-center text-muted border border-border rounded-xl">
-          <p className="text-lg font-semibold mb-2">Очаквайте скоро</p>
-          <p className="text-sm">Разглеждайте пълния ни каталог или се свържете с нас за наличност.</p>
-          <Link href="/products" className="inline-block mt-4 bg-accent text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-accent-hover transition-colors">
-            Виж всички продукти
-          </Link>
-        </div>
-      )}
-
-      {/* SEO body text */}
-      <section className="max-w-3xl mb-12">
-        <div className="prose prose-invert prose-sm max-w-none">
+      {/* SEO body text — full width, columns on desktop */}
+      <section className="mb-10">
+        <div className="columns-1 md:columns-2 gap-8">
           {config.body.split('\n\n').map((para, i) => {
             if (para.startsWith('**') || para.includes('**')) {
               const parts = para.split(/(\*\*[^*]+\*\*)/)
               return (
-                <p key={i} className="text-muted text-sm leading-relaxed mb-4">
+                <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">
                   {parts.map((part, j) =>
                     part.startsWith('**') && part.endsWith('**')
                       ? <strong key={j} className="text-white font-semibold">{part.slice(2, -2)}</strong>
@@ -160,7 +145,7 @@ export default async function CategoryLandingPage({ params }: Props) {
             if (para.startsWith('- ')) {
               const items = para.split('\n').filter(l => l.startsWith('- '))
               return (
-                <ul key={i} className="list-disc list-inside text-muted text-sm mb-4 space-y-1">
+                <ul key={i} className="list-disc list-inside text-muted text-sm mb-4 space-y-1 break-inside-avoid">
                   {items.map((item, j) => <li key={j}>{item.slice(2)}</li>)}
                 </ul>
               )
@@ -168,17 +153,33 @@ export default async function CategoryLandingPage({ params }: Props) {
             if (para.length > 60 && !para.startsWith('-')) {
               const isHeading = para.length < 120 && !para.includes('. ')
               return isHeading
-                ? <h2 key={i} className="text-white font-bold text-base mt-6 mb-2">{para}</h2>
-                : <p key={i} className="text-muted text-sm leading-relaxed mb-4">{para}</p>
+                ? <h2 key={i} className="text-white font-bold text-base mt-6 mb-2 break-inside-avoid">{para}</h2>
+                : <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">{para}</p>
             }
-            return <p key={i} className="text-muted text-sm leading-relaxed mb-4">{para}</p>
+            return <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">{para}</p>
           })}
         </div>
       </section>
 
+      {/* Products */}
+      {products.length > 0 ? (
+        <div className="mb-14">
+          <h2 className="text-xl font-black mb-6">Продукти</h2>
+          <ProductGrid products={products} />
+        </div>
+      ) : (
+        <div className="mb-14 py-12 text-center text-muted border border-border rounded-xl">
+          <p className="text-lg font-semibold mb-2">Очаквайте скоро</p>
+          <p className="text-sm">Разглеждайте пълния ни каталог или се свържете с нас за наличност.</p>
+          <Link href="/products" className="inline-block mt-4 bg-accent text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-accent-hover transition-colors">
+            Виж всички продукти
+          </Link>
+        </div>
+      )}
+
       {/* FAQ */}
       {config.faq.length > 0 && (
-        <section className="max-w-3xl mb-12">
+        <section className="mb-12">
           <h2 className="text-xl font-black mb-6">Често задавани въпроси</h2>
           <div className="space-y-4">
             {config.faq.map((item, i) => (
@@ -192,7 +193,7 @@ export default async function CategoryLandingPage({ params }: Props) {
       )}
 
       {/* CTA */}
-      <section className="bg-surface border border-border rounded-2xl p-6 md:p-8 max-w-3xl flex flex-col md:flex-row items-center gap-6">
+      <section className="bg-surface border border-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
         <div className="flex-1">
           <h2 className="text-lg font-black mb-1">Не намирате точния продукт?</h2>
           <p className="text-muted text-sm">Свържете се с нас — ще ви помогнем да изберете правилната LED крушка за вашия автомобил.</p>
