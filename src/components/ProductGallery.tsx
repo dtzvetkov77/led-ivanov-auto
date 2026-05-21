@@ -110,7 +110,7 @@ export default function ProductGallery({ images, name }: Props) {
 
           {/* Image */}
           <div
-            className="relative w-full h-full max-w-5xl max-h-[90vh] mx-16 flex items-center justify-center"
+            className="relative w-full h-full max-w-5xl max-h-[90vh] mx-2 sm:mx-16 flex items-center justify-center"
             onClick={e => e.stopPropagation()}
           >
             <img

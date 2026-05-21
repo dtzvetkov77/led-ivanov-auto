@@ -3,18 +3,20 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { uploadFile } from '@/lib/upload'
-import type { Product, Category, Make } from '@/lib/types'
+import type { Product, Category, Make, Model } from '@/lib/types'
 
 type Props = {
   product?: Product
   categories: Category[]
   makes: Make[]
+  models?: Model[]
   selectedCategoryIds?: string[]
   selectedMakeIds?: string[]
+  selectedModelIds?: string[]
   hasVariations?: boolean
 }
 
-export default function ProductForm({ product, categories, makes, selectedCategoryIds = [], selectedMakeIds = [], hasVariations = false }: Props) {
+export default function ProductForm({ product, categories, makes, models = [], selectedCategoryIds = [], selectedMakeIds = [], selectedModelIds = [], hasVariations = false }: Props) {
   const router = useRouter()
   const isNew = !product
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -31,6 +33,7 @@ export default function ProductForm({ product, categories, makes, selectedCatego
   })
   const [categoryIds, setCategoryIds] = useState<string[]>(selectedCategoryIds)
   const [makeIds, setMakeIds] = useState<string[]>(selectedMakeIds)
+  const [modelIds, setModelIds] = useState<string[]>(selectedModelIds)
   const [images, setImages] = useState<string[]>(product?.images ?? [])
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -45,8 +48,20 @@ export default function ProductForm({ product, categories, makes, selectedCatego
   const toggleCategory = (id: string) =>
     setCategoryIds(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id])
 
-  const toggleMake = (id: string) =>
-    setMakeIds(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id])
+  const toggleMake = (id: string) => {
+    setMakeIds(prev => {
+      const next = prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
+      // Drop models belonging to deselected make
+      if (prev.includes(id)) {
+        const makeModels = models.filter(m => m.make_id === id).map(m => m.id)
+        setModelIds(ms => ms.filter(mid => !makeModels.includes(mid)))
+      }
+      return next
+    })
+  }
+
+  const toggleModel = (id: string) =>
+    setModelIds(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id])
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -123,6 +138,12 @@ export default function ProductForm({ product, categories, makes, selectedCatego
     await supabase.from('product_makes').delete().eq('product_id', productId)
     if (makeIds.length > 0) {
       await supabase.from('product_makes').insert(makeIds.map(mid => ({ product_id: productId, make_id: mid })))
+    }
+
+    // Sync product_models
+    await supabase.from('product_models').delete().eq('product_id', productId)
+    if (modelIds.length > 0) {
+      await supabase.from('product_models').insert(modelIds.map(mid => ({ product_id: productId, model_id: mid })))
     }
 
     router.push('/admin/products')
@@ -253,39 +274,75 @@ export default function ProductForm({ product, categories, makes, selectedCatego
         </div>
       )}
 
+      {/* Models — grouped by selected make */}
+      {makeIds.length > 0 && models.length > 0 && (
+        <div className="bg-[#0a0a0a] border border-border rounded-xl p-4">
+          <p className="text-xs text-muted uppercase tracking-wider mb-3 font-medium">Съвместимост — модели</p>
+          <div className="space-y-3">
+            {makeIds.map(makeId => {
+              const make = makes.find(m => m.id === makeId)
+              const makeModels = models.filter(m => m.make_id === makeId)
+              if (!make || makeModels.length === 0) return null
+              return (
+                <div key={makeId}>
+                  <p className="text-xs font-semibold text-white mb-1.5">{make.name}</p>
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 ml-2">
+                    {makeModels.map(model => (
+                      <label key={model.id} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={modelIds.includes(model.id)}
+                          onChange={() => toggleModel(model.id)}
+                          className="accent-red-600 w-3.5 h-3.5 shrink-0"
+                        />
+                        <span className="text-sm text-muted">{model.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Image upload */}
       <div>
         <label className="block text-xs text-muted mb-2 uppercase tracking-wider">Изображения</label>
         {images.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {images.map((url, i) => (
-              <div key={url} className="relative group w-24 h-24 rounded-lg overflow-hidden border border-border bg-surface shrink-0">
+              <div key={url} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border bg-surface shrink-0">
                 <img src={url} alt="" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                  {i > 0 && (
-                    <button type="button" onClick={() => moveImage(i, i - 1)}
-                      className="w-7 h-7 rounded bg-white/20 hover:bg-white/40 flex items-center justify-center text-white transition-colors">
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  )}
-                  {i < images.length - 1 && (
-                    <button type="button" onClick={() => moveImage(i, i + 1)}
-                      className="w-7 h-7 rounded bg-white/20 hover:bg-white/40 flex items-center justify-center text-white transition-colors">
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  )}
-                  <button type="button" onClick={() => removeImage(i)}
-                    className="w-7 h-7 rounded bg-red-600/80 hover:bg-red-600 flex items-center justify-center text-white transition-colors">
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                </div>
-                {i === 0 && <span className="absolute top-1 left-1 text-[9px] font-bold bg-accent text-white px-1 rounded">MAIN</span>}
+                {i === 0 && <span className="absolute top-1 left-1 text-[9px] font-bold bg-accent text-white px-1 rounded z-10">MAIN</span>}
+                {/* Delete — top-right, always visible */}
+                <button type="button" onClick={() => removeImage(i)}
+                  className="absolute top-1 right-1 z-10 w-6 h-6 rounded bg-red-600/80 hover:bg-red-600 flex items-center justify-center text-white transition-colors">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
+                  </svg>
+                </button>
+                {/* Reorder arrows — bottom bar, always visible */}
+                {images.length > 1 && (
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-1 pb-1 bg-gradient-to-t from-black/70 to-transparent pt-3">
+                    {i > 0 ? (
+                      <button type="button" onClick={() => moveImage(i, i - 1)}
+                        className="w-7 h-7 rounded bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    ) : <div className="w-7 h-7" />}
+                    {i < images.length - 1 ? (
+                      <button type="button" onClick={() => moveImage(i, i + 1)}
+                        className="w-7 h-7 rounded bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    ) : <div className="w-7 h-7" />}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -7,7 +7,14 @@ import AdminBar from '@/components/AdminBar'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
 function sanitize(html: string) {
-  return html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '')
+  const cleaned = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+  // Plain text (no HTML tags) — convert newlines to <br>
+  if (!/<[a-z]/i.test(cleaned)) {
+    return cleaned.replace(/\n/g, '<br>')
+  }
+  return cleaned
 }
 import type { Product } from '@/lib/types'
 

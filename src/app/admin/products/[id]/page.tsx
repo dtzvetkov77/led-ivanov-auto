@@ -9,12 +9,14 @@ export default async function EditProductPage({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
 
-  const [{ data: product }, { data: categories }, { data: makes }, { data: pc }, { data: pm }] = await Promise.all([
+  const [{ data: product }, { data: categories }, { data: makes }, { data: models }, { data: pc }, { data: pm }, { data: pmod }] = await Promise.all([
     supabase.from('products').select('*').eq('id', id).single(),
     supabase.from('categories').select('*').order('name'),
     supabase.from('makes').select('*').order('name'),
+    supabase.from('models').select('*').order('name'),
     supabase.from('product_categories').select('category_id').eq('product_id', id),
     supabase.from('product_makes').select('make_id').eq('product_id', id),
+    supabase.from('product_models').select('model_id').eq('product_id', id),
   ])
 
   if (!product) notFound()
@@ -25,6 +27,7 @@ export default async function EditProductPage({ params }: Props) {
     selectedCategoryIds = [product.category_id]
   }
   const selectedMakeIds = (pm ?? []).map(r => r.make_id)
+  const selectedModelIds = (pmod ?? []).map(r => r.model_id)
 
   const variations = (product.variations ?? []) as import('@/lib/types').ProductVariation[]
 
@@ -35,8 +38,10 @@ export default async function EditProductPage({ params }: Props) {
         product={product}
         categories={categories ?? []}
         makes={makes ?? []}
+        models={models ?? []}
         selectedCategoryIds={selectedCategoryIds}
         selectedMakeIds={selectedMakeIds}
+        selectedModelIds={selectedModelIds}
         hasVariations={variations.length > 0}
       />
       {variations.length > 0 && (
