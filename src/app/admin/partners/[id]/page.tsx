@@ -74,6 +74,7 @@ export default function AdminPartnerDetailPage() {
       .from('partners')
       .update({
         name: partner.name,
+        slug: partner.slug,
         city: partner.city,
         address: partner.address,
         phone: partner.phone,
@@ -197,6 +198,15 @@ export default function AdminPartnerDetailPage() {
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted mb-5">Информация</h2>
         <form onSubmit={handleSave} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {field('Име', 'name')}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-muted uppercase tracking-wide">Slug</label>
+            <input
+              type="text"
+              value={partner.slug}
+              onChange={e => setPartner(prev => prev ? { ...prev, slug: e.target.value } : prev)}
+              className="bg-background border border-border rounded-xl px-3.5 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-accent transition-colors"
+            />
+          </div>
           {field('Град', 'city')}
           {field('Адрес', 'address')}
           {field('Телефон', 'phone')}
