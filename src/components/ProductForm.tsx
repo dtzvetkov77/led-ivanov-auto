@@ -63,6 +63,16 @@ export default function ProductForm({ product, categories, makes, models = [], s
   const toggleModel = (id: string) =>
     setModelIds(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id])
 
+  const toggleAllMakeModels = (makeId: string) => {
+    const makeModelIds = models.filter(m => m.make_id === makeId).map(m => m.id)
+    const allSelected = makeModelIds.every(id => modelIds.includes(id))
+    setModelIds(prev =>
+      allSelected
+        ? prev.filter(id => !makeModelIds.includes(id))
+        : [...prev, ...makeModelIds.filter(id => !prev.includes(id))]
+    )
+  }
+
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
     setUploading(true)
@@ -283,9 +293,20 @@ export default function ProductForm({ product, categories, makes, models = [], s
               const make = makes.find(m => m.id === makeId)
               const makeModels = models.filter(m => m.make_id === makeId)
               if (!make || makeModels.length === 0) return null
+              const makeModelIds = makeModels.map(m => m.id)
+              const allSelected = makeModelIds.every(id => modelIds.includes(id))
               return (
                 <div key={makeId}>
-                  <p className="text-xs font-semibold text-white mb-1.5">{make.name}</p>
+                  <div className="flex items-center gap-3 mb-1.5">
+                    <p className="text-xs font-semibold text-white">{make.name}</p>
+                    <button
+                      type="button"
+                      onClick={() => toggleAllMakeModels(makeId)}
+                      className="text-[11px] px-2 py-0.5 rounded border border-border hover:border-accent text-muted hover:text-accent transition-colors"
+                    >
+                      {allSelected ? 'Изчисти всички' : 'Избери всички'}
+                    </button>
+                  </div>
                   <div className="flex flex-wrap gap-x-5 gap-y-2 ml-2">
                     {makeModels.map(model => (
                       <label key={model.id} className="flex items-center gap-2 cursor-pointer">
