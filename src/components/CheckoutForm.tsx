@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -7,7 +7,6 @@ import { getCart, clearCart, cartTotal } from '@/lib/cart'
 import type { CartItem } from '@/lib/types'
 
 type DeliveryType = 'address' | 'office'
-type EcontOffice = { id: number; name: string; city: string; address: string }
 
 export default function CheckoutForm() {
   const router = useRouter()
@@ -16,10 +15,6 @@ export default function CheckoutForm() {
   const [items, setItems] = useState<CartItem[]>([])
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('address')
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
-
-  const [econtOffices, setEcontOffices] = useState<EcontOffice[]>([])
-  const [filteredOffices, setFilteredOffices] = useState<EcontOffice[]>([])
-  const econtLoaded = useRef(false)
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -34,32 +29,6 @@ export default function CheckoutForm() {
   })
 
   useEffect(() => { setItems(getCart()) }, [])
-
-  // Load Econt offices once when switching to office delivery
-  useEffect(() => {
-    if (deliveryType === 'office' && form.courier === 'ekont' && !econtLoaded.current) {
-      econtLoaded.current = true
-      fetch('/econt-offices.json')
-        .then(r => r.json())
-        .then((data: EcontOffice[]) => {
-          setEcontOffices(data)
-        })
-    }
-  }, [deliveryType, form.courier])
-
-  // Filter offices when city changes
-  useEffect(() => {
-    if (!form.delivery_city || econtOffices.length === 0) {
-      setFilteredOffices([])
-      return
-    }
-    const q = form.delivery_city.trim().toLowerCase()
-    if (q.length < 2) { setFilteredOffices([]); return }
-    const matches = econtOffices.filter(o => o.city.toLowerCase().includes(q))
-    setFilteredOffices(matches)
-    // Reset office selection when city changes
-    setForm(f => ({ ...f, courier_office: '' }))
-  }, [form.delivery_city, econtOffices])
 
   const set = (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -161,7 +130,7 @@ export default function CheckoutForm() {
                 <button
                   key={c}
                   type="button"
-                  onClick={() => setForm(f => ({ ...f, courier: c, courier_office: '' }))}
+                  onClick={() => setForm(f => ({ ...f, courier: c }))}
                   className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
                     form.courier === c
                       ? 'border-accent bg-accent/10 text-white'
@@ -227,6 +196,11 @@ export default function CheckoutForm() {
             </div>
           ) : (
             <div className="space-y-4">
+              <Field label={`Офис на ${form.courier === 'ekont' ? 'Еконт' : 'Спиди'}`} error={errors.courier_office}>
+                <input type="text" value={form.courier_office} onChange={set('courier_office')} required
+                  placeholder="напр. Офис Витоша"
+                  className="field-input" />
+              </Field>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Населено място" error={errors.delivery_city}>
                   <input type="text" value={form.delivery_city} onChange={set('delivery_city')} required
@@ -239,29 +213,6 @@ export default function CheckoutForm() {
                     className="field-input" />
                 </Field>
               </div>
-              {form.courier === 'ekont' ? (
-                <Field label="Офис на Еконт" error={errors.courier_office}>
-                  {filteredOffices.length > 0 ? (
-                    <select value={form.courier_office} onChange={set('courier_office')} required className="field-input">
-                      <option value="">— Избери офис —</option>
-                      {filteredOffices.map(o => (
-                        <option key={o.id} value={o.name}>{o.name} — {o.address}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input type="text" value={form.courier_office} onChange={set('courier_office')} required
-                      placeholder={form.delivery_city.length >= 2 ? 'Няма намерени офиси за този град' : 'Въведи град по-горе'}
-                      disabled={form.delivery_city.length < 2}
-                      className="field-input disabled:opacity-50" />
-                  )}
-                </Field>
-              ) : (
-                <Field label="Офис на Спиди" error={errors.courier_office}>
-                  <input type="text" value={form.courier_office} onChange={set('courier_office')} required
-                    placeholder="напр. Спиди — Витоша"
-                    className="field-input" />
-                </Field>
-              )}
             </div>
           )}
         </fieldset>
