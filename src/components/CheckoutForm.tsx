@@ -134,13 +134,13 @@ export default function CheckoutForm() {
   return (
     <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
       {/* ── Left: Form ── */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 min-w-0 overflow-x-hidden">
         {errors._form && (
           <p className="bg-red-900/30 border border-red-700 text-red-400 text-sm px-4 py-3 rounded-xl">{errors._form}</p>
         )}
 
         {/* Contact */}
-        <fieldset className="bg-surface border border-border rounded-2xl p-6 space-y-4">
+        <fieldset className="bg-surface border border-border rounded-2xl p-6 space-y-4 min-w-0 w-full">
           <legend className="text-sm font-bold uppercase tracking-widest text-accent px-1">Данни за контакт</legend>
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -164,7 +164,7 @@ export default function CheckoutForm() {
         </fieldset>
 
         {/* Courier + delivery type */}
-        <fieldset className="bg-surface border border-border rounded-2xl p-6 space-y-4">
+        <fieldset className="bg-surface border border-border rounded-2xl p-6 space-y-4 min-w-0 w-full">
           <legend className="text-sm font-bold uppercase tracking-widest text-accent px-1">Доставка</legend>
 
           {/* Courier picker */}
@@ -263,7 +263,7 @@ export default function CheckoutForm() {
         </fieldset>
 
         {/* Notes */}
-        <fieldset className="bg-surface border border-border rounded-2xl p-6">
+        <fieldset className="bg-surface border border-border rounded-2xl p-6 min-w-0 w-full">
           <legend className="text-sm font-bold uppercase tracking-widest text-accent px-1">Бележка</legend>
           <textarea value={form.notes} onChange={set('notes')} rows={3}
             placeholder="Допълнителна информация за поръчката (незадължително)"
