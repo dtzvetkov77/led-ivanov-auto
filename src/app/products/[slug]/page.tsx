@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import ProductGallery from '@/components/ProductGallery'
 import ProductActions from '@/components/ProductActions'
 import ProductDescriptionTabs from '@/components/ProductDescriptionTabs'
+import FrequentlyBoughtTogether from '@/components/FrequentlyBoughtTogether'
 import AdminBar from '@/components/AdminBar'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
@@ -182,7 +183,7 @@ export default async function ProductPage({ params }: Props) {
           )}
 
           {/* Price + variation + add to cart */}
-          <ProductActions product={p} />
+          <ProductActions product={p} categorySlug={(p as any).category?.slug} />
 
           {/* Separator */}
           <div className="h-px bg-border my-6" />
@@ -214,6 +215,12 @@ export default async function ProductPage({ params }: Props) {
       {cleanDescription && (
         <ProductDescriptionTabs description={cleanDescription} attributes={p.attributes ?? []} />
       )}
+
+      {/* Frequently Bought Together */}
+      <FrequentlyBoughtTogether
+        currentProduct={{ id: p.id, name: p.name, slug: p.slug, price: p.price, sale_price: p.sale_price, images: p.images }}
+        categorySlug={(p as any).category?.slug}
+      />
 
       {/* Related products */}
       {related && related.length > 0 && (

@@ -25,16 +25,41 @@ export default function CartDrawer({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) return
     const supabase = createClient()
-    supabase
+    const cart = getCart()
+    const cartIds = new Set(cart.map(i => i.product_id))
+
+    // Find category of most expensive cart item
+    const topItem = [...cart].sort((a, b) => b.price - a.price)[0]
+    const topCategorySlug = topItem?.category_slug
+
+    const query = supabase
       .from('products')
-      .select('id,name,slug,price,sale_price,images')
+      .select('id,name,slug,price,sale_price,images,category_id')
       .eq('published', true)
       .order('position')
-      .limit(12)
+
+    // Filter by same category if available
+    const filteredQuery = topCategorySlug
+      ? query.eq('category_id',
+          supabase.from('categories').select('id').eq('slug', topCategorySlug).limit(1)
+        )
+      : query
+
+    // Simpler approach: just filter client-side using category_slug from cart items
+    supabase
+      .from('products')
+      .select('id,name,slug,price,sale_price,images,categories!category_id(slug)')
+      .eq('published', true)
+      .order('position')
+      .limit(20)
       .then(({ data }) => {
         if (!data) return
-        const cartIds = new Set(getCart().map(i => i.product_id))
-        setUpsell((data as UP[]).filter(p => !cartIds.has(p.id)).slice(0, 3))
+        const all = data as (UP & { categories: { slug: string } | null })[]
+        const filtered = topCategorySlug
+          ? all.filter(p => (p.categories as any)?.slug === topCategorySlug && !cartIds.has(p.id))
+          : all.filter(p => !cartIds.has(p.id))
+        const result = filtered.length >= 2 ? filtered : all.filter(p => !cartIds.has(p.id))
+        setUpsell(result.slice(0, 3))
       })
   }, [open])
 
@@ -217,6 +242,24 @@ export default function CartDrawer({ open, onClose }: Props) {
                   </div>
                 )
               })}
+
+              {/* Pair Nudge — LED bulbs need 2 per car */}
+              {items.filter(i => i.category_slug === 'led-krushki' && i.qty === 1).map(item => (
+                <div key={`nudge-${item.product_id}`} className="flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
+                  <svg className="w-5 h-5 text-yellow-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-xs text-yellow-200 flex-1 leading-snug">
+                    Колите имат <strong>2 фара</strong> — поръчайте 2 бр. за комплект.
+                  </p>
+                  <button
+                    onClick={() => { handleQty(item.product_id, 2) }}
+                    className="shrink-0 text-xs bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    +1 бр.
+                  </button>
+                </div>
+              ))}
 
               {/* Upsell */}
               {upsell.length > 0 && (

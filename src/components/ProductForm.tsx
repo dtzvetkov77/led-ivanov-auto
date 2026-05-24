@@ -29,6 +29,7 @@ export default function ProductForm({ product, categories, makes, models = [], s
     sale_price: String(product?.sale_price ?? ''),
     stock_quantity: product?.stock_quantity != null ? String(product.stock_quantity) : '',
     published: product?.published ?? true,
+    is_order_bump: (product as any)?.is_order_bump ?? false,
     position: String(product?.position ?? 0),
   })
   const [categoryIds, setCategoryIds] = useState<string[]>(selectedCategoryIds)
@@ -119,6 +120,7 @@ export default function ProductForm({ product, categories, makes, models = [], s
       category_id: categoryIds[0] ?? null,
       images,
       published: form.published,
+      is_order_bump: form.is_order_bump,
       position: parseInt(form.position, 10),
     }
     if (!hasVariations) {
@@ -382,6 +384,11 @@ export default function ProductForm({ product, categories, makes, models = [], s
       <label className="flex items-center gap-2 cursor-pointer">
         <input type="checkbox" checked={form.published} onChange={set('published')} className="accent-red-600 w-4 h-4" />
         <span className="text-sm">Публикуван</span>
+      </label>
+
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" checked={form.is_order_bump} onChange={set('is_order_bump')} className="accent-red-600 w-4 h-4" />
+        <span className="text-sm">Order Bump <span className="text-muted text-xs">(показва се като допълнение в checkout)</span></span>
       </label>
 
       <div className="flex gap-3 pt-2">

@@ -60,6 +60,7 @@ export type CartItem = {
   price: number
   image: string
   qty: number
+  category_slug?: string
 }
 
 export type OrderStatus = 'new' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'

@@ -24,6 +24,7 @@ export default function ProductCard({ product }: Props) {
       slug: product.slug,
       price: displayPrice,
       image,
+      category_slug: (product as any).category?.slug ?? undefined,
     })
     window.dispatchEvent(new Event('cart-updated'))
     dispatchToast(`${product.name} е добавен в количката`)
@@ -61,6 +62,9 @@ export default function ProductCard({ product }: Props) {
 
       <div className="p-3 flex flex-col flex-1">
         <h3 className="text-sm font-medium line-clamp-3 flex-1 mb-3">{product.name}</h3>
+        {product.stock_quantity !== null && product.stock_quantity > 0 && product.stock_quantity <= 5 && (
+          <p className="text-red-400 text-[11px] font-semibold mb-1.5">Само {product.stock_quantity} бр.</p>
+        )}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col">
             <span className="text-accent font-bold text-base whitespace-nowrap">{displayPrice.toFixed(2)} €</span>

@@ -7,6 +7,7 @@ import { getCart, clearCart, cartTotal } from '@/lib/cart'
 import type { CartItem } from '@/lib/types'
 
 type DeliveryType = 'address' | 'office'
+type BumpProduct = { id: string; name: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
 
 export default function CheckoutForm() {
   const router = useRouter()
@@ -15,6 +16,8 @@ export default function CheckoutForm() {
   const [items, setItems] = useState<CartItem[]>([])
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('address')
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
+  const [bumpProduct, setBumpProduct] = useState<BumpProduct | null>(null)
+  const [bumpChecked, setBumpChecked] = useState(false)
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -29,6 +32,19 @@ export default function CheckoutForm() {
   })
 
   useEffect(() => { setItems(getCart()) }, [])
+
+  useEffect(() => {
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      createClient()
+        .from('products')
+        .select('id,name,price,sale_price,images,short_description')
+        .eq('is_order_bump', true)
+        .eq('published', true)
+        .limit(1)
+        .single()
+        .then(({ data }) => { if (data) setBumpProduct(data as BumpProduct) })
+    })
+  }, [])
 
   const set = (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -55,12 +71,16 @@ export default function CheckoutForm() {
       : `Офис ${form.courier.charAt(0).toUpperCase() + form.courier.slice(1)}: ${form.courier_office}`
     const delivery_city = cityWithRegion
 
+    const allItems: CartItem[] = bumpChecked && bumpProduct
+      ? [...items, { product_id: bumpProduct.id, name: bumpProduct.name, slug: '', price: bumpProduct.sale_price ?? bumpProduct.price, image: bumpProduct.images[0] ?? '', qty: 1 }]
+      : items
+
     setLoading(true)
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, delivery_address, delivery_city, items }),
+        body: JSON.stringify({ ...form, delivery_address, delivery_city, items: allItems }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -224,6 +244,42 @@ export default function CheckoutForm() {
             placeholder="Допълнителна информация за поръчката (незадължително)"
             className="field-input mt-3 resize-none" />
         </fieldset>
+
+        {/* Order Bump */}
+        {bumpProduct && (
+          <label className={`flex items-start gap-3 cursor-pointer rounded-2xl border-2 p-4 transition-colors ${
+            bumpChecked ? 'border-accent bg-accent/5' : 'border-border hover:border-accent/50'
+          }`}>
+            <div className="relative mt-0.5 shrink-0">
+              <input type="checkbox" className="sr-only" checked={bumpChecked} onChange={e => setBumpChecked(e.target.checked)} />
+              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                bumpChecked ? 'bg-accent border-accent' : 'border-border'
+              }`}>
+                {bumpChecked && (
+                  <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
+                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </div>
+            </div>
+            {bumpProduct.images[0] && (
+              <img src={bumpProduct.images[0]} alt={bumpProduct.name} className="w-14 h-14 rounded-lg object-cover shrink-0 border border-border" />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-accent mb-0.5">Добави към поръчката</p>
+              <p className="font-semibold text-white text-sm leading-snug">{bumpProduct.name}</p>
+              {bumpProduct.short_description && (
+                <p className="text-xs text-muted mt-0.5 line-clamp-2" dangerouslySetInnerHTML={{ __html: bumpProduct.short_description.replace(/<[^>]+>/g,'') }} />
+              )}
+              <p className="text-accent font-bold mt-1">
+                {(bumpProduct.sale_price ?? bumpProduct.price).toFixed(2)} €
+                {bumpProduct.sale_price && (
+                  <span className="text-muted line-through text-xs ml-2">{bumpProduct.price.toFixed(2)} €</span>
+                )}
+              </p>
+            </div>
+          </label>
+        )}
 
         {/* Privacy */}
         <label className={`flex items-start gap-3 cursor-pointer group ${errors.privacy ? 'text-red-400' : ''}`}>
