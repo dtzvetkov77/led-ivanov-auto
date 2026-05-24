@@ -154,7 +154,7 @@ export default function ProductActions({ product, categorySlug }: Props) {
 
       {/* Sticky ATC bar — visible when main button scrolled out of view */}
       {showStickyBar && canAddToCart && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-t border-border px-4 py-3 flex items-center gap-3 shadow-lg">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t border-border px-4 py-3 flex items-center gap-3 shadow-lg">
           {product.images[0] && (
             <img src={product.images[0]} alt={product.name} className="w-10 h-10 rounded-lg object-cover shrink-0 border border-border" />
           )}
