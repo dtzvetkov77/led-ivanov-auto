@@ -132,7 +132,7 @@ export default function CheckoutForm() {
   const freeShipping = total >= 199
 
   return (
-    <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
+    <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start overflow-x-hidden">
       {/* ── Left: Form ── */}
       <form onSubmit={handleSubmit} className="space-y-6 min-w-0 overflow-x-hidden">
         {errors._form && (
@@ -365,7 +365,7 @@ export default function CheckoutForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-4 rounded-xl text-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-3.5 rounded-xl text-base transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

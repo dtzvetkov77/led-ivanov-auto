@@ -10,6 +10,11 @@ fieldset {
   max-width: 100%;
 }
 
+fieldset legend {
+  max-width: 100%;
+  white-space: nowrap;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
