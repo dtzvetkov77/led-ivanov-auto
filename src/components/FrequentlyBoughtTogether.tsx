@@ -40,7 +40,7 @@ export default function FrequentlyBoughtTogether({ currentProduct, categorySlug 
       .limit(20)
       .then(({ data }) => {
         if (!data) return
-        const match = (data as (FBTProduct & { categories: { slug: string } | null })[])
+        const match = (data as unknown as (FBTProduct & { categories: { slug: string } | null })[])
           .find(p => targetSlugs.includes((p.categories as any)?.slug ?? ''))
         if (match) setCompanion(match)
       })
