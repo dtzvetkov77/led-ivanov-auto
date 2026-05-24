@@ -54,7 +54,7 @@ export default function CartDrawer({ open, onClose }: Props) {
       .limit(20)
       .then(({ data }) => {
         if (!data) return
-        const all = data as (UP & { categories: { slug: string } | null })[]
+        const all = data as unknown as (UP & { categories: { slug: string } | null })[]
         const filtered = topCategorySlug
           ? all.filter(p => (p.categories as any)?.slug === topCategorySlug && !cartIds.has(p.id))
           : all.filter(p => !cartIds.has(p.id))
