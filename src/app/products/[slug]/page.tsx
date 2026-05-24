@@ -96,6 +96,15 @@ export default async function ProductPage({ params }: Props) {
         .limit(4)
     : { data: [] }
 
+  // Bundle relations for FBT
+  const { data: bundleRelations } = await supabase
+    .from('product_relations')
+    .select('product:products!related_id(id, name, slug, price, sale_price, images)')
+    .eq('product_id', p.id)
+    .eq('type', 'bundle')
+    .order('position')
+  const bundleProducts = ((bundleRelations ?? []) as unknown as { product: { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[] } }[]).map(r => r.product)
+
   const cleanDescription = p.description ? sanitize(p.description) : null
 
   const effectivePrice = Number(p.sale_price ?? p.price)
@@ -220,6 +229,7 @@ export default async function ProductPage({ params }: Props) {
       <FrequentlyBoughtTogether
         currentProduct={{ id: p.id, name: p.name, slug: p.slug, price: p.price, sale_price: p.sale_price, images: p.images }}
         categorySlug={(p as any).category?.slug}
+        bundleProducts={bundleProducts}
       />
 
       {/* Related products */}

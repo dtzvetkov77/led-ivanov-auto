@@ -5,7 +5,7 @@ import { addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
 import { createClient } from '@/lib/supabase/client'
 
-// category slug → complementary category slugs
+// fallback: category slug → complementary category slugs (used only if no DB bundle relations)
 const FBT_MAP: Record<string, string[]> = {
   'led-krushki':          ['avtoaksesoari', 'dnevni-svetlini'],
   'dnevni-svetlini':      ['led-krushki', 'byagashti-migachi'],
@@ -18,14 +18,22 @@ type FBTProduct = { id: string; name: string; slug: string; price: number; sale_
 type Props = {
   currentProduct: { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[] }
   categorySlug: string | undefined
+  bundleProducts?: FBTProduct[]
 }
 
-export default function FrequentlyBoughtTogether({ currentProduct, categorySlug }: Props) {
-  const [companion, setCompanion] = useState<FBTProduct | null>(null)
+export default function FrequentlyBoughtTogether({ currentProduct, categorySlug, bundleProducts }: Props) {
+  const [companion, setCompanion] = useState<FBTProduct | null>(bundleProducts?.[0] ?? null)
   const [adding, setAdding] = useState(false)
   const [added, setAdded] = useState(false)
 
   useEffect(() => {
+    // If DB bundle products provided, use first one — no fetch needed
+    if (bundleProducts && bundleProducts.length > 0) {
+      setCompanion(bundleProducts[0])
+      return
+    }
+
+    // Fallback: FBT_MAP category logic
     if (!categorySlug) return
     const targetSlugs = FBT_MAP[categorySlug]
     if (!targetSlugs?.length) return
@@ -44,7 +52,7 @@ export default function FrequentlyBoughtTogether({ currentProduct, categorySlug 
           .find(p => targetSlugs.includes((p.categories as any)?.slug ?? ''))
         if (match) setCompanion(match)
       })
-  }, [categorySlug, currentProduct.id])
+  }, [categorySlug, currentProduct.id, bundleProducts])
 
   if (!companion) return null
 
@@ -55,7 +63,7 @@ export default function FrequentlyBoughtTogether({ currentProduct, categorySlug 
   const handleAddBundle = () => {
     setAdding(true)
     addToCart({ product_id: currentProduct.id, name: currentProduct.name, slug: currentProduct.slug, price: currentPrice, image: currentProduct.images[0] ?? '', category_slug: categorySlug })
-    addToCart({ product_id: companion.id, name: companion.name, slug: companion.slug, price: companionPrice, image: companion.images[0] ?? '', category_slug: (companion as any).categories?.slug })
+    addToCart({ product_id: companion.id, name: companion.name, slug: companion.slug, price: companionPrice, image: companion.images[0] ?? '', category_slug: categorySlug })
     window.dispatchEvent(new Event('cart-updated'))
     dispatchToast('Комплектът е добавен в количката')
     setAdded(true)

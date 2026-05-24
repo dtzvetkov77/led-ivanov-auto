@@ -28,24 +28,37 @@ export default function CartDrawer({ open, onClose }: Props) {
     const cart = getCart()
     const cartIds = new Set(cart.map(i => i.product_id))
 
-    // Find category of most expensive cart item
+    // Base product IDs (strip variation suffix __{"...})
+    const baseIds = cart.map(i => i.product_id.split('__')[0]).filter(id => id.length === 36)
+
+    if (baseIds.length > 0) {
+      // Try DB crosssell + upsell relations first
+      supabase
+        .from('product_relations')
+        .select('product:products!related_id(id,name,slug,price,sale_price,images)')
+        .in('product_id', baseIds)
+        .in('type', ['crosssell', 'upsell'])
+        .order('position')
+        .then(({ data }) => {
+          if (data && data.length > 0) {
+            const seen = new Set<string>()
+            const products = (data as unknown as { product: UP }[])
+              .map(r => r.product)
+              .filter(p => !cartIds.has(p.id) && !seen.has(p.id) && seen.add(p.id))
+            setUpsell(products.slice(0, 3))
+            return
+          }
+          // Fallback: category-based
+          loadCategoryUpsell(supabase, cart, cartIds)
+        })
+    } else {
+      loadCategoryUpsell(supabase, cart, cartIds)
+    }
+  }, [open])
+
+  function loadCategoryUpsell(supabase: ReturnType<typeof createClient>, cart: ReturnType<typeof getCart>, cartIds: Set<string>) {
     const topItem = [...cart].sort((a, b) => b.price - a.price)[0]
     const topCategorySlug = topItem?.category_slug
-
-    const query = supabase
-      .from('products')
-      .select('id,name,slug,price,sale_price,images,category_id')
-      .eq('published', true)
-      .order('position')
-
-    // Filter by same category if available
-    const filteredQuery = topCategorySlug
-      ? query.eq('category_id',
-          supabase.from('categories').select('id').eq('slug', topCategorySlug).limit(1)
-        )
-      : query
-
-    // Simpler approach: just filter client-side using category_slug from cart items
     supabase
       .from('products')
       .select('id,name,slug,price,sale_price,images,categories!category_id(slug)')
@@ -61,7 +74,7 @@ export default function CartDrawer({ open, onClose }: Props) {
         const result = filtered.length >= 2 ? filtered : all.filter(p => !cartIds.has(p.id))
         setUpsell(result.slice(0, 3))
       })
-  }, [open])
+  }
 
   // Lock body scroll when open (iOS Safari fix)
   useEffect(() => {

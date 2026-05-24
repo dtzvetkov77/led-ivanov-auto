@@ -8,6 +8,7 @@ import type { CartItem } from '@/lib/types'
 
 type DeliveryType = 'address' | 'office'
 type BumpProduct = { id: string; name: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
+type DownsellProduct = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
 
 export default function CheckoutForm() {
   const router = useRouter()
@@ -18,6 +19,7 @@ export default function CheckoutForm() {
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [bumpProduct, setBumpProduct] = useState<BumpProduct | null>(null)
   const [bumpChecked, setBumpChecked] = useState(false)
+  const [downsells, setDownsells] = useState<DownsellProduct[]>([])
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -35,7 +37,9 @@ export default function CheckoutForm() {
 
   useEffect(() => {
     import('@/lib/supabase/client').then(({ createClient }) => {
-      createClient()
+      const supabase = createClient()
+      // Order bump
+      supabase
         .from('products')
         .select('id,name,price,sale_price,images,short_description')
         .eq('is_order_bump', true)
@@ -43,6 +47,27 @@ export default function CheckoutForm() {
         .limit(1)
         .single()
         .then(({ data }) => { if (data) setBumpProduct(data as BumpProduct) })
+
+      // Downsell relations for cart items
+      const cart = getCart()
+      const baseIds = cart.map(i => i.product_id.split('__')[0]).filter(id => id.length === 36)
+      if (baseIds.length > 0) {
+        supabase
+          .from('product_relations')
+          .select('product:products!related_id(id,name,slug,price,sale_price,images,short_description)')
+          .in('product_id', baseIds)
+          .eq('type', 'downsell')
+          .order('position')
+          .limit(3)
+          .then(({ data }) => {
+            if (!data) return
+            const seen = new Set<string>()
+            const products = (data as unknown as { product: DownsellProduct }[])
+              .map(r => r.product)
+              .filter(p => !seen.has(p.id) && seen.add(p.id))
+            setDownsells(products)
+          })
+      }
     })
   }, [])
 
@@ -244,6 +269,33 @@ export default function CheckoutForm() {
             placeholder="Допълнителна информация за поръчката (незадължително)"
             className="field-input mt-3 resize-none" />
         </fieldset>
+
+        {/* Downsell — cheaper alternatives */}
+        {downsells.length > 0 && (
+          <div className="bg-surface border border-border rounded-2xl p-4 space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-muted">По-евтина алтернатива</p>
+            {downsells.map(p => (
+              <div key={p.id} className="flex items-center gap-3">
+                {p.images[0] && (
+                  <img src={p.images[0]} alt={p.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-border" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium line-clamp-1">{p.name}</p>
+                  {p.short_description && (
+                    <p className="text-xs text-muted line-clamp-1">{p.short_description.replace(/<[^>]+>/g, '')}</p>
+                  )}
+                  <p className="text-accent font-bold text-sm">{(p.sale_price ?? p.price).toFixed(2)} €</p>
+                </div>
+                <Link
+                  href={`/products/${p.slug}`}
+                  className="shrink-0 text-xs text-accent border border-accent/30 hover:border-accent px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  Виж →
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Order Bump */}
         {bumpProduct && (

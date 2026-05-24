@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ProductForm from '@/components/ProductForm'
 import VariationStockEditor from '@/components/VariationStockEditor'
+import ProductRelationsManager from '@/components/ProductRelationsManager'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -49,6 +50,7 @@ export default async function EditProductPage({ params }: Props) {
           <VariationStockEditor productId={product.id} variations={variations} />
         </div>
       )}
+      <ProductRelationsManager productId={product.id} />
     </div>
   )
 }
