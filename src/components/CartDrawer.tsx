@@ -256,24 +256,6 @@ export default function CartDrawer({ open, onClose }: Props) {
                 )
               })}
 
-              {/* Pair Nudge — LED bulbs need 2 per car */}
-              {items.filter(i => i.category_slug === 'led-krushki' && i.qty === 1).map(item => (
-                <div key={`nudge-${item.product_id}`} className="flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
-                  <svg className="w-5 h-5 text-yellow-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <p className="text-xs text-yellow-200 flex-1 leading-snug">
-                    Колите имат <strong>2 фара</strong> — поръчайте 2 бр. за комплект.
-                  </p>
-                  <button
-                    onClick={() => { handleQty(item.product_id, 2) }}
-                    className="shrink-0 text-xs bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap"
-                  >
-                    +1 бр.
-                  </button>
-                </div>
-              ))}
-
               {/* Upsell */}
               {upsell.length > 0 && (
                 <div className="pt-1">

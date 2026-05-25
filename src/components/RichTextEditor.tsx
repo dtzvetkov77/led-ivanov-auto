@@ -3,24 +3,27 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
+import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 
 type Props = {
   value: string
   onChange: (html: string) => void
   placeholder?: string
+  minHeight?: string
 }
 
 const btnCls = 'p-1.5 rounded hover:bg-white/10 transition-colors text-muted hover:text-white disabled:opacity-30'
 const activeCls = 'bg-accent/20 text-accent'
 
-export default function RichTextEditor({ value, onChange, placeholder }: Props) {
+export default function RichTextEditor({ value, onChange, placeholder, minHeight = '200px' }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Underline,
       Image.configure({ inline: false, allowBase64: false }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-accent underline' } }),
       Placeholder.configure({ placeholder: placeholder ?? 'Напишете съдържанието тук...' }),
@@ -28,7 +31,8 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
     content: value,
     editorProps: {
       attributes: {
-        class: 'prose prose-invert prose-sm max-w-none min-h-[320px] px-4 py-3 focus:outline-none',
+        class: `prose prose-invert prose-sm max-w-none px-4 py-3 focus:outline-none`,
+        style: `min-height: ${minHeight}`,
       },
     },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -37,10 +41,19 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
   // Sync value when changed externally (e.g. on load)
   useEffect(() => {
     if (!editor) return
-    if (editor.getHTML() !== value) {
+    if (editor.getHTML() !== value && !editor.isFocused) {
       editor.commands.setContent(value || '', { emitUpdate: false })
     }
   }, [value, editor])
+
+  const setLink = useCallback(() => {
+    if (!editor) return
+    const prev = editor.getAttributes('link').href ?? ''
+    const url = window.prompt('URL:', prev)
+    if (url === null) return
+    if (url === '') { editor.chain().focus().unsetLink().run(); return }
+    editor.chain().focus().setLink({ href: url }).run()
+  }, [editor])
 
   const uploadImage = async (file: File) => {
     const form = new FormData()
@@ -97,6 +110,24 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
         <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={`${btnCls} ${editor.isActive('italic') ? activeCls : ''}`} title="Italic">
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
         </button>
+        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={`${btnCls} ${editor.isActive('underline') ? activeCls : ''}`} title="Underline">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3" strokeLinecap="round"/><line x1="4" y1="21" x2="20" y2="21" strokeLinecap="round"/></svg>
+        </button>
+        <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={`${btnCls} ${editor.isActive('strike') ? activeCls : ''}`} title="Strikethrough">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round"/><path d="M16 6c0-1.1-1.343-2-3-2s-3 .9-3 2 1.343 2 3 2" strokeLinecap="round"/><path d="M8 18c0 1.1 1.343 2 3 2s3-.9 3-2-1.343-2-3-2" strokeLinecap="round"/></svg>
+        </button>
+
+        <div className="w-px h-5 bg-border mx-1" />
+
+        {/* Link */}
+        <button type="button" onClick={setLink} className={`${btnCls} ${editor.isActive('link') ? activeCls : ''}`} title="Link">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" strokeLinecap="round"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round"/></svg>
+        </button>
+        {editor.isActive('link') && (
+          <button type="button" onClick={() => editor.chain().focus().unsetLink().run()} className={btnCls} title="Remove link">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" strokeLinecap="round"/></svg>
+          </button>
+        )}
 
         <div className="w-px h-5 bg-border mx-1" />
 

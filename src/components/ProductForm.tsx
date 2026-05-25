@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { uploadFile } from '@/lib/upload'
+import RichTextEditor from './RichTextEditor'
 import type { Product, Category, Make, Model } from '@/lib/types'
 
 type Props = {
@@ -217,11 +218,21 @@ export default function ProductForm({ product, categories, makes, models = [], s
 
       <div>
         <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Кратко описание</label>
-        <textarea value={form.short_description} onChange={set('short_description')} rows={2} className={inputCls} />
+        <RichTextEditor
+          value={form.short_description}
+          onChange={v => setForm(f => ({ ...f, short_description: v }))}
+          placeholder="Кратко описание на продукта..."
+          minHeight="80px"
+        />
       </div>
       <div>
         <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">Описание</label>
-        <textarea value={form.description} onChange={set('description')} rows={6} className={inputCls} />
+        <RichTextEditor
+          value={form.description}
+          onChange={v => setForm(f => ({ ...f, description: v }))}
+          placeholder="Пълно описание на продукта..."
+          minHeight="240px"
+        />
       </div>
 
       {/* Categories */}
