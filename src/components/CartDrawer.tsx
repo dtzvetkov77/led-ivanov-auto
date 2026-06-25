@@ -8,7 +8,7 @@ import type { CartItem } from '@/lib/types'
 
 const FREE_SHIPPING = 199
 
-type UP = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[] }
+type UP = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[]; attributes: { variation?: boolean; options?: string[] }[] | null }
 type Props = { open: boolean; onClose: () => void }
 
 export default function CartDrawer({ open, onClose }: Props) {
@@ -35,7 +35,7 @@ export default function CartDrawer({ open, onClose }: Props) {
       // Try DB crosssell + upsell relations first
       supabase
         .from('product_relations')
-        .select('product:products!related_id(id,name,slug,price,sale_price,images)')
+        .select('product:products!related_id(id,name,slug,price,sale_price,images,attributes)')
         .in('product_id', baseIds)
         .in('type', ['crosssell', 'upsell'])
         .order('position')
@@ -61,7 +61,7 @@ export default function CartDrawer({ open, onClose }: Props) {
     const topCategorySlug = topItem?.category_slug
     supabase
       .from('products')
-      .select('id,name,slug,price,sale_price,images,categories!category_id(slug)')
+      .select('id,name,slug,price,sale_price,images,attributes,categories!category_id(slug)')
       .eq('published', true)
       .order('position')
       .limit(20)
@@ -101,7 +101,14 @@ export default function CartDrawer({ open, onClose }: Props) {
     window.dispatchEvent(new Event('cart-updated'))
   }
 
+  const hasVariations = (p: UP) =>
+    p.attributes?.some(a => a.variation && (a.options?.length ?? 0) > 0) ?? false
+
   const handleAddUpsell = (p: UP) => {
+    if (hasVariations(p)) {
+      window.location.href = `/products/${p.slug}`
+      return
+    }
     addToCart({ product_id: p.id, name: p.name, slug: p.slug, price: p.sale_price ?? p.price, image: p.images[0] ?? '' })
     window.dispatchEvent(new Event('cart-updated'))
     dispatchToast(`${p.name} е добавен в количката`)
@@ -272,15 +279,24 @@ export default function CartDrawer({ open, onClose }: Props) {
                           <p className="text-xs font-medium line-clamp-1 leading-tight">{p.name}</p>
                           <p className="text-accent text-xs font-bold mt-0.5">{(p.sale_price ?? p.price).toFixed(2)} €</p>
                         </div>
-                        <button
-                          onClick={() => handleAddUpsell(p)}
-                          className="shrink-0 w-8 h-8 rounded-lg bg-accent hover:bg-accent-hover text-white flex items-center justify-center transition-colors"
-                          aria-label={`Добави ${p.name}`}
-                        >
-                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
-                          </svg>
-                        </button>
+                        {hasVariations(p) ? (
+                          <Link
+                            href={`/products/${p.slug}`}
+                            className="shrink-0 text-xs text-accent border border-accent/40 hover:border-accent px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                          >
+                            Виж →
+                          </Link>
+                        ) : (
+                          <button
+                            onClick={() => handleAddUpsell(p)}
+                            className="shrink-0 w-8 h-8 rounded-lg bg-accent hover:bg-accent-hover text-white flex items-center justify-center transition-colors"
+                            aria-label={`Добави ${p.name}`}
+                          >
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
