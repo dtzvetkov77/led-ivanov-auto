@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ConversionTracker from './ConversionTracker'
 
 export const metadata = { title: 'Поръчката е получена | LED Ivanov Auto', robots: { index: false } }
 
@@ -9,6 +10,7 @@ export default async function SuccessPage({ searchParams }: Props) {
   const safeOrder = order && /^ORD-\d{4}-\d{4,}$/.test(order) ? order : null
   return (
     <div className="max-w-xl mx-auto px-4 py-20 text-center">
+      <ConversionTracker />
       <div className="text-accent text-6xl mb-4">✓</div>
       <h1 className="text-3xl font-black mb-3">Поръчката е получена!</h1>
       {safeOrder && (
