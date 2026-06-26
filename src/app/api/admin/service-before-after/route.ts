@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
         after_url,
         label: label || null,
         position: position ?? 0,
+        published: true,
       })
       .select()
       .single()

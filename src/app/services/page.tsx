@@ -34,14 +34,28 @@ export default async function ServicesPage() {
 
   const previews = await Promise.all(
     SERVICES.map(async s => {
-      const { data } = await supabase
+      const { data: pair } = await supabase
         .from('service_before_after')
         .select('before_url, after_url, label')
         .eq('service', s.slug)
         .eq('published', true)
         .limit(1)
         .maybeSingle()
-      return { ...s, pair: data ?? null }
+
+      let fallbackImg: string | null = null
+      if (!pair) {
+        const { data: img } = await supabase
+          .from('service_images')
+          .select('url')
+          .eq('service', s.slug)
+          .eq('published', true)
+          .order('position')
+          .limit(1)
+          .maybeSingle()
+        fallbackImg = img?.url ?? null
+      }
+
+      return { ...s, pair: pair ?? null, fallbackImg }
     })
   )
 
@@ -68,6 +82,8 @@ export default async function ServicesPage() {
                   <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
                   <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">СЛЕД</span>
                 </>
+              ) : s.fallbackImg ? (
+                <img src={s.fallbackImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : s.heroImg ? (
                 <img src={s.heroImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (

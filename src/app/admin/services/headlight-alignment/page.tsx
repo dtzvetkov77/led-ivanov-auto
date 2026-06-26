@@ -3,53 +3,64 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { uploadFileToStorage, makeStoragePath } from '@/lib/upload-service'
 
-type ServiceImage = {
+type BeforeAfterPair = {
   id: string
   service: string
-  url: string
-  caption: string | null
+  before_url: string
+  after_url: string
+  label: string | null
   position: number
 }
 
 const SERVICE = 'headlight-alignment'
-const TITLE = 'Регулиране на фарове'
 
 export default function AdminHeadlightAlignmentPage() {
-  const [images, setImages] = useState<ServiceImage[]>([])
+  const [pairs, setPairs] = useState<BeforeAfterPair[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
-  const [caption, setCaption] = useState('')
-  const [fileName, setFileName] = useState('')
+  const [label, setLabel] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [beforeName, setBeforeName] = useState('')
+  const [afterName, setAfterName] = useState('')
 
   useEffect(() => {
-    fetch(`/api/admin/service-images?service=${SERVICE}`)
+    fetch(`/api/admin/service-before-after?service=${SERVICE}`)
       .then(r => r.json())
-      .then(data => { setImages(Array.isArray(data) ? data : []); setLoading(false) })
+      .then(data => { setPairs(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault()
-    const input = (e.currentTarget as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement
-    const file = input.files?.[0]
-    if (!file) { setError('Избери снимка'); return }
+    const form = e.currentTarget as HTMLFormElement
+    const beforeInput = form.querySelector('input[name="before"]') as HTMLInputElement
+    const afterInput = form.querySelector('input[name="after"]') as HTMLInputElement
+    const beforeFile = beforeInput.files?.[0]
+    const afterFile = afterInput.files?.[0]
+    if (!beforeFile || !afterFile) { setError('Избери и двете снимки'); return }
+
     setUploading(true)
     setError(null)
 
     try {
-      const url = await uploadFileToStorage(file, makeStoragePath(`services/${SERVICE}`, file))
-      const res = await fetch('/api/admin/service-images', {
+      const [before_url, after_url] = await Promise.all([
+        uploadFileToStorage(beforeFile, makeStoragePath(`services/${SERVICE}/before-after`, beforeFile, 'before')),
+        uploadFileToStorage(afterFile, makeStoragePath(`services/${SERVICE}/before-after`, afterFile, 'after')),
+      ])
+
+      const res = await fetch('/api/admin/service-before-after', {
         method: 'POST',
-        body: JSON.stringify({ url, service: SERVICE, caption, position: images.length }),
+        body: JSON.stringify({ before_url, after_url, label, service: SERVICE, position: pairs.length }),
         headers: { 'Content-Type': 'application/json' },
       })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Грешка при запис'); return }
-      setImages(prev => [...prev, data])
-      setCaption('')
-      setFileName('')
-      input.value = ''
+      const result = await res.json()
+      if (!res.ok) { setError(result.error ?? 'Грешка при запис'); return }
+      setPairs(prev => [...prev, result])
+      setLabel('')
+      setBeforeName('')
+      setAfterName('')
+      beforeInput.value = ''
+      afterInput.value = ''
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Неуспешно качване — опитай отново')
     } finally {
@@ -59,18 +70,20 @@ export default function AdminHeadlightAlignmentPage() {
 
   async function handleDelete(id: string) {
     try {
-      await fetch('/api/admin/service-images', {
+      await fetch('/api/admin/service-before-after', {
         method: 'DELETE',
         body: JSON.stringify({ id }),
         headers: { 'Content-Type': 'application/json' },
       })
-      setImages(prev => prev.filter(i => i.id !== id))
+      setPairs(prev => prev.filter(p => p.id !== id))
     } catch {
       // ignore
     }
   }
 
   if (loading) return <div className="flex items-center justify-center py-24 text-muted text-sm">Зареждане...</div>
+
+  const fileLabelCls = 'flex items-center gap-3 bg-background border border-border hover:border-accent/50 rounded-xl px-4 py-2.5 cursor-pointer transition-colors'
 
   return (
     <div className="max-w-2xl">
@@ -80,34 +93,52 @@ export default function AdminHeadlightAlignmentPage() {
             <path d="M19 12H5M12 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </Link>
-        <h1 className="text-xl font-bold">{TITLE}</h1>
+        <h1 className="text-xl font-bold">Регулиране на фарове</h1>
         <Link href="/services/headlight-alignment" target="_blank" className="ml-auto text-sm text-muted hover:text-white transition-colors">
           Преглед →
         </Link>
       </div>
 
       <div className="bg-surface border border-border rounded-2xl p-4 md:p-6 mb-6">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted mb-4">Добави снимка</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted mb-4">Добави двойка ПРЕДИ / СЛЕД</h2>
         <form onSubmit={handleUpload} className="space-y-3">
-          <label className="flex items-center gap-3 bg-background border border-border hover:border-accent/50 rounded-xl px-4 py-2.5 cursor-pointer transition-colors">
-            <svg className="w-4 h-4 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span className="text-sm text-muted truncate min-w-0 flex-1">
-              {fileName || 'Избери снимка *'}
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={e => setFileName(e.target.files?.[0]?.name ?? '')}
-            />
-          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className={fileLabelCls}>
+              <svg className="w-4 h-4 text-muted shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-sm text-muted truncate min-w-0 flex-1">
+                {beforeName || 'ПРЕДИ снимка *'}
+              </span>
+              <input
+                type="file"
+                name="before"
+                accept="image/*"
+                className="hidden"
+                onChange={e => setBeforeName(e.target.files?.[0]?.name ?? '')}
+              />
+            </label>
+            <label className={fileLabelCls}>
+              <svg className="w-4 h-4 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-sm text-muted truncate min-w-0 flex-1">
+                {afterName || 'СЛЕД снимка *'}
+              </span>
+              <input
+                type="file"
+                name="after"
+                accept="image/*"
+                className="hidden"
+                onChange={e => setAfterName(e.target.files?.[0]?.name ?? '')}
+              />
+            </label>
+          </div>
           <input
             type="text"
-            value={caption}
-            onChange={e => setCaption(e.target.value)}
-            placeholder="Надпис (незадължително)"
+            value={label}
+            onChange={e => setLabel(e.target.value)}
+            placeholder="Описание (напр. Audi A4 — регулиране на фарове)"
             className="w-full bg-background border border-border rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
           />
           <button
@@ -120,32 +151,42 @@ export default function AdminHeadlightAlignmentPage() {
             ) : (
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round"/></svg>
             )}
-            {uploading ? 'Качване...' : 'Качи'}
+            {uploading ? 'Качване...' : 'Добави двойка'}
           </button>
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">{error}</p>}
         </form>
       </div>
 
       <div className="bg-surface border border-border rounded-2xl p-4 md:p-6">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted mb-4">Галерия ({images.length})</h2>
-        {images.length === 0 ? (
-          <p className="text-center text-muted text-sm py-8">Няма добавени снимки</p>
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted mb-4">Двойки ПРЕДИ / СЛЕД ({pairs.length})</h2>
+        {pairs.length === 0 ? (
+          <p className="text-center text-muted text-sm py-8">Няма добавени двойки</p>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {images.map(img => (
-              <div key={img.id} className="relative rounded-xl overflow-hidden bg-background border border-border">
-                <div className="aspect-square">
-                  <img src={img.url} alt={img.caption ?? ''} className="w-full h-full object-cover" />
+          <div className="space-y-4">
+            {pairs.map(pair => (
+              <div key={pair.id} className="bg-background border border-border rounded-xl overflow-hidden">
+                <div className="grid grid-cols-2">
+                  <div className="relative aspect-video border-r border-border overflow-hidden">
+                    <img src={pair.before_url} alt="Преди" className="w-full h-full object-cover" />
+                    <span className="absolute top-2 left-2 bg-black/70 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ПРЕДИ</span>
+                  </div>
+                  <div className="relative aspect-video overflow-hidden">
+                    <img src={pair.after_url} alt="След" className="w-full h-full object-cover" />
+                    <span className="absolute top-2 right-2 bg-accent/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">СЛЕД</span>
+                  </div>
                 </div>
-                {img.caption && (
-                  <div className="bg-black/70 text-xs text-white px-2 py-1 truncate">{img.caption}</div>
-                )}
-                <button
-                  onClick={() => handleDelete(img.id)}
-                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-600/90 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
-                >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg>
-                </button>
+                <div className="px-3 py-2.5 flex items-center justify-between gap-3 border-t border-border">
+                  <p className="text-xs text-muted truncate">{pair.label ?? '—'}</p>
+                  <button
+                    onClick={() => handleDelete(pair.id)}
+                    className="shrink-0 flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Изтрий
+                  </button>
+                </div>
               </div>
             ))}
           </div>

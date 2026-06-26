@@ -228,14 +228,28 @@ async function ServicesSection() {
 
   const previews = await Promise.all(
     SERVICES.map(async s => {
-      const { data } = await supabase
+      const { data: pair } = await supabase
         .from('service_before_after')
         .select('before_url, after_url, label')
         .eq('service', s.slug)
         .eq('published', true)
         .limit(1)
         .maybeSingle()
-      return { ...s, pair: data ?? null }
+
+      let fallbackImg: string | null = null
+      if (!pair) {
+        const { data: img } = await supabase
+          .from('service_images')
+          .select('url')
+          .eq('service', s.slug)
+          .eq('published', true)
+          .order('position')
+          .limit(1)
+          .maybeSingle()
+        fallbackImg = img?.url ?? null
+      }
+
+      return { ...s, pair: pair ?? null, fallbackImg }
     })
   )
 
@@ -255,29 +269,17 @@ async function ServicesSection() {
               href={`/services/${s.slug}`}
               className="group bg-background border border-border rounded-2xl overflow-hidden hover:border-accent transition-all duration-200"
             >
-              {/* Before/After image */}
+              {/* Image */}
               <div className="relative aspect-video overflow-hidden bg-surface-2">
                 {s.pair ? (
                   <>
-                    {/* Before */}
-                    <img
-                      src={s.pair.before_url}
-                      alt={`Преди — ${s.name}`}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    {/* After — slides in on hover */}
-                    <img
-                      src={s.pair.after_url}
-                      alt={`След — ${s.name}`}
-                      className="absolute inset-0 w-full h-full object-cover translate-x-full group-hover:translate-x-0 transition-transform duration-500"
-                    />
-                    <div className="absolute bottom-2 left-2 flex gap-1.5 z-10">
-                      <span className="text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded">ПРЕДИ</span>
-                    </div>
-                    <div className="absolute bottom-2 right-2 flex gap-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span className="text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded">СЛЕД</span>
-                    </div>
+                    <img src={s.pair.before_url} alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={s.pair.after_url} alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
+                    <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
+                    <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">СЛЕД</span>
                   </>
+                ) : s.fallbackImg ? (
+                  <img src={s.fallbackImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : s.heroImg ? (
                   <img src={s.heroImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
