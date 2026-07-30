@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import OrderStatusForm from '@/components/OrderStatusForm'
 import DeleteOrderButton from '@/components/DeleteOrderButton'
@@ -32,15 +33,20 @@ export default async function AdminOrderDetailPage({ params }: Props) {
       <div className="bg-surface border border-border rounded-lg p-4 mb-6">
         <h2 className="font-semibold mb-3">Артикули</h2>
         {o.items.map((item, i) => (
-          <div key={i} className="flex items-center gap-3 py-2 border-b border-border last:border-0 text-sm">
+          <Link
+            key={i}
+            href={`/products/${item.slug}`}
+            target="_blank"
+            className="flex items-center gap-3 py-2 border-b border-border last:border-0 text-sm hover:bg-surface-2/50 -mx-1 px-1 rounded transition-colors"
+          >
             {item.image ? (
               <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover bg-surface-2 shrink-0" />
             ) : (
               <div className="w-12 h-12 rounded-lg bg-surface-2 shrink-0" />
             )}
-            <span className="flex-1 line-clamp-2">{item.name} × {item.qty}</span>
+            <span className="flex-1 line-clamp-2 hover:text-accent transition-colors">{item.name} × {item.qty}</span>
             <span className="text-accent shrink-0">{(item.price * item.qty).toFixed(2)} €</span>
-          </div>
+          </Link>
         ))}
         <div className="flex justify-between pt-3 font-bold">
           <span>Общо</span>

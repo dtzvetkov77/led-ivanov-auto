@@ -10,16 +10,30 @@ type Props = {
 
 export default function VariationStockEditor({ productId, variations: initial }: Props) {
   const [variations, setVariations] = useState<ProductVariation[]>(initial)
+  // Raw text drafts for price fields — keeping these as strings (not re-parsed
+  // to number on every keystroke) lets users type a trailing "." or "," without
+  // it being stripped by the controlled re-render before they finish typing.
+  const [priceDrafts, setPriceDrafts] = useState(() => initial.map(v => ({
+    price: String(v.price ?? ''),
+    sale_price: v.sale_price != null ? String(v.sale_price) : '',
+  })))
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
 
   const set = (idx: number, field: keyof ProductVariation, value: string) => {
+    if (field === 'stock_quantity') {
+      setVariations(prev => prev.map((v, i) => i === idx ? { ...v, stock_quantity: value === '' ? null : parseInt(value, 10) } : v))
+      setSaved(false)
+      return
+    }
+    // price / sale_price: BG users type "," as decimal separator
+    const normalized = value.replace(',', '.').replace(/[^0-9.]/g, '')
+    setPriceDrafts(prev => prev.map((d, i) => i === idx ? { ...d, [field]: normalized } : d))
     setVariations(prev => prev.map((v, i) => {
       if (i !== idx) return v
-      if (field === 'stock_quantity') return { ...v, stock_quantity: value === '' ? null : parseInt(value, 10) }
-      if (field === 'price') return { ...v, price: value === '' ? 0 : parseFloat(value) }
-      if (field === 'sale_price') return { ...v, sale_price: value === '' ? null : parseFloat(value) }
+      if (field === 'price') return { ...v, price: normalized === '' ? 0 : parseFloat(normalized) || 0 }
+      if (field === 'sale_price') return { ...v, sale_price: normalized === '' ? null : (parseFloat(normalized) || 0) }
       return v
     }))
     setSaved(false)
@@ -67,10 +81,9 @@ export default function VariationStockEditor({ productId, variations: initial }:
                 <div>
                   <p className="text-[10px] text-muted uppercase tracking-wider mb-1">Цена €</p>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={v.price}
+                    type="text"
+                    inputMode="decimal"
+                    value={priceDrafts[i].price}
                     onChange={e => set(i, 'price', e.target.value)}
                     className="w-full bg-surface border border-border rounded-lg px-2 py-1.5 text-white text-sm text-center focus:outline-none focus:border-accent transition-colors"
                   />
@@ -78,10 +91,9 @@ export default function VariationStockEditor({ productId, variations: initial }:
                 <div>
                   <p className="text-[10px] text-muted uppercase tracking-wider mb-1">Промо €</p>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={v.sale_price ?? ''}
+                    type="text"
+                    inputMode="decimal"
+                    value={priceDrafts[i].sale_price}
                     onChange={e => set(i, 'sale_price', e.target.value)}
                     placeholder="—"
                     className="w-full bg-surface border border-border rounded-lg px-2 py-1.5 text-white text-sm text-center focus:outline-none focus:border-accent transition-colors placeholder:text-muted"

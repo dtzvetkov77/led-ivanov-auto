@@ -44,6 +44,13 @@ export default function ProductForm({ product, categories, makes, models = [], s
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value }))
 
+  // Bulgarian keyboards/users type "," as decimal separator — native type="number"
+  // silently rejects that keystroke, so use text + normalize to "."
+  const setDecimal = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const normalized = e.target.value.replace(',', '.').replace(/[^0-9.]/g, '')
+    setForm(f => ({ ...f, [k]: normalized }))
+  }
+
   const slugify = (text: string) =>
     text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')
 
@@ -182,12 +189,12 @@ export default function ProductForm({ product, categories, makes, models = [], s
             Цена {hasVariations ? <span className="normal-case text-muted/60">(от вариации)</span> : '*'}
           </label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             value={form.price}
-            onChange={set('price')}
+            onChange={setDecimal('price')}
             required={!hasVariations}
             disabled={hasVariations}
-            step="0.01" min="0"
             className={`${inputCls} ${hasVariations ? 'opacity-40 cursor-not-allowed' : ''}`}
           />
           {hasVariations && <p className="text-[11px] text-muted/60 mt-1">Задава се автоматично от вариациите</p>}
@@ -197,11 +204,11 @@ export default function ProductForm({ product, categories, makes, models = [], s
             Промо цена {hasVariations && <span className="normal-case text-muted/60">(от вариации)</span>}
           </label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             value={form.sale_price}
-            onChange={set('sale_price')}
+            onChange={setDecimal('sale_price')}
             disabled={hasVariations}
-            step="0.01" min="0"
             className={`${inputCls} ${hasVariations ? 'opacity-40 cursor-not-allowed' : ''}`}
           />
         </div>

@@ -76,12 +76,16 @@ export default async function ServicesPage() {
           >
             <div className="relative aspect-video overflow-hidden bg-surface-2">
               {s.pair ? (
-                <>
-                  <img src={s.pair.before_url} alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
-                  <img src={s.pair.after_url} alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-                  <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
-                  <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">СЛЕД</span>
-                </>
+                <div className="absolute inset-0 grid grid-cols-2">
+                  <div className="relative overflow-hidden border-r border-border/50">
+                    <img src={s.pair.before_url} alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                    <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
+                  </div>
+                  <div className="relative overflow-hidden">
+                    <img src={s.pair.after_url} alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                    <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10">СЛЕД</span>
+                  </div>
+                </div>
               ) : s.fallbackImg ? (
                 <img src={s.fallbackImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : s.heroImg ? (
