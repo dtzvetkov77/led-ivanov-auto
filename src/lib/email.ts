@@ -56,12 +56,17 @@ function baseTemplate(title: string, body: string) {
 }
 
 function itemsTable(items: Order['items']) {
-  const rows = items.map(i => `
+  const rows = items.map(i => {
+    const [name, variation] = i.name.split(' — ')
+    return `
     <tr>
-      <td style="padding:12px 16px;color:#ffffff;font-size:13px;border-bottom:1px solid #222222;">${esc(i.name)}</td>
+      <td style="padding:12px 16px;color:#ffffff;font-size:13px;border-bottom:1px solid #222222;">
+        ${esc(name)}${variation ? `<div style="color:#888888;font-size:11px;margin-top:3px;">${esc(variation)}</div>` : ''}
+      </td>
       <td style="padding:12px 16px;color:#aaaaaa;font-size:13px;border-bottom:1px solid #222222;text-align:center;white-space:nowrap;">${i.qty} бр.</td>
       <td style="padding:12px 16px;color:#c8102e;font-size:13px;font-weight:700;border-bottom:1px solid #222222;text-align:right;white-space:nowrap;">${(i.price * i.qty).toFixed(2)} €</td>
-    </tr>`).join('')
+    </tr>`
+  }).join('')
 
   return `
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#111111;border-radius:12px;overflow:hidden;margin:20px 0;">
@@ -72,6 +77,12 @@ function itemsTable(items: Order['items']) {
       </tr>
       ${rows}
     </table>`
+}
+
+// Office deliveries are stored as "Офис <Куриер>: <офис>" (see CheckoutForm) —
+// no separate column, so derive from that prefix.
+function deliveryTypeLabel(order: Order) {
+  return order.delivery_address.startsWith('Офис ') ? 'До офис на куриер' : 'До адрес'
 }
 
 function infoRow(label: string, value: string) {
@@ -97,6 +108,7 @@ function adminHtml(order: Order) {
       ${order.customer_email ? infoRow('Имейл', `<a href="mailto:${esc(order.customer_email)}" style="color:#c8102e;text-decoration:none;">${esc(order.customer_email)}</a>`) : ''}
       ${infoRow('Адрес', `${esc(order.delivery_address)}, ${esc(order.delivery_city)}`)}
       ${infoRow('Куриер', order.courier === 'ekont' ? 'Еконт' : 'Спиди')}
+      ${infoRow('Тип доставка', deliveryTypeLabel(order))}
     </table>
 
     <!-- Items -->
@@ -148,6 +160,7 @@ function customerHtml(order: Order) {
       <table width="100%" cellpadding="0" cellspacing="0">
         ${infoRow('Адрес', `${esc(order.delivery_address)}, ${esc(order.delivery_city)}`)}
         ${infoRow('Куриер', order.courier === 'ekont' ? 'Еконт' : 'Спиди')}
+        ${infoRow('Тип доставка', deliveryTypeLabel(order))}
       </table>
     </div>
 

@@ -14,10 +14,18 @@ export default function ProductCard({ product }: Props) {
   const [added, setAdded] = useState(false)
 
   const isOutOfStock = product.stock_quantity === 0
+  const hasVariations = !!product.variations && product.variations.length > 0
+    && (product.attributes ?? []).some(a => a.variation && a.options.length > 0)
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (added || isOutOfStock) return
+    if (hasVariations) {
+      // Variable product — must pick a variation on the product page,
+      // otherwise the wrong (base) price/name/id ends up in the order.
+      router.push(`/products/${product.slug}`)
+      return
+    }
     addToCart({
       product_id: product.id,
       name: product.name,
