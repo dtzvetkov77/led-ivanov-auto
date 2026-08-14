@@ -89,7 +89,6 @@ export default function ProductActions({ product, categorySlug }: Props) {
               </span>
             )}
           </div>
-          <p className="text-muted/60 text-sm mt-0.5">≈ {(Number(effectivePrice) * 1.95583).toFixed(2)} лв.</p>
         </div>
       )}
 

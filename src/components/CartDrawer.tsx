@@ -227,7 +227,6 @@ export default function CartDrawer({ open, onClose }: Props) {
                       <div className="flex items-center justify-between mt-2">
                         <div>
                           <span className="text-accent font-bold text-sm">{item.price.toFixed(2)} €</span>
-                          <span className="text-muted/50 text-[11px] ml-1.5">{(item.price * 1.95583).toFixed(2)} лв.</span>
                         </div>
                         <button
                           onClick={() => handleRemove(item.product_id)}
@@ -313,7 +312,6 @@ export default function CartDrawer({ open, onClose }: Props) {
               <span className="text-muted text-sm">Общо</span>
               <div className="text-right">
                 <div className="font-black text-xl">{total.toFixed(2)} €</div>
-                <div className="text-muted text-xs">≈ {(total * 1.95583).toFixed(2)} лв.</div>
               </div>
             </div>
             <Link

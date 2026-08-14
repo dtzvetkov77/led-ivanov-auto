@@ -174,7 +174,6 @@ export default function SearchBar() {
                       <p className="text-sm font-medium line-clamp-2 text-white leading-snug">{hit.name}</p>
                       <p className="text-xs text-accent font-bold mt-0.5 leading-snug">
                         {price.toFixed(2)} €
-                        <span className="text-muted font-normal ml-1">/ {(price * 1.95583).toFixed(2)} лв.</span>
                         {hit.sale_price && <span className="text-muted line-through ml-1.5 font-normal">{hit.price.toFixed(2)} €</span>}
                       </p>
                     </div>

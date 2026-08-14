@@ -62,7 +62,6 @@ export default function VariationSelector({
             <span className="text-xs text-muted ml-auto">SKU: {matchedVariation.sku}</span>
           )}
         </div>
-        <p className="text-muted/60 text-sm mt-0.5">≈ {(displayPrice * 1.95583).toFixed(2)} лв.</p>
       </div>
 
       {/* Attribute selectors */}
