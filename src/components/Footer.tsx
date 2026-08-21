@@ -93,7 +93,8 @@ export default function Footer() {
               ))}
             </ul>
             <div className="mt-5 space-y-1 text-xs text-muted/60">
-              <p>+359 99 999 7996</p>
+              <a href="tel:+359999997996" className="block hover:text-white transition-colors">+359 99 999 7996</a>
+              <a href="tel:+359892703453" className="block hover:text-white transition-colors">+359 89 270 3453</a>
               <p>Пон–Нед: 09:00 – 23:00</p>
               <p>ж.к. Малинова долина, София</p>
               <p>ЕИК: 207929027</p>

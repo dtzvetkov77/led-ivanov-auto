@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 
 const PHONE = '+359 99 999 7996'
 const PHONE_RAW = '+359999997996'
+const PHONE2 = '+359 89 270 3453'
+const PHONE2_RAW = '+359892703453'
 const FACEBOOK = 'https://www.facebook.com/p/LED-Ivanov-Auto-%D0%9A%D1%80%D1%83%D1%88%D0%BA%D0%B8-%D0%B8-%D0%90%D0%B2%D1%82%D0%BE%D0%B0%D0%BA%D1%81%D0%B5%D1%81%D0%BE%D0%B0%D1%80%D0%B8-100065233232609/'
 const TIKTOK = 'https://www.tiktok.com/@ivanov_auto'
 const YOUTUBE = 'https://www.youtube.com/@Ivanov-Auto'
@@ -99,6 +101,19 @@ export default function ContactPage() {
               <div>
                 <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Телефон</p>
                 <p className="font-bold group-hover:text-accent transition-colors">{PHONE}</p>
+              </div>
+            </a>
+
+            <a href={`tel:${PHONE2_RAW}`}
+              className="flex items-center gap-4 bg-surface border border-border hover:border-accent rounded-xl p-5 transition-all group">
+              <span className="w-11 h-11 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center text-accent shrink-0 group-hover:bg-accent group-hover:text-white transition-all">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <div>
+                <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Телефон 2</p>
+                <p className="font-bold group-hover:text-accent transition-colors">{PHONE2}</p>
               </div>
             </a>
 

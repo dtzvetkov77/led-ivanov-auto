@@ -81,6 +81,10 @@ const globalSchema = {
       description: 'LED и ксенон крушки за фарове, полиране, фолиране и регулиране на фарове в София. Plug & Play монтаж, до 2 год. гаранция, безплатна доставка над 199 €.',
       url: SITE,
       telephone: '+359999997996',
+      contactPoint: [
+        { '@type': 'ContactPoint', telephone: '+359999997996', contactType: 'customer service' },
+        { '@type': 'ContactPoint', telephone: '+359892703453', contactType: 'customer service' },
+      ],
       image: `${SITE}/images/hero.webp`,
       logo: {
         '@type': 'ImageObject',
@@ -157,6 +161,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </svg>
             <span className="sm:hidden">+359 99 999 7996</span>
             <span className="hidden sm:inline">+359 99 999 7996</span>
+          </a>
+          <a href="tel:+359892703453" className="hidden md:flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            <span>+359 89 270 3453</span>
           </a>
           {/* Divider */}
           <span className="text-white/40">|</span>
