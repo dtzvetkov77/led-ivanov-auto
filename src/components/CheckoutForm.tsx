@@ -129,7 +129,6 @@ export default function CheckoutForm() {
   }
 
   const total = cartTotal(items)
-  const freeShipping = total >= 199
 
   return (
     <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start overflow-x-hidden">
@@ -449,13 +448,8 @@ export default function CheckoutForm() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted">Доставка</span>
-              <span className={freeShipping ? 'text-green-400 font-medium' : ''}>
-                {freeShipping ? 'Безплатна' : '~6–8 €'}
-              </span>
+              <span>~6–8 €</span>
             </div>
-            {!freeShipping && (
-              <p className="text-xs text-muted/60">Безплатна доставка при поръчка над 199 €</p>
-            )}
             <div className="flex justify-between font-black text-lg pt-2 border-t border-border">
               <span>Общо</span>
               <div className="text-right">

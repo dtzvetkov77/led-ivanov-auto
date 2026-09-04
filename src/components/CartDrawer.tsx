@@ -6,8 +6,6 @@ import { getCart, updateQty, removeFromCart, cartTotal, addToCart } from '@/lib/
 import { dispatchToast } from '@/lib/toast'
 import type { CartItem } from '@/lib/types'
 
-const FREE_SHIPPING = 199
-
 type UP = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[]; attributes: { variation?: boolean; options?: string[] }[] | null }
 type Props = { open: boolean; onClose: () => void }
 
@@ -117,9 +115,6 @@ export default function CartDrawer({ open, onClose }: Props) {
   }
 
   const total = cartTotal(items)
-  const remaining = Math.max(0, FREE_SHIPPING - total)
-  const progress = Math.min(100, (total / FREE_SHIPPING) * 100)
-  const freeShipping = total >= FREE_SHIPPING
 
   return (
     <>
@@ -158,29 +153,6 @@ export default function CartDrawer({ open, onClose }: Props) {
           </button>
         </div>
 
-        {/* Free shipping progress */}
-        {items.length > 0 && (
-          <div className="px-5 py-3 border-b border-border shrink-0">
-            {freeShipping ? (
-              <div className="flex items-center gap-2 text-green-400 text-xs font-semibold">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Безплатна доставка!
-              </div>
-            ) : (
-              <p className="text-xs text-muted">
-                Още <span className="text-white font-semibold">{remaining.toFixed(2)} €</span> за безплатна доставка
-              </p>
-            )}
-            <div className="h-1 bg-border rounded-full overflow-hidden mt-2">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${progress}%`, background: freeShipping ? '#22c55e' : 'var(--color-accent)' }}
-              />
-            </div>
-          </div>
-        )}
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto overscroll-contain">

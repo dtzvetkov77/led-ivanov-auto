@@ -79,8 +79,7 @@ export default function TermsPage() {
           <ul className="list-disc list-inside space-y-1.5 pl-2">
             <li>Срок: <strong className="text-white">1–2 работни дни</strong> след потвърждение на поръчката</li>
             <li>При поръчка до <strong className="text-white">14:00 ч.</strong> изпращаме същия ден</li>
-            <li>Безплатна доставка при поръчки над <strong className="text-white">199 €</strong></li>
-            <li>При по-малки поръчки куриерската такса е по стандартната тарифа на избрания куриер</li>
+            <li>Куриерската такса е по стандартната тарифа на избрания куриер</li>
           </ul>
           <p>
             Не носим отговорност за забавяния, причинени от куриера, природни бедствия или
