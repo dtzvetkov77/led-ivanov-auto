@@ -166,7 +166,8 @@ export default function ProductForm({ product, categories, makes, models = [], s
       await supabase.from('product_models').insert(modelIds.map(mid => ({ product_id: productId, model_id: mid })))
     }
 
-    router.push('/admin/products')
+    // New products land on the edit page so variations can be added right away
+    router.push(isNew ? `/admin/products/${productId}` : '/admin/products')
     router.refresh()
   }
 

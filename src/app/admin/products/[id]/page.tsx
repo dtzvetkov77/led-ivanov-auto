@@ -45,11 +45,14 @@ export default async function EditProductPage({ params }: Props) {
         selectedModelIds={selectedModelIds}
         hasVariations={variations.length > 0}
       />
-      {variations.length > 0 && (
-        <div className="max-w-2xl mt-6">
-          <VariationStockEditor productId={product.id} variations={variations} />
-        </div>
-      )}
+      <div className="max-w-2xl mt-6">
+        <VariationStockEditor
+          productId={product.id}
+          attributes={(product.attributes ?? []) as import('@/lib/types').ProductAttribute[]}
+          variations={variations}
+          basePrice={Number(product.price) || 0}
+        />
+      </div>
       <ProductRelationsManager productId={product.id} />
     </div>
   )
