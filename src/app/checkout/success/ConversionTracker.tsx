@@ -1,13 +1,20 @@
 'use client'
 import { useEffect } from 'react'
 
-export default function ConversionTracker() {
+type Props = { orderNumber: string | null; value: number | null }
+
+export default function ConversionTracker({ orderNumber, value }: Props) {
   useEffect(() => {
     if (typeof window === 'undefined') return
     const gtag = (window as any).gtag
     if (typeof gtag === 'function') {
-      gtag('event', 'conversion', { send_to: 'AW-18272364793/b0MeCOeG_8UcEPnR-IhE', transaction_id: '' })
+      gtag('event', 'conversion', {
+        send_to: 'AW-18508516374/H_TrCJuanJodEJaYxvlE',
+        value: value ?? 0,
+        currency: 'EUR',
+        transaction_id: orderNumber ?? '',
+      })
     }
-  }, [])
+  }, [orderNumber, value])
   return null
 }
