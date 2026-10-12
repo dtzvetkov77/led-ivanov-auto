@@ -118,6 +118,11 @@ export default function CheckoutForm() {
         }
         return
       }
+      // Handed to the success page for the Ads conversion value; kept client-side
+      // so order totals are never readable by order number alone
+      try {
+        sessionStorage.setItem('last_order', JSON.stringify({ order_number: data.order_number, total: data.total }))
+      } catch {}
       clearCart()
       window.dispatchEvent(new Event('cart-updated'))
       router.push(`/checkout/success?order=${data.order_number}`)

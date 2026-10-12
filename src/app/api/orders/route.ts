@@ -111,5 +111,5 @@ export async function POST(req: NextRequest) {
 
   await sendOrderEmails(order)
 
-  return NextResponse.json({ order_number: order.order_number }, { status: 201 })
+  return NextResponse.json({ order_number: order.order_number, total: order.total }, { status: 201 })
 }
