@@ -187,12 +187,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CookieBanner />
         <Analytics />
         <SpeedInsights />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=AW-18272364793" strategy="afterInteractive" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=AW-18508516374" strategy="afterInteractive" />
         <Script id="google-ads" strategy="afterInteractive">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'AW-18272364793');
+          gtag('config', 'AW-18508516374');
         `}</Script>
         <PageTracker />
       </body>
