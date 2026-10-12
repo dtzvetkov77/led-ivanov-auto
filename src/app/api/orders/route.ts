@@ -13,6 +13,20 @@ const CartItemSchema = z.object({
   qty: z.number().int().positive(),
 })
 
+const sourceField = z.string().max(300).optional()
+const SourceSchema = z.object({
+  utm_source: sourceField,
+  utm_medium: sourceField,
+  utm_campaign: sourceField,
+  utm_term: sourceField,
+  utm_content: sourceField,
+  gclid: sourceField,
+  fbclid: sourceField,
+  referrer: sourceField,
+  landing_page: sourceField,
+  captured_at: sourceField,
+})
+
 const OrderSchema = z.object({
   customer_name: z.string().min(2).max(100),
   customer_phone: z.string().min(7).max(20),
@@ -22,6 +36,8 @@ const OrderSchema = z.object({
   courier: z.enum(['ekont', 'speedy']),
   items: z.array(CartItemSchema).min(1),
   notes: z.string().max(500).optional(),
+  // Invalid/odd tracking data must never block an order
+  source: SourceSchema.nullish().catch(null),
 })
 
 export async function POST(req: NextRequest) {
@@ -90,26 +106,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Грешка при запис' }, { status: 500 })
   }
 
-  const { data: order, error } = await supabase
-    .from('orders')
-    .insert({
-      order_number,
-      customer_name: data.customer_name,
-      customer_phone: data.customer_phone,
-      customer_email: data.customer_email || null,
-      delivery_address: data.delivery_address,
-      delivery_city: data.delivery_city,
-      courier: data.courier,
-      items: validatedItems,
-      total,
-      notes: data.notes || null,
-    })
-    .select()
-    .single()
+  const row = {
+    order_number,
+    customer_name: data.customer_name,
+    customer_phone: data.customer_phone,
+    customer_email: data.customer_email || null,
+    delivery_address: data.delivery_address,
+    delivery_city: data.delivery_city,
+    courier: data.courier,
+    items: validatedItems,
+    total,
+    notes: data.notes || null,
+    source: data.source ?? null,
+  }
+  let { data: order, error } = await supabase.from('orders').insert(row).select().single()
+  // Fallback until migration 017 (orders.source) is applied
+  if (error && /source/.test(error.message)) {
+    const { source: _source, ...rowWithoutSource } = row // eslint-disable-line @typescript-eslint/no-unused-vars
+    ;({ data: order, error } = await supabase.from('orders').insert(rowWithoutSource).select().single())
+  }
 
   if (error) return NextResponse.json({ error: 'Грешка при запис' }, { status: 500 })
 
-  await sendOrderEmails(order)
+  await sendOrderEmails({ ...order, source: data.source ?? null })
 
   return NextResponse.json({ order_number: order.order_number, total: order.total }, { status: 201 })
 }

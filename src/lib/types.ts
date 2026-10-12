@@ -78,6 +78,7 @@ export type Order = {
   total: number
   status: OrderStatus
   notes: string | null
+  source?: import('./traffic-source').TrafficSource | null
   created_at: string
   updated_at: string
 }

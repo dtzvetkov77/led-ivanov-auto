@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getCart, clearCart, cartTotal } from '@/lib/cart'
 import type { CartItem } from '@/lib/types'
+import { readTrafficSource } from '@/lib/traffic-source'
 
 type DeliveryType = 'address' | 'office'
 type BumpProduct = { id: string; name: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
@@ -105,7 +106,7 @@ export default function CheckoutForm() {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, delivery_address, delivery_city, items: allItems }),
+        body: JSON.stringify({ ...form, delivery_address, delivery_city, items: allItems, source: readTrafficSource() }),
       })
       const data = await res.json()
       if (!res.ok) {

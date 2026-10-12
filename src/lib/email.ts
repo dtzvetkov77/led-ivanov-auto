@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import type { Order } from './types'
+import { describeSource } from './traffic-source'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
@@ -93,6 +94,11 @@ function infoRow(label: string, value: string) {
     </tr>`
 }
 
+function sourceText(order: Order) {
+  const { label, detail } = describeSource(order.source)
+  return detail ? `${label} (${detail})` : label
+}
+
 function adminHtml(order: Order) {
   const body = `
     <!-- Title -->
@@ -109,6 +115,7 @@ function adminHtml(order: Order) {
       ${infoRow('Адрес', `${esc(order.delivery_address)}, ${esc(order.delivery_city)}`)}
       ${infoRow('Куриер', order.courier === 'ekont' ? 'Еконт' : 'Спиди')}
       ${infoRow('Тип доставка', deliveryTypeLabel(order))}
+      ${infoRow('Източник', esc(sourceText(order)))}
     </table>
 
     <!-- Items -->

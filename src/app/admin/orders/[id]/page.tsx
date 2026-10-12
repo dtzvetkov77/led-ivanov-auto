@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import OrderStatusForm from '@/components/OrderStatusForm'
 import DeleteOrderButton from '@/components/DeleteOrderButton'
 import type { Order } from '@/lib/types'
+import { describeSource } from '@/lib/traffic-source'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -17,6 +18,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   // Office deliveries are stored as "Офис <Куриер>: <офис>" (see CheckoutForm) —
   // no separate column, so derive the badge from that prefix.
   const isOfficeDelivery = o.delivery_address.startsWith('Офис ')
+  const source = describeSource(o.source)
   return (
     <div className="max-w-2xl">
       <div className="flex items-center justify-between mb-6">
@@ -32,6 +34,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <div><span className="text-muted">Тип доставка:</span> {isOfficeDelivery ? 'До офис на куриер' : 'До адрес'}</div>
           <div className="col-span-2"><span className="text-muted">Адрес:</span> {o.delivery_address}, {o.delivery_city}</div>
           {o.notes && <div className="col-span-2"><span className="text-muted">Бележка:</span> {o.notes}</div>}
+          <div className="col-span-2">
+            <span className="text-muted">Източник:</span> {source.label}
+            {source.detail && <span className="text-muted"> · кампания: {source.detail}</span>}
+            {o.source?.landing_page && <span className="block text-xs text-muted mt-0.5 break-all">Първа страница: {o.source.landing_page}</span>}
+            {o.source?.referrer && <span className="block text-xs text-muted break-all">Дошъл от: {o.source.referrer}</span>}
+          </div>
         </div>
       </div>
       <div className="bg-surface border border-border rounded-lg p-4 mb-6">

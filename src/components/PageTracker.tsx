@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
+import { captureTrafficSource } from '@/lib/traffic-source'
 
 export default function PageTracker() {
   const pathname = usePathname()
@@ -10,6 +11,7 @@ export default function PageTracker() {
     if (pathname === lastPath.current) return
     const isFirst = lastPath.current === null
     lastPath.current = pathname
+    if (isFirst) captureTrafficSource()
 
     const payload = JSON.stringify({
       path: pathname,

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import DeleteOrderButton from '@/components/DeleteOrderButton'
 import OrderStatusTabs from '@/components/OrderStatusTabs'
+import { describeSource } from '@/lib/traffic-source'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,7 +72,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             </div>
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
               <span className="text-xs text-muted/60">
-                {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')}
+                {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')} · {describeSource(o.source).label}
               </span>
               <DeleteOrderButton orderId={o.id} />
             </div>
@@ -84,14 +85,14 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         <table className="w-full text-sm">
           <thead className="bg-surface-2">
             <tr>
-              {['Номер', 'Клиент', 'Телефон', 'Град', 'Сума', 'Статус', 'Дата', ''].map(h => (
+              {['Номер', 'Клиент', 'Телефон', 'Град', 'Сума', 'Източник', 'Статус', 'Дата', ''].map(h => (
                 <th key={h} className="text-left px-4 py-3 text-muted font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {(orders ?? []).length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">Няма поръчки</td></tr>
+              <tr><td colSpan={9} className="px-4 py-8 text-center text-muted">Няма поръчки</td></tr>
             )}
             {(orders ?? []).map(o => (
               <tr key={o.id} className="border-t border-border hover:bg-surface transition-colors">
@@ -102,6 +103,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                 <td className="px-4 py-3">{o.customer_phone}</td>
                 <td className="px-4 py-3">{o.delivery_city}</td>
                 <td className="px-4 py-3 font-semibold">{Number(o.total).toFixed(2)} €</td>
+                <td className="px-4 py-3 text-muted">{describeSource(o.source).label}</td>
                 <td className="px-4 py-3">
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${STATUS_COLORS[o.status] ?? 'text-muted bg-border border-border'}`}>
                     {STATUS_LABELS[o.status] ?? o.status}
