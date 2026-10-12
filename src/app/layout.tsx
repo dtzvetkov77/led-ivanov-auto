@@ -150,7 +150,28 @@ const globalSchema = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="bg">
+      <head>
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-M32TFVNV');`,
+          }}
+        />
+      </head>
       <body className={`${inter.variable} ${oswald.variable} font-sans bg-background text-white`}>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-M32TFVNV"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <JsonLd data={globalSchema} />
         {/* Fixed delivery banner — h-8 (32px) */}
         <div className="fixed top-0 left-0 right-0 z-50 bg-accent text-white text-xs h-8 flex items-center justify-center font-semibold tracking-widest uppercase gap-3 sm:gap-6">
