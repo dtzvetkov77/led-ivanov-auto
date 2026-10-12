@@ -11,6 +11,14 @@ export default function CookieBanner() {
 
   const accept = (type: 'all' | 'necessary') => {
     localStorage.setItem('cookie-consent', type)
+    // Update Google Consent Mode (defaults set in layout <head>)
+    const w = window as unknown as { dataLayer?: unknown[] }
+    w.dataLayer = w.dataLayer || []
+    const g = type === 'all' ? 'granted' : 'denied'
+    // gtag() must push the Arguments object, not a plain array
+    function gtag(..._args: unknown[]) { w.dataLayer!.push(arguments) } // eslint-disable-line @typescript-eslint/no-unused-vars, prefer-rest-params
+    gtag('consent', 'update', { ad_storage: g, ad_user_data: g, ad_personalization: g, analytics_storage: g })
+    w.dataLayer.push({ event: 'cookie_consent_update', cookie_consent: type })
     setShow(false)
   }
 
