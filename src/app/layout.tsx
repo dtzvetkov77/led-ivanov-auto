@@ -153,13 +153,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="bg">
       <head>
         {/* Google Consent Mode v2 - must run before gtag. Defaults to denied
-            until the visitor accepts in CookieBanner (stored in localStorage). */}
+            until the visitor accepts in CookieBanner (stored in localStorage).
+            url_passthrough keeps the ad click (gclid) in internal URLs while
+            cookies are denied, so a later purchase can still be attributed. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 var c=null;try{c=localStorage.getItem('cookie-consent')}catch(e){}
 var g=c==='all'?'granted':'denied';
-gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:g,functionality_storage:'granted',security_storage:'granted',wait_for_update:500});`,
+gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:g,functionality_storage:'granted',security_storage:'granted',wait_for_update:500});
+gtag('set','url_passthrough',true);`,
           }}
         />
       </head>
