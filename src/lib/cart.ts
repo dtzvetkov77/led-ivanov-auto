@@ -1,4 +1,5 @@
 import type { CartItem } from './types'
+import { CONVERSIONS, trackConversion } from './gtag'
 
 const KEY = 'led_ivanov_cart'
 
@@ -25,6 +26,7 @@ export function addToCart(item: Omit<CartItem, 'qty'>): CartItem[] {
     cart.push({ ...item, qty: 1 })
   }
   saveCart(cart)
+  trackConversion(CONVERSIONS.addToCart, { value: item.price, currency: 'EUR' })
   return cart
 }
 

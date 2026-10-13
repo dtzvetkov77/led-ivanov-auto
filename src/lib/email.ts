@@ -96,7 +96,11 @@ function infoRow(label: string, value: string) {
 
 function sourceText(order: Order) {
   const { label, detail } = describeSource(order.source)
-  return detail ? `${label} (${detail})` : label
+  const last = detail ? `${label} (${detail})` : label
+  const first = order.source?.first
+  if (!first || first.captured_at === order.source?.captured_at) return last
+  const f = describeSource(first)
+  return `${last} · първо посещение: ${f.detail ? `${f.label} (${f.detail})` : f.label}`
 }
 
 function adminHtml(order: Order) {

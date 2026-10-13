@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { getCart, clearCart, cartTotal } from '@/lib/cart'
 import type { CartItem } from '@/lib/types'
 import { readTrafficSource } from '@/lib/traffic-source'
+import { CONVERSIONS, trackConversion } from '@/lib/gtag'
 
 type DeliveryType = 'address' | 'office'
 type BumpProduct = { id: string; name: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
@@ -34,7 +35,11 @@ export default function CheckoutForm() {
     notes: '',
   })
 
-  useEffect(() => { setItems(getCart()) }, [])
+  useEffect(() => {
+    const cart = getCart()
+    setItems(cart)
+    if (cart.length > 0) trackConversion(CONVERSIONS.beginCheckout, { value: cartTotal(cart), currency: 'EUR' })
+  }, [])
 
   useEffect(() => {
     import('@/lib/supabase/client').then(({ createClient }) => {
@@ -119,10 +124,10 @@ export default function CheckoutForm() {
         }
         return
       }
-      // Handed to the success page for the Ads conversion value; kept client-side
+      // Handed to the success page for the Ads conversion value and enhanced conversions; kept client-side
       // so order totals are never readable by order number alone
       try {
-        sessionStorage.setItem('last_order', JSON.stringify({ order_number: data.order_number, total: data.total }))
+        sessionStorage.setItem('last_order', JSON.stringify({ order_number: data.order_number, total: data.total, email: form.customer_email, phone: form.customer_phone }))
       } catch {}
       clearCart()
       window.dispatchEvent(new Event('cart-updated'))

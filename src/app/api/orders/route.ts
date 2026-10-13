@@ -14,7 +14,7 @@ const CartItemSchema = z.object({
 })
 
 const sourceField = z.string().max(300).optional()
-const SourceSchema = z.object({
+const TouchSchema = z.object({
   utm_source: sourceField,
   utm_medium: sourceField,
   utm_campaign: sourceField,
@@ -22,9 +22,16 @@ const SourceSchema = z.object({
   utm_content: sourceField,
   gclid: sourceField,
   fbclid: sourceField,
+  srsltid: sourceField,
+  gad_source: sourceField,
+  gad_campaignid: sourceField,
   referrer: sourceField,
   landing_page: sourceField,
   captured_at: sourceField,
+})
+const SourceSchema = TouchSchema.extend({
+  first: TouchSchema.optional().catch(undefined),
+  visits: z.number().int().nonnegative().max(100000).optional().catch(undefined),
 })
 
 const OrderSchema = z.object({

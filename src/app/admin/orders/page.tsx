@@ -3,6 +3,7 @@ import Link from 'next/link'
 import DeleteOrderButton from '@/components/DeleteOrderButton'
 import OrderStatusTabs from '@/components/OrderStatusTabs'
 import { describeSource } from '@/lib/traffic-source'
+import SourceSummary from '@/components/SourceSummary'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +17,11 @@ const STATUS_COLORS: Record<string, string> = {
   shipped: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
   delivered: 'text-green-400 bg-green-400/10 border-green-400/20',
   cancelled: 'text-red-400 bg-red-400/10 border-red-400/20',
+}
+
+function sourceText(source: Parameters<typeof describeSource>[0]) {
+  const { label, detail } = describeSource(source)
+  return detail ? `${label} (${detail})` : label
 }
 
 type Props = { searchParams: Promise<{ status?: string }> }
@@ -36,7 +42,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   // Counts per status for tab badges
   const { data: counts } = await supabase
     .from('orders')
-    .select('status')
+    .select('*')
 
   const statusCounts: Record<string, number> = {}
   for (const o of counts ?? []) {
@@ -47,6 +53,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Поръчки</h1>
+
+      <SourceSummary orders={counts ?? []} />
 
       <OrderStatusTabs active={status ?? 'all'} counts={statusCounts} total={totalCount} />
 
@@ -72,7 +80,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             </div>
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
               <span className="text-xs text-muted/60">
-                {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')} · {describeSource(o.source).label}
+                {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')} · {sourceText(o.source)}
               </span>
               <DeleteOrderButton orderId={o.id} />
             </div>
@@ -103,7 +111,10 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                 <td className="px-4 py-3">{o.customer_phone}</td>
                 <td className="px-4 py-3">{o.delivery_city}</td>
                 <td className="px-4 py-3 font-semibold">{Number(o.total).toFixed(2)} €</td>
-                <td className="px-4 py-3 text-muted">{describeSource(o.source).label}</td>
+                <td className="px-4 py-3 text-muted">
+                  <span className="text-white/90">{describeSource(o.source).label}</span>
+                  {describeSource(o.source).detail && <span className="block text-xs">{describeSource(o.source).detail}</span>}
+                </td>
                 <td className="px-4 py-3">
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${STATUS_COLORS[o.status] ?? 'text-muted bg-border border-border'}`}>
                     {STATUS_LABELS[o.status] ?? o.status}
