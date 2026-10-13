@@ -3,9 +3,9 @@ export const ADS_ID = 'AW-18508516374'
 
 export const CONVERSIONS = {
   purchase: `${ADS_ID}/H_TrCJuanJodEJaYxvlE`,
-  phoneClick: '',
-  addToCart: '',
-  beginCheckout: '',
+  phoneClick: `${ADS_ID}/3YqvCIzGtJsdEJaYxvlE`,
+  addToCart: `${ADS_ID}/uZ1fCJLGtJsdEJaYxvlE`,
+  beginCheckout: `${ADS_ID}/6xy4CJXGtJsdEJaYxvlE`,
 } as const
 
 type Gtag = (...args: unknown[]) => void
