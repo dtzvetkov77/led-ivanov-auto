@@ -23,7 +23,7 @@ export default function GoogleRatingBadge({ className = '' }: { className?: stri
             </svg>
           ))}
         </span>
-        <span className="text-white/50 text-xs">· {GOOGLE_REVIEWS.count}+ ревюта в Google</span>
+        <span className="text-white text-xs font-medium">· {GOOGLE_REVIEWS.count}+ ревюта в Google</span>
       </span>
     </a>
   )

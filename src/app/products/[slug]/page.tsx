@@ -189,7 +189,7 @@ export default async function ProductPage({ params }: Props) {
 
           {p.short_description && (
             <div
-              className="product-description text-muted text-sm mb-6 leading-relaxed wrap-break-word overflow-hidden"
+              className="product-description text-white text-sm mb-6 leading-relaxed wrap-break-word overflow-hidden"
               dangerouslySetInnerHTML={{ __html: sanitize(p.short_description) }}
             />
           )}
