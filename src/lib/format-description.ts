@@ -36,7 +36,7 @@ export function parseDescription(html: string): DescBlock[] {
   const lines = text
     .split('\n')
     // Run-on bullets like "6000K (студено бяло) -Напрежение: 12V"
-    .flatMap(l => l.split(/\s+(?=-[A-ZА-Я])/))
+    .flatMap(l => l.split(/\s+(?=-[A-ZА-Я0-9+])/))
     .map(l => l.replace(/\s+/g, ' ').trim())
     .filter(Boolean)
 

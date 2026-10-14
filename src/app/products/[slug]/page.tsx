@@ -9,6 +9,7 @@ import GoogleRatingBadge from '@/components/GoogleRatingBadge'
 import { getGoogleReviews } from '@/lib/google-reviews'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
+import LightboxGallery from '@/components/LightboxGallery'
 import ProductDescription, { RichDescription } from '@/components/ProductDescription'
 import { parseDescription, isRichHtml, type DescBlock } from '@/lib/format-description'
 function sanitize(html: string) {
@@ -144,7 +145,21 @@ export default async function ProductPage({ params }: Props) {
       )
     : null
 
-  const isBulb = p.category?.slug === 'led-krushki'
+  const isBulb = /krushk/.test(p.category?.slug ?? '') || /крушк/i.test(p.name)
+
+  // Customer photos from the gallery; ones captioned with this bulb's socket (e.g. "H7") go first
+  const socket = p.name.match(/\b(H\d{1,2}|D\d[SR]|HB\d|T10|T15|W5W|P21W|BA9S|BA15S|1156|1157)\b/i)?.[1]?.toUpperCase()
+  const { data: gallery } = isBulb
+    ? await supabase
+        .from('gallery_images')
+        .select('id, url, caption')
+        .eq('published', true)
+        .order('position')
+        .order('created_at', { ascending: false })
+        .limit(40)
+    : { data: null }
+  const socketPhotos = socket ? (gallery ?? []).filter(g => g.caption && new RegExp(`\\b${socket}\\b`, 'i').test(g.caption)) : []
+  const customerPhotos = [...socketPhotos, ...(gallery ?? []).filter(g => !socketPhotos.includes(g))].slice(0, 8)
 
   const effectivePrice = Number(p.sale_price ?? p.price)
   const productSchema = {
@@ -282,6 +297,23 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Social proof: real customers */}
+      {customerPhotos.length > 0 && (
+        <section className="mb-12 border-t border-border pt-10">
+          <div className="flex flex-wrap items-end justify-between gap-3 mb-5">
+            <div>
+              <h2 className="text-xl md:text-2xl font-black text-white">
+                {socketPhotos.length > 0 ? `Доволни клиенти с ${socket}` : 'Доволни клиенти'}
+              </h2>
+              <p className="text-sm text-white/70 mt-1">Реални клиенти от нашия сервиз в София</p>
+            </div>
+            <GoogleRatingBadge reviews={await getGoogleReviews()} />
+          </div>
+          <LightboxGallery images={customerPhotos} alt="Доволен клиент на LED Ivanov Auto" cols="grid-cols-2 md:grid-cols-4" />
+          <Link href="/gallery" className="inline-block mt-4 text-sm font-semibold text-accent hover:underline">Виж всички снимки →</Link>
+        </section>
+      )}
 
       {/* Description tabs */}
       <ProductDescriptionTabs description={descriptionContent} attributes={p.attributes ?? []} />
