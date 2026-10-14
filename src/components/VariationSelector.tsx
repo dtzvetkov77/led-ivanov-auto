@@ -58,6 +58,11 @@ export default function VariationSelector({
           {hasSale && (
             <span className="text-muted line-through text-lg">{originalPrice.toFixed(2)} €</span>
           )}
+          {hasSale && originalPrice > displayPrice && (
+            <span className="self-center bg-accent text-white text-xs font-bold px-2 py-1 rounded-md">
+              Спести {(originalPrice - displayPrice).toFixed(2)} €
+            </span>
+          )}
           {matchedVariation && matchedVariation.sku && (
             <span className="text-xs text-muted ml-auto">SKU: {matchedVariation.sku}</span>
           )}

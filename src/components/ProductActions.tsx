@@ -5,9 +5,9 @@ import { dispatchToast } from '@/lib/toast'
 import VariationSelector from './VariationSelector'
 import type { Product, ProductVariation } from '@/lib/types'
 
-type Props = { product: Product; categorySlug?: string }
+type Props = { product: Product; categorySlug?: string; priceNote?: string }
 
-export default function ProductActions({ product, categorySlug }: Props) {
+export default function ProductActions({ product, categorySlug, priceNote }: Props) {
   const [selectedVariation, setSelectedVariation] = useState<ProductVariation | null>(null)
   const [added, setAdded] = useState(false)
   const [showStickyBar, setShowStickyBar] = useState(false)
@@ -88,8 +88,22 @@ export default function ProductActions({ product, categorySlug }: Props) {
                 {Number(product.price).toFixed(2)} €
               </span>
             )}
+            {product.sale_price && Number(product.price) > Number(product.sale_price) && (
+              <span className="self-center bg-accent text-white text-xs font-bold px-2 py-1 rounded-md">
+                Спести {(Number(product.price) - Number(product.sale_price)).toFixed(2)} €
+              </span>
+            )}
           </div>
         </div>
+      )}
+
+      {priceNote && (
+        <p className="flex items-center gap-2 text-sm text-white font-semibold -mt-2 mb-4">
+          <svg className="w-4 h-4 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {priceNote}
+        </p>
       )}
 
       {showUrgency && (
@@ -150,6 +164,17 @@ export default function ProductActions({ product, categorySlug }: Props) {
           </>
         )}
       </button>
+
+      <ul className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-white/80">
+        {['Плащаш при получаване', 'Поръчка до 14:00 — тръгва днес', '14 дни за връщане'].map(t => (
+          <li key={t} className="flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-green-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            {t}
+          </li>
+        ))}
+      </ul>
 
       {/* Sticky ATC bar — visible when main button scrolled out of view */}
       {showStickyBar && canAddToCart && (

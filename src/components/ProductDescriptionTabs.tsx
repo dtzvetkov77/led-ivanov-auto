@@ -1,21 +1,22 @@
 'use client'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { ProductAttribute } from '@/lib/types'
 
 type Props = {
-  description: string
+  description: ReactNode
   attributes: ProductAttribute[]
 }
 
 export default function ProductDescriptionTabs({ description, attributes }: Props) {
-  const [tab, setTab] = useState<'description' | 'specs'>('description')
-
   const nonVariationAttrs = attributes.filter(a => !a.variation && a.options.length > 0)
 
   const tabs = [
-    { id: 'description' as const, label: 'Описание' },
+    ...(description ? [{ id: 'description' as const, label: 'Описание' }] : []),
     ...(nonVariationAttrs.length > 0 ? [{ id: 'specs' as const, label: 'Характеристики' }] : []),
   ]
+  const [tab, setTab] = useState<'description' | 'specs'>(tabs[0]?.id ?? 'description')
+
+  if (tabs.length === 0) return null
 
   return (
     <div className="border-t border-border pt-10">
@@ -36,20 +37,7 @@ export default function ProductDescriptionTabs({ description, attributes }: Prop
         ))}
       </div>
 
-      {tab === 'description' && (
-        <div className="overflow-x-auto">
-          <div
-            className="prose prose-invert prose-sm max-w-none text-muted leading-relaxed
-              prose-headings:text-white prose-headings:font-bold
-              prose-strong:text-white prose-li:marker:text-accent
-              prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-              prose-table:border-collapse prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2
-              prose-th:border prose-th:border-border prose-th:px-3 prose-th:py-2 prose-th:bg-surface
-              [&_img]:max-w-full [&_img]:h-auto **:wrap-break-word"
-            dangerouslySetInnerHTML={{ __html: description }}
-          />
-        </div>
-      )}
+      {tab === 'description' && description}
 
       {tab === 'specs' && (
         <div className="max-w-2xl">
@@ -57,7 +45,7 @@ export default function ProductDescriptionTabs({ description, attributes }: Prop
             <tbody>
               {nonVariationAttrs.map(attr => (
                 <tr key={attr.name} className="border-b border-border last:border-0">
-                  <td className="py-3 pr-6 text-muted font-medium w-40 align-top">{attr.name}</td>
+                  <td className="py-3 pr-6 text-white/70 font-medium w-40 align-top">{attr.name}</td>
                   <td className="py-3 text-white">{attr.options.join(', ')}</td>
                 </tr>
               ))}

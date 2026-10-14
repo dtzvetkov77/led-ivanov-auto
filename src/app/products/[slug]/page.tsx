@@ -9,6 +9,8 @@ import GoogleRatingBadge from '@/components/GoogleRatingBadge'
 import { getGoogleReviews } from '@/lib/google-reviews'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
+import ProductDescription, { RichDescription } from '@/components/ProductDescription'
+import { parseDescription, isRichHtml, type DescBlock } from '@/lib/format-description'
 function sanitize(html: string) {
   const cleaned = html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -72,6 +74,19 @@ const TRUST = [
   },
 ]
 
+const VIBER = 'viber://chat?number=%2B359999997996'
+const PHONE_RAW = '+359999997996'
+
+const BULB_FAQ = [
+  { q: 'Ще пасват ли на моята кола?', a: 'Пиши ни марка, модел и година във Viber или се обади — ще ти кажем точно кои крушки ти трябват, преди да поръчаш.' },
+  { q: 'Ще има ли грешки на таблото (CanBus)?', a: 'При повечето коли — не. При някои модели (основно BMW, Mercedes, VAG група) може да е нужен CanBus модул. Имаме такива и ще ти кажем предварително дали ти трябва.' },
+  { q: 'Трудно ли се монтират?', a: 'Не. Plug & Play — слагаш ги на мястото на старите крушки за около 5 минути, без преправяне на инсталацията.' },
+  { q: 'Как плащам и кога пристигат?', a: 'Плащаш с наложен платеж при получаване. Поръчка до 14:00 тръгва същия ден с Еконт или Спиди, доставка 1–2 работни дни.' },
+  { q: 'Какво става, ако нещо не е наред?', a: 'Гаранция до 2 години и 14 дни право на връщане. Пиши ни във Viber — отговаряме бързо.' },
+]
+
+const plain = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()
+
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
@@ -107,7 +122,29 @@ export default async function ProductPage({ params }: Props) {
     .order('position')
   const bundleProducts = ((bundleRelations ?? []) as unknown as { product: { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[] } }[]).map(r => r.product)
 
-  const cleanDescription = p.description ? sanitize(p.description) : null
+  // Short description: lead sentence + key specs up top, the full structured text in the "Описание" tab
+  const shortBlocks: DescBlock[] = p.short_description && !isRichHtml(p.short_description) ? parseDescription(sanitize(p.short_description)) : []
+  const lead = shortBlocks[0]?.type === 'paragraph' ? shortBlocks[0].text : null
+  const keySpecs = shortBlocks.flatMap(b => (b.type === 'specs' ? b.items : [])).slice(0, 4)
+  const restBlocks = lead ? shortBlocks.slice(1) : shortBlocks
+  const priceNote = p.short_description && /комплект от 2|2 броя/i.test(p.short_description) ? 'Цената е за комплект от 2 броя' : undefined
+
+  // Skip the long description when it just repeats the short one
+  const longHtml = p.description ? sanitize(p.description) : null
+  const longIsDuplicate = !!(longHtml && p.short_description && plain(longHtml).slice(0, 80) === plain(p.short_description).slice(0, 80))
+  const longBlocks = longHtml && !longIsDuplicate && !isRichHtml(longHtml) ? parseDescription(longHtml) : []
+
+  const descriptionContent = restBlocks.length > 0 || longBlocks.length > 0 || (longHtml && !longIsDuplicate)
+    ? (
+        <div className="space-y-8">
+          {restBlocks.length > 0 && <ProductDescription blocks={restBlocks} />}
+          {longBlocks.length > 0 && <ProductDescription blocks={longBlocks} />}
+          {longHtml && !longIsDuplicate && isRichHtml(longHtml) && <RichDescription html={longHtml} />}
+        </div>
+      )
+    : null
+
+  const isBulb = p.category?.slug === 'led-krushki'
 
   const effectivePrice = Number(p.sale_price ?? p.price)
   const productSchema = {
@@ -188,7 +225,21 @@ export default async function ProductPage({ params }: Props) {
 
           <GoogleRatingBadge reviews={await getGoogleReviews()} className="self-start mb-4" />
 
-          {p.short_description && (
+          {lead && <p className="text-white text-[15px] leading-relaxed mb-5">{lead}</p>}
+
+          {keySpecs.length > 0 && (
+            <dl className="grid grid-cols-2 gap-2 mb-6">
+              {keySpecs.map(s => (
+                <div key={s.key} className="bg-surface border border-border rounded-xl px-3 py-2.5">
+                  <dt className="text-[11px] uppercase tracking-wider text-white/60">{s.key}</dt>
+                  <dd className="text-sm font-bold text-white leading-snug">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          {/* Short description we couldn't structure (rich HTML) */}
+          {p.short_description && shortBlocks.length === 0 && (
             <div
               className="product-description text-white text-sm mb-6 leading-relaxed wrap-break-word overflow-hidden"
               dangerouslySetInnerHTML={{ __html: sanitize(p.short_description) }}
@@ -196,7 +247,7 @@ export default async function ProductPage({ params }: Props) {
           )}
 
           {/* Price + variation + add to cart */}
-          <ProductActions product={p} categorySlug={(p as any).category?.slug} />
+          <ProductActions product={p} categorySlug={(p as any).category?.slug} priceNote={priceNote} />
 
           {/* Separator */}
           <div className="h-px bg-border my-6" />
@@ -214,19 +265,42 @@ export default async function ProductPage({ params }: Props) {
             ))}
           </div>
 
-          {/* Delivery note */}
-          <div className="mt-4 flex items-center gap-2 text-xs text-muted bg-accent/5 border border-accent/15 rounded-xl px-4 py-2.5">
-            <svg className="w-4 h-4 text-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Поръчай сега — доставка в рамките на 1–2 работни дни. Плащане с наложен платеж.
+          {/* Fitment help: the #1 question before buying bulbs */}
+          <div className="mt-4 bg-surface border border-border rounded-xl p-4">
+            <p className="text-sm font-bold text-white">Не знаеш дали пасват на колата ти?</p>
+            <p className="text-xs text-white/70 mt-0.5 mb-3">Пиши ни марка и модел — отговаряме веднага, 24/7.</p>
+            <div className="grid grid-cols-2 gap-2">
+              <a href={VIBER} className="flex items-center justify-center gap-2 bg-[#7360f2] hover:bg-[#6554d6] text-white text-sm font-bold rounded-lg py-2.5 transition-colors">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Viber
+              </a>
+              <a href={`tel:${PHONE_RAW}`} className="flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white text-sm font-bold rounded-lg py-2.5 transition-colors">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Обади се
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Description tabs */}
-      {cleanDescription && (
-        <ProductDescriptionTabs description={cleanDescription} attributes={p.attributes ?? []} />
+      <ProductDescriptionTabs description={descriptionContent} attributes={p.attributes ?? []} />
+
+      {isBulb && (
+        <section className="mt-14 border-t border-border pt-10 max-w-3xl">
+          <h2 className="text-xl font-black mb-5">Често задавани въпроси</h2>
+          <div className="space-y-2">
+            {BULB_FAQ.map(f => (
+              <details key={f.q} className="group bg-surface border border-border rounded-xl px-4 py-3 open:border-accent/40">
+                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none font-semibold text-white text-[15px]">
+                  {f.q}
+                  <span className="text-accent text-xl leading-none transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-2 text-[15px] text-white/85 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Frequently Bought Together */}
