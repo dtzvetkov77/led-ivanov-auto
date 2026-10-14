@@ -11,6 +11,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import PhoneClickTracker from '@/components/PhoneClickTracker'
 import PageTracker from '@/components/PageTracker'
 import Script from 'next/script'
+import { GOOGLE_REVIEWS } from '@/lib/google-reviews'
 
 const inter  = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
 const oswald = Oswald({ subsets: ['latin', 'cyrillic'], variable: '--font-oswald', weight: ['400', '500', '600', '700'] })
@@ -116,8 +117,8 @@ const globalSchema = {
       },
       aggregateRating: {
         '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: '266',
+        ratingValue: String(GOOGLE_REVIEWS.rating),
+        reviewCount: String(GOOGLE_REVIEWS.count),
         bestRating: '5',
         worstRating: '1',
       },
