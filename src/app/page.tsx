@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import HeroFilter from '@/components/HeroFilter'
+import { getGoogleReviews } from '@/lib/google-reviews'
 import ProductGrid from '@/components/ProductGrid'
 import ProductSlider from '@/components/ProductSlider'
 import TestimonialsSlider from '@/components/TestimonialsSlider'
@@ -40,7 +41,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero filter ───────────────────────────────────────────────── */}
-      <HeroFilter />
+      <HeroFilter reviews={await getGoogleReviews()} />
 
       {/* ── Product series slider ─────────────────────────────────────── */}
       <ProductSlider />

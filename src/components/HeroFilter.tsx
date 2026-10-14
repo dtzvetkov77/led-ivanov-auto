@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
 import GoogleRatingBadge from '@/components/GoogleRatingBadge'
+import type { GoogleReviews } from '@/lib/google-reviews'
 
 type Make  = { id: string; name: string; slug: string }
 type Model = { id: string; name: string }
@@ -183,7 +184,7 @@ function CatSelect({
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function HeroFilter() {
+export default function HeroFilter({ reviews }: { reviews: GoogleReviews }) {
   const router = useRouter()
 
   const [makes,    setMakes]    = useState<Make[]>([])
@@ -267,7 +268,7 @@ export default function HeroFilter() {
         </span>
 
         {/* Google rating badge */}
-        <GoogleRatingBadge />
+        <GoogleRatingBadge reviews={reviews} />
         </div>
 
         {/* Headline */}

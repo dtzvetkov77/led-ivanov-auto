@@ -1,10 +1,10 @@
-import { GOOGLE_REVIEWS } from '@/lib/google-reviews'
+import type { GoogleReviews } from '@/lib/google-reviews'
 
 // Google logo + stars + review count, linking to the Google Maps profile
-export default function GoogleRatingBadge({ className = '' }: { className?: string }) {
+export default function GoogleRatingBadge({ reviews, className = '' }: { reviews: GoogleReviews; className?: string }) {
   return (
     <a
-      href={GOOGLE_REVIEWS.url}
+      href={reviews.url}
       target="_blank" rel="noopener noreferrer"
       className={`inline-flex items-center gap-2 bg-white/8 hover:bg-white/12 border border-white/12 rounded-full px-4 py-1.5 transition-colors ${className}`}
     >
@@ -15,15 +15,15 @@ export default function GoogleRatingBadge({ className = '' }: { className?: stri
         <path fill="#FBBC05" d="M5.63 14.69A6.74 6.74 0 015.27 12.25c0-.85.15-1.67.42-2.43L1.32 7.92A11.94 11.94 0 000 12.25c0 1.5.28 2.94.78 4.24l4.85-1.8z"/>
       </svg>
       <span className="flex items-center gap-1">
-        <span className="text-white text-xs font-bold">{GOOGLE_REVIEWS.rating.toFixed(1)}</span>
-        <span className="flex gap-0.5" aria-label={`${GOOGLE_REVIEWS.rating} от 5 звезди`}>
+        <span className="text-white text-xs font-bold">{reviews.rating.toFixed(1)}</span>
+        <span className="flex gap-0.5" aria-label={`${reviews.rating} от 5 звезди`}>
           {[1, 2, 3, 4, 5].map(s => (
             <svg key={s} className="w-3 h-3 text-yellow-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
           ))}
         </span>
-        <span className="text-white text-xs font-medium">· {GOOGLE_REVIEWS.count}+ ревюта в Google</span>
+        <span className="text-white text-xs font-medium">· {reviews.count} ревюта в Google</span>
       </span>
     </a>
   )

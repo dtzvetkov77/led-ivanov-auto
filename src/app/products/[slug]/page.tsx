@@ -6,6 +6,7 @@ import ProductDescriptionTabs from '@/components/ProductDescriptionTabs'
 import FrequentlyBoughtTogether from '@/components/FrequentlyBoughtTogether'
 import AdminBar from '@/components/AdminBar'
 import GoogleRatingBadge from '@/components/GoogleRatingBadge'
+import { getGoogleReviews } from '@/lib/google-reviews'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
 function sanitize(html: string) {
@@ -185,7 +186,7 @@ export default async function ProductPage({ params }: Props) {
 
           <h1 className="text-2xl md:text-3xl font-black mb-3 leading-tight wrap-break-word">{p.name}</h1>
 
-          <GoogleRatingBadge className="self-start mb-4" />
+          <GoogleRatingBadge reviews={await getGoogleReviews()} className="self-start mb-4" />
 
           {p.short_description && (
             <div

@@ -11,7 +11,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import PhoneClickTracker from '@/components/PhoneClickTracker'
 import PageTracker from '@/components/PageTracker'
 import Script from 'next/script'
-import { GOOGLE_REVIEWS } from '@/lib/google-reviews'
+import { getGoogleReviews, type GoogleReviews } from '@/lib/google-reviews'
 
 const inter  = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter' })
 const oswald = Oswald({ subsets: ['latin', 'cyrillic'], variable: '--font-oswald', weight: ['400', '500', '600', '700'] })
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   },
 }
 
-const globalSchema = {
+const globalSchema = (reviews: GoogleReviews) => ({
   '@context': 'https://schema.org',
   '@graph': [
     {
@@ -117,8 +117,8 @@ const globalSchema = {
       },
       aggregateRating: {
         '@type': 'AggregateRating',
-        ratingValue: String(GOOGLE_REVIEWS.rating),
-        reviewCount: String(GOOGLE_REVIEWS.count),
+        ratingValue: String(reviews.rating),
+        reviewCount: String(reviews.count),
         bestRating: '5',
         worstRating: '1',
       },
@@ -147,9 +147,9 @@ const globalSchema = {
       },
     },
   ],
-}
+})
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="bg">
       <head>
@@ -168,7 +168,7 @@ gtag('set','url_passthrough',true);`,
         />
       </head>
       <body className={`${inter.variable} ${oswald.variable} font-sans bg-background text-white`}>
-        <JsonLd data={globalSchema} />
+        <JsonLd data={globalSchema(await getGoogleReviews())} />
         {/* Fixed delivery banner — h-8 (32px) */}
         <div className="fixed top-0 left-0 right-0 z-50 bg-accent text-white text-xs h-8 flex items-center justify-center font-semibold tracking-widest uppercase gap-3 sm:gap-6">
           {/* Phone */}
