@@ -84,7 +84,7 @@ const SLIDES = [
       { icon: iconLight(c),  label: '+380% светлина' },
       { icon: iconWatt(c),   label: '110W' },
       { icon: iconPlug(c),   label: 'Plug & Play' },
-      { icon: iconShield(c), label: '4 год. гаранция' },
+      { icon: iconShield(c), label: '2 год. гаранция' },
     ],
     href: '/products/led-zamestitel-na-ksenon-d1sd2s-rd3sd4sd5sd8s-110w-6000k',
     img: '/images/products/d-series.png',

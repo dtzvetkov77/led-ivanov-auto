@@ -57,6 +57,7 @@ const TRUST = [
     icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg>,
     title: 'до 2 год. гаранция',
     sub: 'На всички продукти',
+    warranty: true,
   },
   {
     icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>,
@@ -85,6 +86,13 @@ const BULB_FAQ = [
   { q: 'Как плащам и кога пристигат?', a: 'Плащаш с наложен платеж при получаване. Поръчка до 14:00 тръгва същия ден с Еконт или Спиди, доставка 1–2 работни дни.' },
   { q: 'Какво става, ако нещо не е наред?', a: 'Гаранция до 2 години и 14 дни право на връщане. Пиши ни във Viber — отговаряме бързо.' },
 ]
+
+// Warranty per series (owner's call 2026-10-16): 180W = 1 year, 200W and D-series xenon replacements = 2 years
+function warrantyYears(name: string): 1 | 2 | null {
+  if (/\b180\s?W\b/i.test(name)) return 1
+  if (/\b200\s?W\b/i.test(name) || /\bD[1-8][SR]\b/i.test(name)) return 2
+  return null
+}
 
 const plain = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()
 
@@ -144,6 +152,16 @@ export default async function ProductPage({ params }: Props) {
         </div>
       )
     : null
+
+  const years = warrantyYears(p.name)
+  const trust = TRUST.map(t =>
+    'warranty' in t && years ? { ...t, title: `${years} год. гаранция`, sub: `${years * 12} месеца на този продукт` } : t,
+  )
+  const faq = BULB_FAQ.map(f =>
+    years && f.q.startsWith('Какво става')
+      ? { ...f, a: `Гаранция ${years === 1 ? '1 година' : '2 години'} на този продукт и 14 дни право на връщане. Пиши ни във Viber — отговаряме бързо.` }
+      : f,
+  )
 
   const isBulb = /krushk/.test(p.category?.slug ?? '') || /крушк/i.test(p.name)
 
@@ -269,7 +287,7 @@ export default async function ProductPage({ params }: Props) {
 
           {/* Trust badges */}
           <div className="grid grid-cols-2 gap-3">
-            {TRUST.map(b => (
+            {trust.map(b => (
               <div key={b.title} className="flex items-center gap-3 bg-surface border border-border rounded-xl px-3 py-2.5">
                 <span className="text-accent shrink-0">{b.icon}</span>
                 <div>
@@ -322,7 +340,7 @@ export default async function ProductPage({ params }: Props) {
         <section className="mt-14 border-t border-border pt-10 max-w-3xl">
           <h2 className="text-xl font-black mb-5">Често задавани въпроси</h2>
           <div className="space-y-2">
-            {BULB_FAQ.map(f => (
+            {faq.map(f => (
               <details key={f.q} className="group bg-surface border border-border rounded-xl px-4 py-3 open:border-accent/40">
                 <summary className="flex items-center justify-between gap-4 cursor-pointer list-none font-semibold text-white text-[15px]">
                   {f.q}
