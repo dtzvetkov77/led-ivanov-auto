@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import HeroFilter from '@/components/HeroFilter'
 import { getGoogleReviews } from '@/lib/google-reviews'
-import ProductGrid from '@/components/ProductGrid'
+import BestsellersGrid from '@/components/BestsellersGrid'
 import ProductSlider from '@/components/ProductSlider'
 import TestimonialsSlider from '@/components/TestimonialsSlider'
 import HomePartnersSection from '@/components/HomePartnersSection'
@@ -36,7 +36,23 @@ export default async function HomePage() {
     ? productsQuery.in('id', bulbIds)
     : bulbCatIds.length ? productsQuery.in('category_id', bulbCatIds) : productsQuery.limit(8)
   const { data: allBulbs } = await productsQuery.order('position').order('created_at', { ascending: false })
-  const products = (allBulbs ?? []).filter(p => !/модул/i.test(p.name))
+  // Pinned to the top in this order (H7 200W, 180W, xenon replacements, parking lights); rest keep admin order
+  const PINNED = [
+    'led-krushki-h7-200w-60000lm-580-yarkost',
+    '180w-led-krushki',
+    '50000lum-180w-led-krushki-h4',
+    'led-zamestitel-na-ksenon-d1sd2s-rd3sd4sd5sd8s-110w-6000k',
+    'premium-led-d2s-110w',
+    'led-zamestitel-na-ksenon-d5s-110w-6000k',
+    'led-gabaritni-krushki-t10-w5w-360-osvetyavane',
+    'naj-silnite-gabaritni-krushki-t10',
+  ]
+  const pinRank = (slug: string) => { const i = PINNED.indexOf(slug); return i === -1 ? PINNED.length : i }
+  const products = (allBulbs ?? [])
+    .filter(p => !/модул/i.test(p.name))
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => pinRank(a.p.slug) - pinRank(b.p.slug) || a.i - b.i)
+    .map(x => x.p)
 
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
   const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null; image_url: string | null }[]
@@ -131,7 +147,7 @@ export default async function HomePage() {
             <h2 className="text-2xl md:text-3xl font-black mb-2">НАЙ-ПРОДАВАНИ</h2>
             <p className="text-muted text-sm">Разгледай най-популярните продукти от LED IVANOV AUTO</p>
           </div>
-          <ProductGrid products={products ?? []} />
+          <BestsellersGrid products={products} />
           <div className="text-center mt-8">
             <Link href="/products"
               className="inline-block border border-accent text-accent hover:bg-accent hover:text-white px-8 py-3 rounded-lg font-bold transition-colors">
