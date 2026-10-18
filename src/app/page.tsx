@@ -20,11 +20,23 @@ const STATIC_PARTNERS = [
 
 export default async function HomePage() {
   const supabase = await createClient()
-  const [{ data: products }, { data: partnersData }, { data: categoriesData }] = await Promise.all([
-    supabase.from('products').select('*').eq('published', true).order('position').limit(8),
+  const [{ data: partnersData }, { data: categoriesData }] = await Promise.all([
     supabase.from('partners').select('slug,name,city,phone,cover_image,logo_url').eq('published', true).order('position'),
     supabase.from('categories').select('id,name,slug,parent_id,image_url').order('name'),
   ])
+  // Bestsellers = every published LED bulb (led-krushki + its subcategories)
+  const bulbCat = (categoriesData ?? []).find(c => c.slug === 'led-krushki')
+  const bulbCatIds = bulbCat ? [bulbCat.id, ...(categoriesData ?? []).filter(c => c.parent_id === bulbCat.id).map(c => c.id)] : []
+  const { data: pc } = bulbCatIds.length
+    ? await supabase.from('product_categories').select('product_id').in('category_id', bulbCatIds)
+    : { data: [] }
+  const bulbIds = [...new Set((pc ?? []).map(r => r.product_id as string))]
+  let productsQuery = supabase.from('products').select('*').eq('published', true)
+  productsQuery = bulbIds.length
+    ? productsQuery.in('id', bulbIds)
+    : bulbCatIds.length ? productsQuery.in('category_id', bulbCatIds) : productsQuery.limit(8)
+  const { data: products } = await productsQuery.order('position').order('created_at', { ascending: false })
+
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
   const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null; image_url: string | null }[]
   const dbSubcategories = allDbCats
