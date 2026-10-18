@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
-import { ARTICLES } from '@/lib/articles'
+import { ARTICLES, articleCover } from '@/lib/articles'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +34,7 @@ export default async function BlogPage() {
       title: a.title,
       meta_description: a.metaDescription as string | null,
       reading_time: a.readingTime,
-      cover_image: null as string | null,
+      cover_image: articleCover(a.slug) as string | null,
       created_at: a.date,
     })),
     ...(dbPosts ?? []),

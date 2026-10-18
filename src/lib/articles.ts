@@ -783,6 +783,10 @@ ${table(
   },
 ]
 
+export function articleCover(slug: string): string {
+  return `/images/blog/${slug}.webp`
+}
+
 export function getArticle(slug: string): Article | undefined {
   return ARTICLES.find(a => a.slug === slug)
 }

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
-import { getArticle, type Article } from '@/lib/articles'
+import { getArticle, articleCover, type Article } from '@/lib/articles'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +25,7 @@ function fromArticle(a: Article): Post {
     title: a.title,
     meta_description: a.metaDescription,
     content: a.content,
-    cover_image: null,
+    cover_image: articleCover(a.slug),
     reading_time: a.readingTime,
     created_at: a.date,
     updated_at: a.date,
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props) {
   const supabase = await createClient()
   const { data: dbPost } = await supabase
     .from('blog_posts')
-    .select('title, meta_description, created_at, updated_at')
+    .select('title, meta_description, cover_image, created_at, updated_at')
     .eq('slug', slug)
     .eq('published', true)
     .maybeSingle()
@@ -55,6 +55,7 @@ export async function generateMetadata({ params }: Props) {
       url: `${SITE}/blog/${slug}`,
       type: 'article',
       publishedTime: post.created_at,
+      ...(post.cover_image ? { images: [{ url: post.cover_image.startsWith('/') ? `${SITE}${post.cover_image}` : post.cover_image, width: 1600, height: 900, alt: post.title }] } : {}),
       modifiedTime: post.updated_at ?? undefined,
     },
   }
@@ -82,7 +83,7 @@ export default async function BlogPostPage({ params }: Props) {
     description: post.meta_description ?? undefined,
     datePublished: post.created_at,
     dateModified: post.updated_at ?? post.created_at,
-    ...(post.cover_image ? { image: post.cover_image } : {}),
+    ...(post.cover_image ? { image: post.cover_image.startsWith('/') ? `${SITE}${post.cover_image}` : post.cover_image } : {}),
     author: {
       '@type': 'Organization',
       name: 'LED Ivanov Auto',
