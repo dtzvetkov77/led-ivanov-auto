@@ -169,16 +169,17 @@ export default async function HomePage() {
             target="_blank"
             rel="noopener noreferrer"
             className="block relative rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/30 hover:border-accent/50 transition-colors group"
-            style={{ height: 340 }}
           >
-            <Image
-              src="/images/about.jpg"
-              alt="LED Ivanov Auto — ж.к. Малинова долина, София"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+            <div className="relative h-[480px] md:h-[520px]">
+              <Image
+                src="/images/servis.jpg"
+                alt="Сервиз LED Ivanov Auto — ж.к. Малинова долина, София"
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover object-[center_45%] group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 pb-6 pt-16 bg-linear-to-t from-black/70 to-transparent flex items-end justify-center">
               <span className="inline-flex items-center gap-2 bg-black/70 backdrop-blur-sm text-white text-sm font-bold px-5 py-2.5 rounded-full border border-white/20">
                 <svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round"/>
