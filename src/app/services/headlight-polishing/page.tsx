@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export const metadata: Metadata = {
-  title: 'Полиране на фарове | LED Ivanov Auto',
+  title: { absolute: 'Полиране на фарове | LED Ivanov Auto' },
   description: 'Професионално полиране и възстановяване на фарове в София. Премахваме пожълтяването и мътността за кристална прозрачност и ярка светлина. Гаранция за резултата.',
 }
 

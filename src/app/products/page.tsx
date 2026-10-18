@@ -4,7 +4,7 @@ import ProductFilter from '@/components/ProductFilter'
 import { Suspense } from 'react'
 
 export const metadata = {
-  title: 'LED крушки и ксенон за автомобили | LED Ivanov Auto',
+  title: { absolute: 'LED крушки и ксенон за автомобили | LED Ivanov Auto' },
   description: 'Купете LED и ксенон крушки за фарове онлайн — широк избор от H1, H4, H7, H11 и др. Plug & Play монтаж, без CanBus грешки, до 2 год. гаранция.',
   alternates: {
     canonical: '/products',

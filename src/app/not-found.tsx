@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '404 — Страницата не е намерена | LED Ivanov Auto',
+  title: { absolute: '404 — Страницата не е намерена | LED Ivanov Auto' },
   robots: { index: false },
 }
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Видео | LED Ivanov Auto',
+  title: { absolute: 'Видео | LED Ivanov Auto' },
   description: 'Видео демонстрации и монтажни инструкции на LED крушки от LED Ivanov Auto.',
 }
 

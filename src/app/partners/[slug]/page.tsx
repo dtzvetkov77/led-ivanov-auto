@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const partner = STATIC_PARTNERS.find(p => p.slug === slug)
   const name = partner?.name ?? slug
   return {
-    title: `${name} | Партньорски сервизи | LED Ivanov Auto`,
+    title: { absolute: `${name} | Партньорски сервизи | LED Ivanov Auto` },
     description: `${name} — партньорски сервиз на LED Ivanov Auto в ${partner?.city ?? ''}. Полиране на фарове и автомобилна козметика.`,
   }
 }

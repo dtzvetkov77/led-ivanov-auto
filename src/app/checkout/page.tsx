@@ -1,6 +1,6 @@
 import CheckoutForm from '@/components/CheckoutForm'
 
-export const metadata = { title: 'Поръчка | LED Ivanov Auto', robots: { index: false } }
+export const metadata = { title: { absolute: 'Поръчка | LED Ivanov Auto' }, robots: { index: false } }
 
 export default function CheckoutPage() {
   return (

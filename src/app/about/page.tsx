@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'За нас | LED Ivanov Auto',
+  title: { absolute: 'За нас | LED Ivanov Auto' },
   description: 'LED Ivanov Auto – вашият специалист за LED крушки и авто осветление в България. Качество, гаранция и монтаж.',
 }
 

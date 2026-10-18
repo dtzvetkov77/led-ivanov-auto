@@ -3,7 +3,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Admin | LED Ivanov Auto' }
+export const metadata = { title: { absolute: 'Admin | LED Ivanov Auto' } }
 
 export default async function AdminDashboard() {
   const supabase = await createClient()

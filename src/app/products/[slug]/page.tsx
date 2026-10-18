@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props) {
     ? product.short_description.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 160)
     : undefined
   return {
-    title: `${product.name} | LED Ivanov Auto`,
+    title: { absolute: `${product.name} | LED Ivanov Auto` },
     description: plainDesc,
     alternates: { canonical: `/products/${slug}` },
     openGraph: {

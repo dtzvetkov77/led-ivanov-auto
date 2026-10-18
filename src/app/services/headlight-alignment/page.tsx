@@ -8,7 +8,7 @@ import LightboxGallery from '@/components/LightboxGallery'
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export const metadata: Metadata = {
-  title: 'Регулиране на фарове | LED Ivanov Auto',
+  title: { absolute: 'Регулиране на фарове | LED Ivanov Auto' },
   description: 'Професионално регулиране на фарове в София. Правилната насоченост на фаровете е задължителна за ГТП и за безопасност. Обслужваме всички марки автомобили.',
 }
 

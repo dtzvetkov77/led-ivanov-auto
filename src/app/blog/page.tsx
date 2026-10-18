@@ -1,13 +1,14 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
+import { ARTICLES } from '@/lib/articles'
 
 export const dynamic = 'force-dynamic'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export const metadata = {
-  title: 'Блог — LED крушки и авто осветление | LED Ivanov Auto',
+  title: { absolute: 'Блог — LED крушки и авто осветление | LED Ivanov Auto' },
   description: 'Ръководства, съвети и новини за LED крушки, ксенон, полиране и фолиране на фарове. Научете всичко за авто осветлението от специалистите на LED Ivanov Auto.',
   alternates: { canonical: '/blog' },
   openGraph: {
@@ -19,11 +20,25 @@ export const metadata = {
 
 export default async function BlogPage() {
   const supabase = await createClient()
-  const { data: posts } = await supabase
+  const { data: dbPosts } = await supabase
     .from('blog_posts')
     .select('id, slug, title, meta_description, reading_time, cover_image, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
+
+  const dbSlugs = new Set((dbPosts ?? []).map(p => p.slug))
+  const posts = [
+    ...ARTICLES.filter(a => !dbSlugs.has(a.slug)).map(a => ({
+      id: a.slug,
+      slug: a.slug,
+      title: a.title,
+      meta_description: a.metaDescription as string | null,
+      reading_time: a.readingTime,
+      cover_image: null as string | null,
+      created_at: a.date,
+    })),
+    ...(dbPosts ?? []),
+  ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -47,7 +62,7 @@ export default async function BlogPage() {
       <div className="mb-10">
         <span className="text-xs font-bold tracking-[4px] uppercase text-accent mb-2 block">РЕСУРСИ</span>
         <h1 className="text-3xl font-black mb-2">Блог</h1>
-        <p className="text-muted text-sm max-w-xl">Ръководства за избор на LED крушки, CANBUS съвместимост, полиране на фарове и всичко за авто осветлението.</p>
+        <p className="text-muted text-sm max-w-xl">Ръководства от сервиза на LED Ivanov Auto за LED крушки за автомобил: H7, H4, H11, заместители на ксенон, CANBUS, монтаж и регулиране на фарове.</p>
       </div>
 
       {!posts?.length ? (

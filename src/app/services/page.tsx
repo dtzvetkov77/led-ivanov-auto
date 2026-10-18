@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'Услуги за фарове | LED Ivanov Auto',
+  title: { absolute: 'Услуги за фарове | LED Ivanov Auto' },
   description: 'Полиране, фолиране и регулиране на фарове в София. Професионална грижа за фаровете на вашия автомобил.',
   alternates: { canonical: '/services' },
 }

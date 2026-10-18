@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ConversionTracker from './ConversionTracker'
 
-export const metadata = { title: 'Поръчката е получена | LED Ivanov Auto', robots: { index: false } }
+export const metadata = { title: { absolute: 'Поръчката е получена | LED Ivanov Auto' }, robots: { index: false } }
 
 type Props = { searchParams: Promise<{ order?: string }> }
 

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Условия за ползване | LED Ivanov Auto',
+  title: { absolute: 'Условия за ползване | LED Ivanov Auto' },
   description: 'Общи условия за ползване на онлайн магазин LED Ivanov Auto. Поръчки, доставка, гаранция и право на отказ.',
   robots: { index: false },
 }

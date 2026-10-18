@@ -8,7 +8,7 @@ import LightboxGallery from '@/components/LightboxGallery'
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 export const metadata: Metadata = {
-  title: 'Фолиране на фарове | LED Ivanov Auto',
+  title: { absolute: 'Фолиране на фарове | LED Ivanov Auto' },
   description: 'Професионално фолиране на фарове с PPF фолио в София. Защита от UV лъчи, камъни и надрасквания. Запазва прозрачността и стойността на автомобила с до 5 години гаранция.',
 }
 

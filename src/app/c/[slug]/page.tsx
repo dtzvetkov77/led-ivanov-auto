@@ -5,6 +5,17 @@ import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
 import { CATEGORY_PAGE_CONFIGS } from '@/lib/categoryPages'
 import type { Product } from '@/lib/types'
+import { getArticle, type Article } from '@/lib/articles'
+
+const GUIDES: Record<string, string[]> = {
+  'led-krushki-h7': ['led-krushki-h7-110w-180w-200w', 'montazh-led-krushki-h7', 'led-krushki-greshka-migane-smushtenia'],
+  'led-krushki-h4': ['led-krushki-h4-kasi-i-dalgi', 'led-krushki-sveti-slabo-razseyana-svetlina', 'zakonni-li-sa-led-krushkite'],
+  'led-krushki-h11': ['led-krushki-za-mygla-h11-h8', 'kakva-krushka-e-moyata-kola', 'nai-dobrite-led-krushki'],
+  'led-krushki-h1': ['kakva-krushka-e-moyata-kola', 'led-krushki-za-avtomobil-vsichko', 'led-krushki-za-mygla-h11-h8'],
+  'ksenon-krushki': ['led-zamestitel-na-ksenon-d1s-d2s-d3s', 'led-vs-ksenon-vs-halogen', 'nai-dobrite-led-krushki'],
+  'dnevni-svetlini': ['led-krushki-za-avtomobil-vsichko', 'led-vs-ksenon-vs-halogen', 'nai-dobrite-led-krushki'],
+  'led-krushki-canbus': ['led-krushki-greshka-migane-smushtenia', 'montazh-led-krushki-h7', 'led-krushki-za-avtomobil-vsichko'],
+}
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
@@ -19,7 +30,7 @@ export async function generateMetadata({ params }: Props) {
   const config = CATEGORY_PAGE_CONFIGS[slug]
   if (!config) return {}
   return {
-    title: config.title,
+    title: { absolute: config.title },
     description: config.metaDescription,
     alternates: { canonical: `/c/${slug}` },
     openGraph: {
@@ -176,6 +187,24 @@ export default async function CategoryLandingPage({ params }: Props) {
           </Link>
         </div>
       )}
+
+      {/* Guides */}
+      {(() => {
+        const guides = (GUIDES[slug] ?? []).map(getArticle).filter((a): a is Article => !!a)
+        if (!guides.length) return null
+        return (
+          <section className="mb-12">
+            <h2 className="text-xl font-black mb-6">Полезни ръководства</h2>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {guides.map(g => (
+                <Link key={g.slug} href={`/blog/${g.slug}`} className="bg-surface border border-border hover:border-accent/60 rounded-xl p-4 text-sm font-semibold leading-snug transition-colors">
+                  {g.title}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )
+      })()}
 
       {/* FAQ */}
       {config.faq.length > 0 && (

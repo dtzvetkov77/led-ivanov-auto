@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import LightboxGallery from '@/components/LightboxGallery'
 
-export const metadata = { title: 'Галерия | LED Ivanov Auto' }
+export const metadata = { title: { absolute: 'Галерия | LED Ivanov Auto' } }
 
 export default async function GalleryPage() {
   const supabase = await createClient()

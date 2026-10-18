@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Политика за поверителност | LED Ivanov Auto',
+  title: { absolute: 'Политика за поверителност | LED Ivanov Auto' },
   description: 'Политика за защита на личните данни на LED Ivanov Auto. Научете как събираме, използваме и пазим вашата информация.',
   robots: { index: false },
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Доволни Клиенти | LED Ivanov Auto',
+  title: { absolute: 'Доволни Клиенти | LED Ivanov Auto' },
   description: 'Реални отзиви от клиенти на LED Ivanov Auto. Над 1000 доволни шофьори в България.',
 }
 
