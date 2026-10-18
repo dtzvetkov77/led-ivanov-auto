@@ -158,15 +158,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Services ─────────────────────────────────────────────────── */}
-      <ServicesSection />
-
-      {/* ── Testimonials ─────────────────────────────────────────────── */}
-      <TestimonialsSlider />
-
-      {/* ── Partners ─────────────────────────────────────────────────── */}
-      <HomePartnersSection partners={PARTNERS} />
-
       {/* ── Location map ─────────────────────────────────────────────── */}
       <section className="py-14 px-4">
         <div className="max-w-3xl mx-auto text-center">
@@ -199,6 +190,15 @@ export default async function HomePage() {
           </a>
         </div>
       </section>
+
+      {/* ── Services ─────────────────────────────────────────────────── */}
+      <ServicesSection />
+
+      {/* ── Testimonials ─────────────────────────────────────────────── */}
+      <TestimonialsSlider />
+
+      {/* ── Partners ─────────────────────────────────────────────────── */}
+      <HomePartnersSection partners={PARTNERS} />
 
       {/* ── Trust badges ─────────────────────────────────────────────── */}
       <section className="py-12 px-4">
