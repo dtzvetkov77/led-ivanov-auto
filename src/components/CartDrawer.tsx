@@ -7,6 +7,11 @@ import { dispatchToast } from '@/lib/toast'
 import type { CartItem } from '@/lib/types'
 
 type UP = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[]; attributes: { variation?: boolean; options?: string[] }[] | null }
+const NOT_LIGHT = /модул|резистор|декодер|адаптер|кабел|ключодърж|стикер|ароматизатор|постелк|калъф/i
+const PARKING = /габарит|\bW5W\b|\bT10\b/i
+const SMALL_LIGHT = /габарит|мигач|плафон|номер|табло|дневни|\b(W5W|WY5W|C5W|T10|T15|W16W|T20|P21W|PY21W|PWY24W|PH24WY|1156|1157|BA9S|BAY9S|BAX9S|BAW9S|T5|W3W)\b/i
+const isUpsellLight = (name: string) => SMALL_LIGHT.test(name) && !NOT_LIGHT.test(name)
+
 type Props = { open: boolean; onClose: () => void }
 
 export default function CartDrawer({ open, onClose }: Props) {
@@ -30,7 +35,7 @@ export default function CartDrawer({ open, onClose }: Props) {
     const baseIds = cart.map(i => i.product_id.split('__')[0]).filter(id => id.length === 36)
 
     if (baseIds.length > 0) {
-      // Try DB crosssell + upsell relations first
+      // Admin-set crosssell/upsell relations first, but only small lights (no modules etc.)
       supabase
         .from('product_relations')
         .select('product:products!related_id(id,name,slug,price,sale_price,images,attributes)')
@@ -38,39 +43,32 @@ export default function CartDrawer({ open, onClose }: Props) {
         .in('type', ['crosssell', 'upsell'])
         .order('position')
         .then(({ data }) => {
-          if (data && data.length > 0) {
-            const seen = new Set<string>()
-            const products = (data as unknown as { product: UP }[])
-              .map(r => r.product)
-              .filter(p => !cartIds.has(p.id) && !seen.has(p.id) && seen.add(p.id))
-            setUpsell(products.slice(0, 3))
-            return
-          }
-          // Fallback: category-based
-          loadCategoryUpsell(supabase, cart, cartIds)
+          const seen = new Set<string>()
+          const related = ((data ?? []) as unknown as { product: UP | null }[])
+            .map(r => r.product)
+            .filter((p): p is UP => !!p && isUpsellLight(p.name) && !cartIds.has(p.id) && !seen.has(p.id) && !!seen.add(p.id))
+          if (related.length >= 3) { setUpsell(related.slice(0, 3)); return }
+          loadLightUpsell(supabase, cartIds, related)
         })
     } else {
-      loadCategoryUpsell(supabase, cart, cartIds)
+      loadLightUpsell(supabase, cartIds, [])
     }
   }, [open])
 
-  function loadCategoryUpsell(supabase: ReturnType<typeof createClient>, cart: ReturnType<typeof getCart>, cartIds: Set<string>) {
-    const topItem = [...cart].sort((a, b) => b.price - a.price)[0]
-    const topCategorySlug = topItem?.category_slug
+  // Fill the upsell with parking lights (габарити) first, then other small lights
+  function loadLightUpsell(supabase: ReturnType<typeof createClient>, cartIds: Set<string>, picked: UP[]) {
     supabase
       .from('products')
-      .select('id,name,slug,price,sale_price,images,attributes,categories!category_id(slug)')
+      .select('id,name,slug,price,sale_price,images,attributes')
       .eq('published', true)
       .order('position')
-      .limit(20)
+      .limit(200)
       .then(({ data }) => {
-        if (!data) return
-        const all = data as unknown as (UP & { categories: { slug: string } | null })[]
-        const filtered = topCategorySlug
-          ? all.filter(p => (p.categories as any)?.slug === topCategorySlug && !cartIds.has(p.id))
-          : all.filter(p => !cartIds.has(p.id))
-        const result = filtered.length >= 2 ? filtered : all.filter(p => !cartIds.has(p.id))
-        setUpsell(result.slice(0, 3))
+        const taken = new Set(picked.map(p => p.id))
+        const pool = ((data ?? []) as UP[]).filter(p => isUpsellLight(p.name) && !cartIds.has(p.id) && !taken.has(p.id))
+        const rank = (n: string) => (PARKING.test(n) ? 0 : 1)
+        pool.sort((a, b) => rank(a.name) - rank(b.name))
+        setUpsell([...picked, ...pool].slice(0, 3))
       })
   }
 

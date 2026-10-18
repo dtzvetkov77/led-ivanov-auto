@@ -35,7 +35,8 @@ export default async function HomePage() {
   productsQuery = bulbIds.length
     ? productsQuery.in('id', bulbIds)
     : bulbCatIds.length ? productsQuery.in('category_id', bulbCatIds) : productsQuery.limit(8)
-  const { data: products } = await productsQuery.order('position').order('created_at', { ascending: false })
+  const { data: allBulbs } = await productsQuery.order('position').order('created_at', { ascending: false })
+  const products = (allBulbs ?? []).filter(p => !/модул/i.test(p.name))
 
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
   const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null; image_url: string | null }[]
