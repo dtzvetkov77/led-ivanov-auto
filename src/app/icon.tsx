@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 
-export const size = { width: 32, height: 32 }
+export const size = { width: 192, height: 192 }
 export const contentType = 'image/png'
 
 export default function Icon() {
@@ -14,11 +14,11 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: '7px',
+          borderRadius: '42px',
         }}
       >
         {/* Headlight: red lens circle + white light beams */}
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+        <svg viewBox="0 0 24 24" width="156" height="156" fill="none">
           {/* Lens */}
           <circle cx="7" cy="12" r="4.5" fill="#cc0000" />
           {/* Beams */}
