@@ -168,15 +168,15 @@ export default async function HomePage() {
             href="https://maps.google.com/?q=ул.+Георги+Русев+2,+жк+Малинова+долина,+1734+София"
             target="_blank"
             rel="noopener noreferrer"
-            className="block relative rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/30 hover:border-accent/50 transition-colors group"
+            className="block relative max-w-xl mx-auto rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/30 hover:border-accent/50 transition-colors group"
           >
-            <div className="relative h-[480px] md:h-[520px]">
+            <div className="relative h-[480px] md:h-[600px]">
               <Image
                 src="/images/servis.jpg"
                 alt="Сервиз LED Ivanov Auto — ж.к. Малинова долина, София"
                 fill
-                sizes="(max-width: 768px) 100vw, 768px"
-                className="object-cover object-[center_45%] group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 640px) 100vw, 576px"
+                className="object-cover object-[center_15%] group-hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className="absolute inset-x-0 bottom-0 pb-6 pt-16 bg-linear-to-t from-black/70 to-transparent flex items-end justify-center">
