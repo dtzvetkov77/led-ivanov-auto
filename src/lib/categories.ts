@@ -11,5 +11,6 @@ export const PRODUCT_CATEGORIES: readonly StaticCategory[] = [
   { slug: 'led-plafoni-za-nomer', name: 'LED Плафони за номер' },
   { slug: 'avtoaksesoari',        name: 'Автоаксесоари' },
   { slug: 'klyuchodarzhateli',    name: 'Ключодържатели' },
+  { slug: 'стикери',              name: 'Стикери' },
   { slug: 'bmw-babreci',         name: 'BMW Бъбреци', onlyMakes: ['bmw'] as const },
 ]
