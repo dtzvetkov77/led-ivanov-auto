@@ -7,6 +7,8 @@ import { CATEGORY_PAGE_CONFIGS } from '@/lib/categoryPages'
 import type { Product } from '@/lib/types'
 import { getArticle, type Article } from '@/lib/articles'
 
+const ACCESSORY = /модул|резистор|декодер|адаптер|преходни|кабел|букс|ключодърж|стикер/i
+
 const GUIDES: Record<string, string[]> = {
   'led-krushki-h7': ['led-krushki-h7-110w-180w-200w', 'montazh-led-krushki-h7', 'led-krushki-greshka-migane-smushtenia'],
   'led-krushki-h4': ['led-krushki-h4-kasi-i-dalgi', 'led-krushki-sveti-slabo-razseyana-svetlina', 'zakonni-li-sa-led-krushkite'],
@@ -75,27 +77,25 @@ export default async function CategoryLandingPage({ params }: Props) {
   }
 
   if (products.length === 0 && config.searchTerms?.length) {
-    let query = supabase.from('products').select('*').eq('published', true)
-    const term = config.searchTerms[0]
-    query = query.ilike('name', `%${term}%`)
-    const { data } = await query.order('position')
-    products = (data ?? []) as Product[]
-
-    if (products.length === 0 && config.searchTerms.length > 1) {
-      for (const t of config.searchTerms.slice(1)) {
-        const { data: extra } = await supabase
-          .from('products')
-          .select('*')
-          .eq('published', true)
-          .ilike('name', `%${t}%`)
-          .order('position')
-        const ids = new Set(products.map(p => p.id))
-        for (const p of (extra ?? []) as Product[]) {
-          if (!ids.has(p.id)) products.push(p)
-        }
+    const seen = new Set<string>()
+    for (const t of config.searchTerms) {
+      const { data } = await supabase
+        .from('products')
+        .select('*')
+        .eq('published', true)
+        .ilike('name', `%${t}%`)
+        .order('position')
+      for (const p of (data ?? []) as Product[]) {
+        if (!seen.has(p.id)) { seen.add(p.id); products.push(p) }
       }
     }
   }
+
+  // Bulbs first, accessories (modules, adapters, decoders) after — stable sort keeps DB position.
+  products = products
+    .map((p, i) => ({ p, i, acc: ACCESSORY.test(p.name) ? 1 : 0 }))
+    .sort((a, b) => a.acc - b.acc || a.i - b.i)
+    .map(x => x.p)
 
   const itemListSchema = products.length > 0 ? {
     '@context': 'https://schema.org',
@@ -135,10 +135,26 @@ export default async function CategoryLandingPage({ params }: Props) {
       </nav>
 
       <h1 className="text-3xl font-black mb-3">{config.h1}</h1>
-      <p className="text-muted text-sm mb-8 leading-relaxed">{config.metaDescription}</p>
+      <p className="text-muted text-sm mb-6 leading-relaxed max-w-3xl">{config.metaDescription}</p>
+
+      {/* Products */}
+      {products.length > 0 ? (
+        <div className="mb-14">
+          <h2 className="text-xl font-black mb-4">Продукти <span className="text-muted text-sm font-semibold">({products.length})</span></h2>
+          <ProductGrid products={products} />
+        </div>
+      ) : (
+        <div className="mb-14 py-12 text-center text-muted border border-border rounded-xl">
+          <p className="text-lg font-semibold mb-2">Очаквайте скоро</p>
+          <p className="text-sm">Разглеждайте пълния ни каталог или се свържете с нас за наличност.</p>
+          <Link href="/products" className="inline-block mt-4 bg-accent text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-accent-hover transition-colors">
+            Виж всички продукти
+          </Link>
+        </div>
+      )}
 
       {/* SEO body text — full width, columns on desktop */}
-      <section className="mb-10">
+      <section className="mb-14 pt-10 border-t border-border">
         <div className="columns-1 md:columns-2 gap-8">
           {config.body.split('\n\n').map((para, i) => {
             if (para.startsWith('**') || para.includes('**')) {
@@ -171,22 +187,6 @@ export default async function CategoryLandingPage({ params }: Props) {
           })}
         </div>
       </section>
-
-      {/* Products */}
-      {products.length > 0 ? (
-        <div className="mb-14">
-          <h2 className="text-xl font-black mb-6">Продукти</h2>
-          <ProductGrid products={products} />
-        </div>
-      ) : (
-        <div className="mb-14 py-12 text-center text-muted border border-border rounded-xl">
-          <p className="text-lg font-semibold mb-2">Очаквайте скоро</p>
-          <p className="text-sm">Разглеждайте пълния ни каталог или се свържете с нас за наличност.</p>
-          <Link href="/products" className="inline-block mt-4 bg-accent text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-accent-hover transition-colors">
-            Виж всички продукти
-          </Link>
-        </div>
-      )}
 
       {/* Guides */}
       {(() => {
