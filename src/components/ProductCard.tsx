@@ -1,13 +1,14 @@
 'use client'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
 import type { Product } from '@/lib/types'
 import { useState } from 'react'
 
-type Props = { product: Product }
+type Props = { product: Product; priority?: boolean }
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product, priority = false }: Props) {
   const router = useRouter()
   const image = product.images[0] ?? ''
   const displayPrice = product.sale_price ?? product.price
@@ -41,16 +42,14 @@ export default function ProductCard({ product }: Props) {
   }
 
   return (
-    <article
-      className="group relative bg-surface rounded-lg overflow-hidden border border-border hover:border-accent transition-colors flex flex-col cursor-pointer"
-      onClick={() => router.push(`/products/${product.slug}`)}
-    >
+    <article className="group relative bg-surface rounded-lg overflow-hidden border border-border hover:border-accent transition-colors flex flex-col cursor-pointer">
       <div className="relative aspect-square bg-surface-2 overflow-hidden">
         {image ? (
           <img
             src={image}
             alt={product.name}
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -69,7 +68,9 @@ export default function ProductCard({ product }: Props) {
       </div>
 
       <div className="p-3 flex flex-col flex-1">
-        <h3 className="text-sm font-medium line-clamp-3 flex-1 mb-3">{product.name}</h3>
+        <h3 className="text-sm font-medium line-clamp-3 flex-1 mb-3">
+          <Link href={`/products/${product.slug}`} className="after:absolute after:inset-0">{product.name}</Link>
+        </h3>
         {product.stock_quantity !== null && product.stock_quantity > 0 && product.stock_quantity <= 5 && (
           <p className="text-red-400 text-[11px] font-semibold mb-1.5">Само {product.stock_quantity} бр.</p>
         )}
