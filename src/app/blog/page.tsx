@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
 import { ARTICLES, articleCover } from '@/lib/articles'
+import { optImg } from '@/lib/img'
 
 export const dynamic = 'force-dynamic'
 
@@ -81,7 +82,8 @@ export default async function BlogPage() {
               <div className="aspect-video bg-background overflow-hidden shrink-0">
                 {post.cover_image ? (
                   <img
-                    src={post.cover_image}
+                    src={optImg(post.cover_image, 640)}
+                    loading="lazy"
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
                   />

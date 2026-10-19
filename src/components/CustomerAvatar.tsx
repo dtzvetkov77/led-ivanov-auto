@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { optImg } from '@/lib/img'
 
 const COLORS = ['#cc0000', '#1a6be0', '#e07b00', '#228844', '#7b22cc', '#cc6600']
 
@@ -19,7 +20,8 @@ export default function CustomerAvatar({
     <div className={`relative shrink-0 ${dim}`}>
       {!failed && (
         <img
-          src={photo}
+          src={optImg(photo, 96)}
+          loading="lazy"
           alt={name}
           className={`${dim} rounded-full object-cover border-2 border-border absolute inset-0`}
           onError={() => setFailed(true)}

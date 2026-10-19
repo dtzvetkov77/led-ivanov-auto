@@ -5,6 +5,7 @@ import { addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
 import type { Product } from '@/lib/types'
 import { useState } from 'react'
+import { optImg, optImgSet } from '@/lib/img'
 
 type Props = { product: Product; priority?: boolean }
 
@@ -46,7 +47,9 @@ export default function ProductCard({ product, priority = false }: Props) {
       <div className="relative aspect-square bg-surface-2 overflow-hidden">
         {image ? (
           <img
-            src={image}
+            src={optImg(image, 384)}
+            srcSet={optImgSet(image, [256, 384, 640])}
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             alt={product.name}
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}

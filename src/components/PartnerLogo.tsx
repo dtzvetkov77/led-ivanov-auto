@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { optImg } from '@/lib/img'
 
 export default function PartnerLogo({ name, logo, href }: { name: string; logo: string; href: string }) {
   const [failed, setFailed] = useState(false)
@@ -13,7 +14,8 @@ export default function PartnerLogo({ name, logo, href }: { name: string; logo: 
     >
       {!failed ? (
         <img
-          src={logo}
+          src={optImg(logo, 256)}
+          loading="lazy"
           alt={name}
           className="max-h-8 max-w-full object-contain opacity-50 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0"
           onError={() => setFailed(true)}

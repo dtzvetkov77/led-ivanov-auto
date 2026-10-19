@@ -4,6 +4,7 @@ import { addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
 import VariationSelector from './VariationSelector'
 import type { Product, ProductVariation } from '@/lib/types'
+import { optImg } from '@/lib/img'
 
 type Props = { product: Product; categorySlug?: string; priceNote?: string }
 
@@ -180,7 +181,7 @@ export default function ProductActions({ product, categorySlug, priceNote }: Pro
       {showStickyBar && canAddToCart && (
         <div className="fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t border-border px-4 py-3 flex items-center gap-3 shadow-lg">
           {product.images[0] && (
-            <img src={product.images[0]} alt={product.name} className="w-10 h-10 rounded-lg object-cover shrink-0 border border-border" />
+            <img src={optImg(product.images[0], 96)} alt={product.name} className="w-10 h-10 rounded-lg object-cover shrink-0 border border-border" />
           )}
           <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold line-clamp-1">{product.name}</p>

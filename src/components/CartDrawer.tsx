@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { getCart, updateQty, removeFromCart, cartTotal, addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
 import type { CartItem } from '@/lib/types'
+import { optImg } from '@/lib/img'
 
 type UP = { id: string; name: string; slug: string; price: number; sale_price: number | null; images: string[]; attributes: { variation?: boolean; options?: string[] }[] | null }
 const NOT_LIGHT = /модул|резистор|декодер|адаптер|кабел|ключодърж|стикер|ароматизатор|постелк|калъф/i
@@ -179,7 +180,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                   <div key={item.product_id} className="flex gap-3 bg-background border border-border rounded-xl p-3">
                     {item.image ? (
                       <div className="w-18 h-18 shrink-0 rounded-lg overflow-hidden bg-surface-2">
-                        <img src={item.image} alt={base} className="w-full h-full object-cover" />
+                        <img src={optImg(item.image, 128)} alt={base} className="w-full h-full object-cover" />
                       </div>
                     ) : (
                       <div className="w-18 h-18 shrink-0 rounded-lg bg-surface-2 flex items-center justify-center">
@@ -241,7 +242,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                       <div key={p.id} className="flex items-center gap-3 bg-background border border-border rounded-xl p-2.5 hover:border-accent/40 transition-colors">
                         {p.images[0] && (
                           <div className="w-11 h-11 shrink-0 rounded-lg overflow-hidden bg-surface-2">
-                            <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+                            <img src={optImg(p.images[0], 256)} alt={p.name} className="w-full h-full object-cover" />
                           </div>
                         )}
                         <div className="flex-1 min-w-0">

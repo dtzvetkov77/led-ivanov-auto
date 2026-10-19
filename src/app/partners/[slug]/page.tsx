@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
+import { optImg } from '@/lib/img'
 
 type Partner = {
   id: string
@@ -188,7 +189,8 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
               {images.map(img => (
                 <div key={img.id} className="aspect-square overflow-hidden rounded-xl bg-surface border border-border">
                   <img
-                    src={img.url}
+                    src={optImg(img.url, 640)}
+                    loading="lazy"
                     alt={img.caption ?? partner!.name}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />

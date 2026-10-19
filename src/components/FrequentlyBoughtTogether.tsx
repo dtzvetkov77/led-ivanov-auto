@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { addToCart } from '@/lib/cart'
 import { dispatchToast } from '@/lib/toast'
 import { createClient } from '@/lib/supabase/client'
+import { optImg } from '@/lib/img'
 
 // fallback: category slug → complementary category slugs (used only if no DB bundle relations)
 const FBT_MAP: Record<string, string[]> = {
@@ -79,7 +80,7 @@ export default function FrequentlyBoughtTogether({ currentProduct, categorySlug,
         {/* Current product */}
         <Link href={`/products/${currentProduct.slug}`} className="flex items-center gap-3 flex-1 min-w-0 group">
           <div className="w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-border bg-surface-2">
-            {currentProduct.images[0] && <img src={currentProduct.images[0]} alt={currentProduct.name} className="w-full h-full object-cover" />}
+            {currentProduct.images[0] && <img src={optImg(currentProduct.images[0], 384)} alt={currentProduct.name} className="w-full h-full object-cover" />}
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium line-clamp-2 group-hover:text-accent transition-colors">{currentProduct.name}</p>
@@ -92,7 +93,7 @@ export default function FrequentlyBoughtTogether({ currentProduct, categorySlug,
         {/* Companion product */}
         <Link href={`/products/${companion.slug}`} className="flex items-center gap-3 flex-1 min-w-0 group">
           <div className="w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-accent/30 bg-surface-2">
-            {companion.images[0] && <img src={companion.images[0]} alt={companion.name} className="w-full h-full object-cover" />}
+            {companion.images[0] && <img src={optImg(companion.images[0], 384)} alt={companion.name} className="w-full h-full object-cover" />}
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium line-clamp-2 group-hover:text-accent transition-colors">{companion.name}</p>

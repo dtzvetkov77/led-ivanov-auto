@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
 import { getArticle, articleCover, type Article } from '@/lib/articles'
+import { optImg } from '@/lib/img'
 
 export const dynamic = 'force-dynamic'
 
@@ -138,7 +139,7 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Cover image */}
       {post.cover_image && (
         <div className="aspect-video w-full rounded-2xl overflow-hidden mb-8 bg-background">
-          <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+          <img src={optImg(post.cover_image, 1200)} alt={post.title} className="w-full h-full object-cover" />
         </div>
       )}
 

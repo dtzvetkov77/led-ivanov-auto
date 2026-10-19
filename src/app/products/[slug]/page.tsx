@@ -23,6 +23,7 @@ function sanitize(html: string) {
   return cleaned
 }
 import type { Product } from '@/lib/types'
+import { optImg } from '@/lib/img'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
@@ -374,7 +375,8 @@ export default async function ProductPage({ params }: Props) {
                 {r.images?.[0] && (
                   <div className="aspect-square overflow-hidden bg-surface-2">
                     <img
-                      src={r.images[0]}
+                      src={optImg(r.images[0], 384)}
+                      loading="lazy"
                       alt={r.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

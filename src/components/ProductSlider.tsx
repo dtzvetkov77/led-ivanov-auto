@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { optImg, optImgSet } from '@/lib/img'
 
 type Stat = { icon: React.ReactNode; label: string }
 
@@ -190,7 +191,9 @@ export default function ProductSlider() {
               style={{ background: s.accent }} />
             <img
               key={s.img}
-              src={s.img}
+              src={optImg(s.img, 640)}
+              srcSet={optImgSet(s.img, [384, 640, 1080])}
+              sizes="(max-width: 768px) 60vw, 480px"
               alt={s.badge}
               className="relative z-10 h-full max-h-32 md:max-h-none md:w-full md:max-w-120 mx-auto object-contain drop-shadow-2xl animate-[fadeIn_0.5s_ease]"
               onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { optImg, optImgSet } from '@/lib/img'
 
 type Props = { images: string[]; name: string }
 
@@ -43,7 +44,9 @@ export default function ProductGallery({ images, name }: Props) {
           className="w-full aspect-square rounded-xl overflow-hidden bg-surface-2 group cursor-zoom-in focus:outline-none relative"
         >
           <img
-            src={images[active]}
+            src={optImg(images[active], 828)}
+            srcSet={optImgSet(images[active], [640, 828, 1200])}
+            sizes="(max-width: 1024px) 100vw, 50vw"
             alt={name}
             fetchPriority="high"
             decoding="async"
@@ -66,7 +69,7 @@ export default function ProductGallery({ images, name }: Props) {
                 aria-label={`Снимка ${i + 1}`}
                 className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${i === active ? 'border-accent' : 'border-border hover:border-muted'}`}
               >
-                <img src={img} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover block" />
+                <img src={optImg(img, 128)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover block" />
               </button>
             ))}
           </div>
@@ -114,7 +117,7 @@ export default function ProductGallery({ images, name }: Props) {
             onClick={e => e.stopPropagation()}
           >
             <img
-              src={images[active]}
+              src={optImg(images[active], 1920)}
               alt={name}
               decoding="async"
               className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"

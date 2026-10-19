@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { optImg } from '@/lib/img'
 
 type Partner = {
   slug: string
@@ -66,7 +67,7 @@ export default function HomePartnersSection({ partners }: Props) {
               <Link key={p.slug} href={`/partners/${p.slug}`} className="bg-background border border-border rounded-xl overflow-hidden hover:border-accent transition-colors group block">
                 <div className="relative w-full h-40 bg-black">
                   {banner ? (
-                    <img src={banner} alt={p.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
+                    <img src={optImg(banner, 384)} loading="lazy" alt={p.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <svg className="w-10 h-10 text-accent/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

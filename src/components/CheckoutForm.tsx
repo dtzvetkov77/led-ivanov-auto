@@ -7,6 +7,7 @@ import { getCart, clearCart, cartTotal } from '@/lib/cart'
 import type { CartItem } from '@/lib/types'
 import { readTrafficSource } from '@/lib/traffic-source'
 import { CONVERSIONS, trackConversion } from '@/lib/gtag'
+import { optImg } from '@/lib/img'
 
 type DeliveryType = 'address' | 'office'
 type BumpProduct = { id: string; name: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
@@ -287,7 +288,7 @@ export default function CheckoutForm() {
             {downsells.map(p => (
               <div key={p.id} className="flex items-center gap-3">
                 {p.images[0] && (
-                  <img src={p.images[0]} alt={p.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-border" />
+                  <img src={optImg(p.images[0], 96)} alt={p.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-border" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium line-clamp-1">{p.name}</p>
@@ -325,7 +326,7 @@ export default function CheckoutForm() {
               </div>
             </div>
             {bumpProduct.images[0] && (
-              <img src={bumpProduct.images[0]} alt={bumpProduct.name} className="w-14 h-14 rounded-lg object-cover shrink-0 border border-border" />
+              <img src={optImg(bumpProduct.images[0], 128)} alt={bumpProduct.name} className="w-14 h-14 rounded-lg object-cover shrink-0 border border-border" />
             )}
             <div className="flex-1 min-w-0">
               <p className="text-[11px] font-bold uppercase tracking-widest text-accent mb-0.5">Добави към поръчката</p>

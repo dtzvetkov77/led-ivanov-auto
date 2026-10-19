@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { optImg } from '@/lib/img'
 
 export const metadata: Metadata = {
   title: { absolute: 'Услуги за фарове | LED Ivanov Auto' },
@@ -78,18 +79,18 @@ export default async function ServicesPage() {
               {s.pair ? (
                 <div className="absolute inset-0 grid grid-cols-2">
                   <div className="relative overflow-hidden border-r border-border/50">
-                    <img src={s.pair.before_url} alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={optImg(s.pair.before_url, 640)} loading="lazy" alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
                     <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
                   </div>
                   <div className="relative overflow-hidden">
-                    <img src={s.pair.after_url} alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={optImg(s.pair.after_url, 640)} loading="lazy" alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
                     <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10">СЛЕД</span>
                   </div>
                 </div>
               ) : s.fallbackImg ? (
-                <img src={s.fallbackImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={optImg(s.fallbackImg, 828)} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : s.heroImg ? (
-                <img src={s.heroImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={optImg(s.heroImg, 828)} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (
                 <div className="w-full h-full bg-surface flex items-center justify-center">
                   <svg className="w-12 h-12 text-border" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

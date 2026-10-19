@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { optImg } from '@/lib/img'
 
 type Partner = {
   id: string
@@ -68,7 +69,7 @@ export default function PartnersGrid({ partners }: Props) {
             >
               <div className="relative w-full h-44 bg-black">
                 {banner ? (
-                  <img src={banner} alt={partner.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
+                  <img src={optImg(banner, 384)} loading="lazy" alt={partner.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <svg className="w-12 h-12 text-accent/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

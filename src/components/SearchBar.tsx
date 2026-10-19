@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { optImg } from '@/lib/img'
 
 type Hit = {
   id: string
@@ -161,7 +162,7 @@ export default function SearchBar() {
                   >
                     <div className="w-12 h-12 rounded-lg bg-background border border-border overflow-hidden shrink-0">
                       {hit.images?.[0] ? (
-                        <img src={hit.images[0]} alt={hit.name} className="w-full h-full object-cover" />
+                        <img src={optImg(hit.images[0], 128)} alt={hit.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted/30">
                           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

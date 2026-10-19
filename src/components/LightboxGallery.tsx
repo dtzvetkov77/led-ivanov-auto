@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
+import { optImg } from '@/lib/img'
 
 type GalleryImage = { id: string; url: string; caption?: string | null }
 
@@ -92,7 +93,7 @@ export default function LightboxGallery({ images, alt, cols = 'grid-cols-2 sm:gr
             onClick={e => e.stopPropagation()}
           >
             <img
-              src={images[active].url}
+              src={optImg(images[active].url, 1920)}
               alt={images[active].caption ?? alt}
               className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
             />

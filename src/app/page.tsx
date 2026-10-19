@@ -8,6 +8,7 @@ import HomePartnersSection from '@/components/HomePartnersSection'
 import Link from 'next/link'
 import Image from 'next/image'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
+import { optImg } from '@/lib/img'
 
 const STATIC_PARTNERS = [
   { slug: 'kostas-garage',     name: "Kosta's Garage",      city: 'Бяла Слатина',                    phone: '+359895756194', cover_image: null as string | null, logo_url: null as string | null },
@@ -95,7 +96,7 @@ export default async function HomePage() {
                   <div className="absolute inset-0"
                     style={{ background: `linear-gradient(135deg, hsl(${hue} 60% 10%) 0%, #0d0d0d 100%)` }} />
                   <div className="absolute inset-0 bg-cover bg-center opacity-60 group-hover:opacity-80 transition-opacity"
-                    style={{ backgroundImage: `url(${img})` }} />
+                    style={{ backgroundImage: `url(${optImg(img, 640)})` }} />
                   <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                   <span className="relative z-10 text-sm font-black uppercase leading-tight group-hover:text-accent transition-colors tracking-wide">
                     {cat.name.toUpperCase()}
@@ -129,7 +130,7 @@ export default async function HomePage() {
                 <div className="absolute inset-0"
                   style={{ background: `linear-gradient(135deg, hsl(${hue} 50% 12%) 0%, #0d0d0d 100%)` }} />
                 <div className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${img})` }} />
+                  style={{ backgroundImage: `url(${optImg(img, 640)})` }} />
                 <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent group-hover:from-black/50 transition-all" />
                 <span className="relative z-10 text-[10px] font-bold leading-tight group-hover:text-accent transition-colors">
                   {cat.name.toUpperCase()}
@@ -306,18 +307,18 @@ async function ServicesSection() {
                 {s.pair ? (
                   <div className="absolute inset-0 grid grid-cols-2">
                     <div className="relative overflow-hidden border-r border-border/50">
-                      <img src={s.pair.before_url} alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                      <img src={optImg(s.pair.before_url, 640)} loading="lazy" alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
                       <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
                     </div>
                     <div className="relative overflow-hidden">
-                      <img src={s.pair.after_url} alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                      <img src={optImg(s.pair.after_url, 640)} loading="lazy" alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
                       <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10">СЛЕД</span>
                     </div>
                   </div>
                 ) : s.fallbackImg ? (
-                  <img src={s.fallbackImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={optImg(s.fallbackImg, 828)} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : s.heroImg ? (
-                  <img src={s.heroImg} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={optImg(s.heroImg, 828)} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <svg className="w-12 h-12 text-border" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { optImg } from '@/lib/img'
 
 const COLORS = ['#cc0000', '#1a6be0', '#e07b00', '#228844', '#7b22cc', '#cc6600']
 
@@ -32,7 +33,7 @@ function Card({ t, index }: { t: Review; index: number }) {
     <div className="flex flex-col rounded-2xl overflow-hidden border border-border bg-surface">
       <div className="relative aspect-square">
         {t.photo_url && !imgFailed ? (
-          <img src={t.photo_url} alt={t.name} className="absolute inset-0 w-full h-full object-cover"
+          <img src={optImg(t.photo_url, 640)} alt={t.name} className="absolute inset-0 w-full h-full object-cover"
             onError={() => setImgFailed(true)} />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2"
