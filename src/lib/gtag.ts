@@ -3,12 +3,12 @@ export const ADS_ID = 'AW-18508516374'
 
 export const CONVERSIONS = {
   purchase: `${ADS_ID}/H_TrCJuanJodEJaYxvlE`,
-  // Owner's call (2026-10-13): only purchases are sent. An empty label is a no-op;
-  // to turn one back on use phoneClick 3YqvCIzGtJsdEJaYxvlE,
-  // addToCart uZ1fCJLGtJsdEJaYxvlE, beginCheckout 6xy4CJXGtJsdEJaYxvlE
+  // Add to cart and begin checkout back on 2026-10-19 (observe only, not bid on),
+  // to see where ad visitors drop off. Phone click stays off: an empty label is a
+  // no-op; to turn it back on use 3YqvCIzGtJsdEJaYxvlE
   phoneClick: '',
-  addToCart: '',
-  beginCheckout: '',
+  addToCart: `${ADS_ID}/uZ1fCJLGtJsdEJaYxvlE`,
+  beginCheckout: `${ADS_ID}/6xy4CJXGtJsdEJaYxvlE`,
 } as const
 
 type Gtag = (...args: unknown[]) => void
