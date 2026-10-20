@@ -460,7 +460,7 @@ export default function CheckoutForm() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted">Доставка</span>
-              <span>~6–8 €</span>
+              <span>~2–4 €</span>
             </div>
             <div className="flex justify-between font-black text-lg pt-2 border-t border-border">
               <span>Общо</span>
