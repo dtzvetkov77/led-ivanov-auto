@@ -5,6 +5,14 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { optImg } from '@/lib/img'
 
+// Common Cyrillic/Latin spellings people type for the same thing.
+const SYNONYMS: Record<string, string[]> = {
+  'лед': ['led'],
+  'led': ['лед'],
+  'крушка': ['крушки'],
+  'канбус': ['canbus'],
+}
+
 type Hit = {
   id: string
   slug: string
@@ -84,13 +92,19 @@ export default function SearchBar() {
         .select('id, slug, name, price, sale_price, images')
         .eq('published', true)
         .order('position')
-        .limit(20)
+        .limit(60)
       for (const word of words) {
-        const safe = word.replace(/[%_]/g, '\\$&')
-        q = q.or(`name.ilike.%${safe}%,short_description.ilike.%${safe}%,description.ilike.%${safe}%`)
+        const variants = [word, ...(SYNONYMS[word.toLowerCase()] ?? [])].map(w => w.replace(/[%_]/g, '\\$&'))
+        q = q.or(variants.flatMap(v => [`name.ilike.%${v}%`, `short_description.ilike.%${v}%`, `description.ilike.%${v}%`]).join(','))
       }
       const { data } = await q
-      setResults((data ?? []) as Hit[])
+      // Name matches first; description-only matches (e.g. "лед" inside "следващ") after.
+      const inName = (h: Hit) => words.every(w => {
+        const n = h.name.toLowerCase()
+        return [w, ...(SYNONYMS[w.toLowerCase()] ?? [])].some(v => n.includes(v.toLowerCase()))
+      })
+      const hits = (data ?? []) as Hit[]
+      setResults([...hits.filter(inName), ...hits.filter(h => !inName(h))].slice(0, 20))
       setLoading(false)
       setActive(-1)
     }, 300)
@@ -125,7 +139,7 @@ export default function SearchBar() {
 
   const showResults = open && (loading || results.length > 0 || query.trim().length >= 2)
 
-  const ResultsList = () => (
+  const resultsList = (
     <>
       {loading && (
         <div className="flex items-center gap-2 px-5 py-4 text-muted text-xs">
@@ -236,8 +250,8 @@ export default function SearchBar() {
           </div>
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto overscroll-contain">
-            {showResults ? <ResultsList /> : (
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+            {showResults ? resultsList : (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/30 px-6 text-center">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
                   <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
@@ -284,8 +298,8 @@ export default function SearchBar() {
       )}
 
       {showResults && (
-        <div className="absolute top-full right-0 mt-2 w-80 bg-surface border border-border rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50">
-          <ResultsList />
+        <div className="absolute top-full right-0 mt-2 w-80 bg-surface border border-border rounded-2xl shadow-2xl shadow-black/50 overflow-y-auto overscroll-contain max-h-[calc(100dvh-6rem)] z-50">
+          {resultsList}
         </div>
       )}
     </div>
