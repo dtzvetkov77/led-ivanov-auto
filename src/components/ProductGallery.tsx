@@ -94,7 +94,7 @@ export default function ProductGallery({ images, name }: Props) {
 
           {/* Counter */}
           {images.length > 1 && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/50 text-sm">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/85 text-sm">
               {active + 1} / {images.length}
             </div>
           )}

@@ -187,7 +187,7 @@ export default function ProductForm({ product, categories, makes, models = [], s
         </div>
         <div>
           <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">
-            Цена {hasVariations ? <span className="normal-case text-muted/60">(от вариации)</span> : '*'}
+            Цена {hasVariations ? <span className="normal-case text-muted/90">(от вариации)</span> : '*'}
           </label>
           <input
             type="text"
@@ -198,11 +198,11 @@ export default function ProductForm({ product, categories, makes, models = [], s
             disabled={hasVariations}
             className={`${inputCls} ${hasVariations ? 'opacity-40 cursor-not-allowed' : ''}`}
           />
-          {hasVariations && <p className="text-[11px] text-muted/60 mt-1">Задава се автоматично от вариациите</p>}
+          {hasVariations && <p className="text-[11px] text-muted/90 mt-1">Задава се автоматично от вариациите</p>}
         </div>
         <div>
           <label className="block text-xs text-muted mb-1.5 uppercase tracking-wider">
-            Промо цена {hasVariations && <span className="normal-case text-muted/60">(от вариации)</span>}
+            Промо цена {hasVariations && <span className="normal-case text-muted/90">(от вариации)</span>}
           </label>
           <input
             type="text"

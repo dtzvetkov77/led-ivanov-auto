@@ -45,7 +45,7 @@ export default async function AdminBlogPage() {
                 />
               ) : (
                 <div className="w-12 h-12 rounded-lg bg-background flex items-center justify-center shrink-0 border border-border">
-                  <svg className="w-5 h-5 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg className="w-5 h-5 text-muted/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v10a2 2 0 01-2 2z" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M14 2v6h6M8 13h8M8 17h6" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>

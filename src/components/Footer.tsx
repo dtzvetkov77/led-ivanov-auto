@@ -58,7 +58,7 @@ export default function Footer() {
 
           {/* Products */}
           <div>
-            <h3 className="text-xs font-semibold tracking-widest uppercase text-muted/70 mb-4">Продукти</h3>
+            <h3 className="text-xs font-semibold tracking-widest uppercase text-muted/90 mb-4">Продукти</h3>
             <ul className="space-y-2">
               {PRODUCT_CATEGORIES.map(c => (
                 <li key={c.slug}>
@@ -73,7 +73,7 @@ export default function Footer() {
 
           {/* Info */}
           <div>
-            <h3 className="text-xs font-semibold tracking-widest uppercase text-muted/70 mb-4">Информация</h3>
+            <h3 className="text-xs font-semibold tracking-widest uppercase text-muted/90 mb-4">Информация</h3>
             <ul className="space-y-2">
               {[
                 { href: '/products',                      label: 'Всички продукти' },
@@ -90,7 +90,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-            <div className="mt-5 space-y-1 text-xs text-muted/60">
+            <div className="mt-5 space-y-1 text-xs text-muted/90">
               <a href="tel:+359999997996" className="block hover:text-white transition-colors">+359 99 999 7996</a>
               <a href="tel:+359892703453" className="block hover:text-white transition-colors">+359 89 270 3453</a>
               <p>Пон–Нед: 09:00 – 23:00</p>
@@ -119,10 +119,10 @@ export default function Footer() {
         </nav>
 
         <div className="mt-6 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-muted/50">
+          <p className="text-xs text-muted/80">
             © {new Date().getFullYear()} LED Ivanov Auto. Всички права запазени.
           </p>
-          <div className="flex items-center gap-3 text-xs text-muted/40 flex-wrap justify-center">
+          <div className="flex items-center gap-3 text-xs text-muted/80 flex-wrap justify-center">
             <Link href="/privacy-policy" className="hover:text-muted transition-colors">Поверителност</Link>
             <span>·</span>
             <Link href="/terms" className="hover:text-muted transition-colors">Условия</Link>
@@ -131,7 +131,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-4 pt-4 border-t border-border/40 text-center">
-          <p className="text-[11px] text-muted/30">
+          <p className="text-[11px] text-muted/80">
             Дизайн и изработка:{' '}
             <a
               href="https://www.digitalagencynexus.com/"

@@ -106,7 +106,7 @@ export default function ProductRelationsManager({ productId }: { productId: stri
         ))}
       </div>
 
-      <p className="text-xs text-muted/60 mb-3">{TYPES.find(t => t.value === activeType)?.desc}</p>
+      <p className="text-xs text-muted/90 mb-3">{TYPES.find(t => t.value === activeType)?.desc}</p>
 
       {/* Current relations */}
       {loading ? (
@@ -134,7 +134,7 @@ export default function ProductRelationsManager({ productId }: { productId: stri
           ))}
         </div>
       ) : (
-        <p className="text-xs text-muted/50 mb-4">Няма добавени продукти от тип «{TYPES.find(t => t.value === activeType)?.label}»</p>
+        <p className="text-xs text-muted/80 mb-4">Няма добавени продукти от тип «{TYPES.find(t => t.value === activeType)?.label}»</p>
       )}
 
       {/* Search + add */}

@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-xs text-muted mb-1">Миналия месец</p>
             <p className="text-2xl font-black">{lastMonthRevenue.toFixed(2)} €</p>
-            <p className="text-xs text-muted/50 mt-1">{(lastMonthOrders ?? []).length} поръчки</p>
+            <p className="text-xs text-muted/80 mt-1">{(lastMonthOrders ?? []).length} поръчки</p>
           </div>
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-xs text-muted mb-1">Поръчки общо</p>

@@ -28,7 +28,7 @@ function DropdownButton({
       disabled={disabled || loading}
       className={`w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border text-sm text-left transition-all duration-150 ${
         disabled || loading
-          ? 'bg-surface/50 border-border text-muted/40 cursor-not-allowed'
+          ? 'bg-surface/50 border-border text-muted/80 cursor-not-allowed'
           : open
             ? 'bg-surface border-accent text-white shadow-lg shadow-accent/10'
             : selected
@@ -107,7 +107,7 @@ function DynSelect<T extends { id: string; name: string }>({
           {value && <ClearRow onClear={() => { onChange(null); setOpen(false) }} />}
 
           {options.length === 0 ? (
-            <p className="px-4 py-3 text-xs text-muted/60 italic">
+            <p className="px-4 py-3 text-xs text-muted/90 italic">
               {emptyHint ?? 'Няма намерени записи'}
             </p>
           ) : (

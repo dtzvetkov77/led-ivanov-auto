@@ -127,7 +127,7 @@ function ProductImagePlaceholder({ name }: { name: string }) {
         <line x1="9" y1="21" x2="15" y2="21" strokeLinecap="round"/>
         <line x1="10" y1="19" x2="14" y2="19" strokeLinecap="round"/>
       </svg>
-      <p className="text-muted/50 text-[10px] text-center line-clamp-2 leading-tight">{name}</p>
+      <p className="text-muted/80 text-[10px] text-center line-clamp-2 leading-tight">{name}</p>
     </div>
   )
 }

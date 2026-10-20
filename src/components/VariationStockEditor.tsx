@@ -184,7 +184,7 @@ export default function VariationStockEditor({ productId, attributes, variations
     <div className="bg-background border border-border rounded-xl p-4 space-y-5">
       <div>
         <p className="text-xs text-muted uppercase tracking-wider font-medium">Вариации</p>
-        <p className="text-[11px] text-muted/60 mt-1">
+        <p className="text-[11px] text-muted/90 mt-1">
           Добавете атрибут (напр. Цокъл) със стойности, разделени със запетая (напр. H1, H7, H11), после генерирайте или добавете вариации.
         </p>
       </div>

@@ -177,7 +177,7 @@ export default function SearchBar() {
                       {hit.images?.[0] ? (
                         <img src={optImg(hit.images[0], 128)} alt={hit.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted/30">
+                        <div className="w-full h-full flex items-center justify-center text-muted/80">
                           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
                           </svg>
@@ -191,7 +191,7 @@ export default function SearchBar() {
                         {hit.sale_price && <span className="text-muted line-through ml-1.5 font-normal">{hit.price.toFixed(2)} €</span>}
                       </p>
                     </div>
-                    <svg className="w-3.5 h-3.5 shrink-0 text-muted/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3.5 h-3.5 shrink-0 text-muted/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </Link>
@@ -238,7 +238,7 @@ export default function SearchBar() {
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Търси..."
-              className="flex-1 bg-transparent text-sm text-white placeholder:text-muted/60 focus:outline-none min-w-0"
+              className="flex-1 bg-transparent text-sm text-white placeholder:text-muted/90 focus:outline-none min-w-0"
             />
             <button type="button" onClick={query ? () => setQuery('') : closeSearch}
               className="p-1 text-muted hover:text-white rounded-lg hover:bg-border transition-colors shrink-0">
@@ -251,7 +251,7 @@ export default function SearchBar() {
           {/* Results */}
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             {showResults ? resultsList : (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/30 px-6 text-center">
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-muted/80 px-6 text-center">
                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
                   <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
                 </svg>

@@ -49,7 +49,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
             label: '',
             render: p => p.images?.[0]
               ? <img src={p.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover bg-surface-2 shrink-0" />
-              : <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center text-muted/30">
+              : <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center text-muted/80">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                 </div>,
           },

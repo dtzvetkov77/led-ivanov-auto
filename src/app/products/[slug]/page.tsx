@@ -265,7 +265,7 @@ export default async function ProductPage({ params }: Props) {
             <dl className="grid grid-cols-2 gap-2 mb-6">
               {keySpecs.map(s => (
                 <div key={s.key} className="bg-surface border border-border rounded-xl px-3 py-2.5">
-                  <dt className="text-[11px] uppercase tracking-wider text-white/60">{s.key}</dt>
+                  <dt className="text-[11px] uppercase tracking-wider text-white/85">{s.key}</dt>
                   <dd className="text-sm font-bold text-white leading-snug">{s.value}</dd>
                 </div>
               ))}

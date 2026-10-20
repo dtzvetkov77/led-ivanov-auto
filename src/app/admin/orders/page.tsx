@@ -79,7 +79,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               </div>
             </div>
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-              <span className="text-xs text-muted/60">
+              <span className="text-xs text-muted/90">
                 {o.delivery_city} · {new Date(o.created_at).toLocaleDateString('bg-BG')} · {sourceText(o.source)}
               </span>
               <DeleteOrderButton orderId={o.id} />

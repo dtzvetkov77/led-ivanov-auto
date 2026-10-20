@@ -113,7 +113,7 @@ export default function AdminGalleryPage() {
             <p className="text-sm text-muted">
               Плъзни снимки или <span className="text-accent font-medium">кликни за качване</span>
             </p>
-            <p className="text-xs text-muted/60">PNG, JPG, WebP — множество файлове</p>
+            <p className="text-xs text-muted/90">PNG, JPG, WebP — множество файлове</p>
           </div>
         )}
       </div>

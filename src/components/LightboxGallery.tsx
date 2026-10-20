@@ -71,7 +71,7 @@ export default function LightboxGallery({ images, alt, cols = 'grid-cols-2 sm:gr
           </button>
 
           {/* Counter */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/50 text-sm">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/85 text-sm">
             {active + 1} / {images.length}
           </div>
 
@@ -98,7 +98,7 @@ export default function LightboxGallery({ images, alt, cols = 'grid-cols-2 sm:gr
               className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
             />
             {images[active].caption && (
-              <div className="absolute bottom-0 left-0 right-0 text-center text-white/60 text-sm pb-2">
+              <div className="absolute bottom-0 left-0 right-0 text-center text-white/85 text-sm pb-2">
                 {images[active].caption}
               </div>
             )}

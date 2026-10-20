@@ -79,7 +79,7 @@ function BarChart({ rows, color, formatValue }: { rows: Row[]; color: string; fo
               style={{ height: `${pct}%`, background: color }}
             />
             {showDates && i % showEveryN === 0 && (
-              <span className="text-[8px] text-muted/50 text-center mt-0.5 leading-none">{dd}/{mm}</span>
+              <span className="text-[8px] text-muted/80 text-center mt-0.5 leading-none">{dd}/{mm}</span>
             )}
           </div>
         )
@@ -152,12 +152,12 @@ export default function AdminAnalyticsPage() {
               <div className="bg-surface border border-accent/20 rounded-xl p-4">
                 <p className="text-xs text-muted mb-1">Приходи</p>
                 <p className="text-2xl font-black text-accent">{data.totalRevenue.toFixed(2)} €</p>
-                <p className="text-xs text-muted/50 mt-0.5">последните {days} дни</p>
+                <p className="text-xs text-muted/80 mt-0.5">последните {days} дни</p>
               </div>
               <div className="bg-surface border border-border rounded-xl p-4">
                 <p className="text-xs text-muted mb-1">Поръчки</p>
                 <p className="text-2xl font-black">{data.orderCount}</p>
-                <p className="text-xs text-muted/50 mt-0.5">без отказани</p>
+                <p className="text-xs text-muted/80 mt-0.5">без отказани</p>
               </div>
               <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
                 <p className="text-xs text-muted mb-1">Средна поръчка</p>
@@ -183,7 +183,7 @@ export default function AdminAnalyticsPage() {
               <div className="bg-surface border border-border rounded-xl p-4 col-span-2 sm:col-span-1">
                 <p className="text-xs text-muted mb-1">Общо прегледи</p>
                 <p className="text-3xl font-black">{data.total.toLocaleString()}</p>
-                <p className="text-xs text-muted/50 mt-0.5">последните {days} дни</p>
+                <p className="text-xs text-muted/80 mt-0.5">последните {days} дни</p>
               </div>
               <div className="bg-surface border border-border rounded-xl p-4">
                 <p className="text-xs text-muted mb-1">Топ страница</p>
@@ -202,7 +202,7 @@ export default function AdminAnalyticsPage() {
                     ? Math.round(((data.devices.find(d => d.key === 'mobile')?.total ?? 0) / data.total) * 100)
                     : 0}%
                 </p>
-                <p className="text-xs text-muted/50 mt-0.5">от всички</p>
+                <p className="text-xs text-muted/80 mt-0.5">от всички</p>
               </div>
             </div>
           </div>
@@ -220,13 +220,13 @@ export default function AdminAnalyticsPage() {
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Топ страници</p>
               {data.pages.length === 0
-                ? <p className="text-xs text-muted/40">Няма данни</p>
+                ? <p className="text-xs text-muted/80">Няма данни</p>
                 : <Bars rows={data.pages} />}
             </div>
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Източници</p>
               {data.referrers.length === 0
-                ? <p className="text-xs text-muted/40">Няма данни</p>
+                ? <p className="text-xs text-muted/80">Няма данни</p>
                 : <Bars rows={data.referrers} />}
             </div>
           </div>
@@ -235,7 +235,7 @@ export default function AdminAnalyticsPage() {
             <div className="bg-surface border border-border rounded-xl p-4">
               <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Устройства</p>
               {data.devices.length === 0
-                ? <p className="text-xs text-muted/40">Няма данни</p>
+                ? <p className="text-xs text-muted/80">Няма данни</p>
                 : <Bars rows={data.devices} />}
             </div>
             {data.countries.length > 0 && (

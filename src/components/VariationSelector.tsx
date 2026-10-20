@@ -98,7 +98,7 @@ export default function VariationSelector({
                       ? 'bg-accent border-accent text-white shadow-lg shadow-accent/20'
                       : available
                         ? 'border-border text-muted hover:border-accent hover:text-white bg-surface'
-                        : 'border-border/30 text-muted/30 cursor-not-allowed line-through'
+                        : 'border-border/30 text-muted/80 cursor-not-allowed line-through'
                   }`}
                 >
                   {option}

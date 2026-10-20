@@ -50,7 +50,7 @@ fieldset legend {
 .product-description strong { color: #fff; }
 
 .field-input {
-  @apply w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-muted/50;
+  @apply w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-muted/80;
 }
 
 @theme inline {
@@ -61,8 +61,8 @@ fieldset legend {
   --color-border-2: #333333;
   --color-accent: #cc0000;
   --color-accent-hover: #e00000;
-  --color-muted: #888888;
-  --color-muted-2: #aaaaaa;
+  --color-muted: #c4c4c4;
+  --color-muted-2: #dddddd;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-oswald), var(--font-inter), system-ui, sans-serif;
 }
