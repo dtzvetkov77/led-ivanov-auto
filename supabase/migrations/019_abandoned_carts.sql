@@ -12,6 +12,11 @@ CREATE TABLE IF NOT EXISTS abandoned_carts (
   recovered_at timestamptz                 -- set when an order is placed with this email
 );
 
+-- Hashed client IP, used to cap captures per IP (anti-abuse: stops anyone
+-- from making the site email arbitrary addresses in bulk)
+ALTER TABLE abandoned_carts ADD COLUMN IF NOT EXISTS ip_hash text;
+CREATE INDEX IF NOT EXISTS abandoned_carts_ip_idx ON abandoned_carts (ip_hash, created_at);
+
 CREATE INDEX IF NOT EXISTS abandoned_carts_email_idx ON abandoned_carts (email);
 CREATE INDEX IF NOT EXISTS abandoned_carts_pending_idx ON abandoned_carts (updated_at)
   WHERE reminded_at IS NULL AND recovered_at IS NULL;

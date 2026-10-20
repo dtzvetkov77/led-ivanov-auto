@@ -80,7 +80,7 @@ export default function CheckoutForm() {
   }, [])
 
   // Save the cart for an abandoned-cart reminder once a valid email is entered
-  const capture = () => captureCart(form.customer_email, form.customer_name, items)
+  const capture = () => captureCart(form.customer_email, items)
 
   const set = (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>

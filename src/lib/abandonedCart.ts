@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
-import { ctaButton, emailLayout, escHtml as esc, personalize, SITE } from './campaignEmail'
+import { ctaButton, emailLayout, escHtml as esc, SITE } from './campaignEmail'
 import { normalizeEmail } from './customerSegments'
 import { unsubscribeOneClickUrl, unsubscribePageUrl } from './unsubscribe'
 
@@ -14,6 +14,8 @@ export const REMIND_WITHIN = 72 * HOUR
 /** At most one reminder per email in this window, whatever the cart. */
 const EMAIL_COOLDOWN = 7 * 24 * HOUR
 const RETENTION = 90 * 24 * HOUR
+/** Hard cap on reminders per run, limits damage if capture is abused. */
+const MAX_SENDS_PER_RUN = 50
 
 const FROM = 'LED Ivanov Auto <orders@ledivanovauto.com>'
 
@@ -57,9 +59,6 @@ export async function validateCartItems(supabase: SupabaseClient, raw: unknown):
   return out
 }
 
-/** Keep only letters, spaces, hyphens, apostrophes; first word only. */
-export const safeFirstName = (name: string | null | undefined) =>
-  (name ?? '').replace(/[^\p{L}\s'-]/gu, '').trim().split(/\s+/)[0]?.slice(0, 40) ?? ''
 
 export const restoreUrl = (id: string) => `${SITE}/cart/restore/${id}`
 
@@ -67,8 +66,7 @@ function money(n: number) {
   return `${n.toFixed(2)} €`
 }
 
-export function renderAbandonedCartHtml(cart: { id: string; name: string | null; items: SavedCartItem[]; total: number }, unsubscribeUrl: string) {
-  const first = safeFirstName(cart.name)
+export function renderAbandonedCartHtml(cart: { id: string; items: SavedCartItem[]; total: number }, unsubscribeUrl: string) {
   const rows = cart.items.map(i => {
     const img = /^https:\/\//.test(i.image)
       ? `<img src="${esc(i.image)}" width="64" height="64" alt="" style="display:block;width:64px;height:64px;object-fit:cover;border-radius:8px;border:0;background:#222;">`
@@ -82,7 +80,8 @@ export function renderAbandonedCartHtml(cart: { id: string; name: string | null;
 
   const p = (t: string) => `<p style="margin:0 0 16px;color:#e5e5e5;font-size:15px;line-height:1.6;">${t}</p>`
   const inner = [
-    p(esc(personalize('Здравей, {{име}}!', first))),
+    // No client-supplied text in the email (capture endpoint is public)
+    p('Здравей!'),
     p('Видяхме, че не завърши поръчката си. Запазихме продуктите в количката ти — можеш да продължиш с един клик.'),
     `<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;border-top:1px solid #2a2a2a;border-bottom:1px solid #2a2a2a;">${rows}</table>`,
     `<p style="margin:0 0 20px;color:#ffffff;font-size:15px;font-weight:700;text-align:right;">Общо: ${money(cart.total)}</p>`,
@@ -100,7 +99,7 @@ export function renderAbandonedCartHtml(cart: { id: string; name: string | null;
   })
 }
 
-type CartRow = { id: string; email: string; name: string | null; items: SavedCartItem[]; total: number; created_at: string; updated_at: string }
+type CartRow = { id: string; email: string; items: SavedCartItem[]; total: number; created_at: string; updated_at: string }
 
 /**
  * Send one reminder per eligible abandoned cart. Uses the service client.
@@ -112,7 +111,7 @@ export async function sendAbandonedCartReminders(service: SupabaseClient, now = 
 
   const { data: carts, error } = await service
     .from('abandoned_carts')
-    .select('id, email, name, items, total, created_at, updated_at')
+    .select('id, email, items, total, created_at, updated_at')
     .is('reminded_at', null)
     .is('recovered_at', null)
     .lte('updated_at', new Date(now - REMIND_AFTER).toISOString())
@@ -126,6 +125,7 @@ export async function sendAbandonedCartReminders(service: SupabaseClient, now = 
   const handled = new Set<string>()
 
   for (const cart of (carts ?? []) as CartRow[]) {
+    if (result.sent >= MAX_SENDS_PER_RUN) break
     const email = normalizeEmail(cart.email)
     const skip = async () => {
       result.skipped++

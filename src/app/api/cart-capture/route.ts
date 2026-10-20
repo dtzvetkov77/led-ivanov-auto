@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createHmac } from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizeEmail } from '@/lib/customerSegments'
 import { validateCartItems } from '@/lib/abandonedCart'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+/** New carts allowed per IP per 24h — real shoppers need 1-2; caps bulk abuse. */
+const MAX_NEW_CARTS_PER_IP = 3
+
+function ipHash(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  return createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY ?? '').update(ip).digest('hex').slice(0, 32)
+}
 
 // Checkout saves the cart once a valid email is entered, for the abandoned-cart reminder
 export async function POST(req: NextRequest) {
-  let body: { id?: unknown; email?: unknown; name?: unknown; items?: unknown }
+  let body: { id?: unknown; email?: unknown; items?: unknown }
   try {
     body = await req.json()
   } catch {
@@ -24,10 +32,21 @@ export async function POST(req: NextRequest) {
   const { data: existing } = await service.from('abandoned_carts').select('recovered_at').eq('id', id).maybeSingle()
   if (existing?.recovered_at) return NextResponse.json({ ok: true })
 
+  // Per-IP cap on new carts; silently ignore beyond it
+  const ip_hash = ipHash(req)
+  if (!existing) {
+    const { count } = await service
+      .from('abandoned_carts')
+      .select('id', { count: 'exact', head: true })
+      .eq('ip_hash', ip_hash)
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+    if ((count ?? 0) >= MAX_NEW_CARTS_PER_IP) return NextResponse.json({ ok: true })
+  }
+
   const { error } = await service.from('abandoned_carts').upsert({
     id,
     email,
-    name: typeof body.name === 'string' ? body.name.slice(0, 100) : null,
+    ip_hash,
     items,
     total: items.reduce((s, i) => s + i.price * i.qty, 0),
     updated_at: new Date().toISOString(),

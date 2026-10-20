@@ -27,7 +27,7 @@ export function resetCartId() {
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-export function captureCart(email: string, name: string, items: CartItem[]) {
+export function captureCart(email: string, items: CartItem[]) {
   if (!EMAIL.test(email.trim()) || !items.length) return
   fetch('/api/cart-capture', {
     method: 'POST',
@@ -35,7 +35,6 @@ export function captureCart(email: string, name: string, items: CartItem[]) {
     body: JSON.stringify({
       id: getCartId(),
       email: email.trim(),
-      name: name.trim(),
       items: items.map(i => ({ product_id: i.product_id, qty: i.qty })),
     }),
     keepalive: true,
