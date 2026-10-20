@@ -194,7 +194,9 @@ export function renderCampaignHtml(c: CampaignContent, firstName: string, unsubs
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr>
           <td style="background:#111111;border-radius:16px 16px 0 0;padding:28px 40px;border-bottom:2px solid #cc0000;text-align:center;">
-            <a href="${SITE}" style="font-size:22px;font-weight:900;letter-spacing:3px;color:#ffffff;text-transform:uppercase;text-decoration:none;">LED IVANOV AUTO</a>
+            <a href="${SITE}" style="text-decoration:none;">
+              <img src="${SITE}/images/logo.png" width="300" alt="LED IVANOV AUTO" style="display:inline-block;width:300px;max-width:100%;height:auto;border:0;color:#ffffff;font-size:22px;font-weight:900;letter-spacing:3px;">
+            </a>
           </td>
         </tr>
         <tr>
