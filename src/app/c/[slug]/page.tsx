@@ -10,6 +10,7 @@ import { getArticle, type Article } from '@/lib/articles'
 const ACCESSORY = /модул|резистор|декодер|адаптер|преходни|кабел|букс|ключодърж|стикер/i
 
 const GUIDES: Record<string, string[]> = {
+  'led-krushki-za-kola': ['led-krushki-za-kola-kak-da-izberem', 'led-krushki-za-kola-ceni', 'led-krushki-za-avtomobil-vsichko'],
   'led-krushki-h7': ['led-krushki-h7-110w-180w-200w', 'montazh-led-krushki-h7', 'led-krushki-greshka-migane-smushtenia'],
   'led-krushki-h4': ['led-krushki-h4-kasi-i-dalgi', 'led-krushki-sveti-slabo-razseyana-svetlina', 'zakonni-li-sa-led-krushkite'],
   'led-krushki-h11': ['led-krushki-za-mygla-h11-h8', 'kakva-krushka-e-moyata-kola', 'nai-dobrite-led-krushki'],
@@ -22,6 +23,20 @@ const GUIDES: Record<string, string[]> = {
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 type Props = { params: Promise<{ slug: string }> }
+
+// Body text supports **bold** and [text](/url) inline.
+function inline(text: string) {
+  return text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/).map((part, j) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={j} className="text-white font-semibold">{part.slice(2, -2)}</strong>
+    }
+    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+    if (link) {
+      return <Link key={j} href={link[2]} className="text-accent hover:underline">{link[1]}</Link>
+    }
+    return part
+  })
+}
 
 export async function generateStaticParams() {
   return Object.keys(CATEGORY_PAGE_CONFIGS).map(slug => ({ slug }))
@@ -157,33 +172,21 @@ export default async function CategoryLandingPage({ params }: Props) {
       <section className="mb-14 pt-10 border-t border-border">
         <div className="columns-1 md:columns-2 gap-8">
           {config.body.split('\n\n').map((para, i) => {
-            if (para.startsWith('**') || para.includes('**')) {
-              const parts = para.split(/(\*\*[^*]+\*\*)/)
-              return (
-                <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">
-                  {parts.map((part, j) =>
-                    part.startsWith('**') && part.endsWith('**')
-                      ? <strong key={j} className="text-white font-semibold">{part.slice(2, -2)}</strong>
-                      : part
-                  )}
-                </p>
-              )
+            if (para.startsWith('## ')) {
+              return <h2 key={i} className="text-white font-bold text-base mt-6 mb-2 break-inside-avoid">{para.slice(3)}</h2>
             }
             if (para.startsWith('- ')) {
               const items = para.split('\n').filter(l => l.startsWith('- '))
               return (
                 <ul key={i} className="list-disc list-inside text-muted text-sm mb-4 space-y-1 break-inside-avoid">
-                  {items.map((item, j) => <li key={j}>{item.slice(2)}</li>)}
+                  {items.map((item, j) => <li key={j}>{inline(item.slice(2))}</li>)}
                 </ul>
               )
             }
-            if (para.length > 60 && !para.startsWith('-')) {
-              const isHeading = para.length < 120 && !para.includes('. ')
-              return isHeading
-                ? <h2 key={i} className="text-white font-bold text-base mt-6 mb-2 break-inside-avoid">{para}</h2>
-                : <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">{para}</p>
-            }
-            return <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">{para}</p>
+            const isHeading = para.length > 60 && para.length < 120 && !para.includes('. ') && !/[*\[]/.test(para)
+            return isHeading
+              ? <h2 key={i} className="text-white font-bold text-base mt-6 mb-2 break-inside-avoid">{para}</h2>
+              : <p key={i} className="text-muted text-sm leading-relaxed mb-4 break-inside-avoid">{inline(para)}</p>
           })}
         </div>
       </section>

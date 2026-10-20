@@ -100,7 +100,25 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
+        <nav aria-label="LED крушки по цокъл" className="mt-10 pt-6 border-t border-border flex flex-wrap gap-x-4 gap-y-2 text-xs">
+          {[
+            { href: '/c/led-krushki-za-kola', label: 'LED крушки за кола' },
+            { href: '/c/led-krushki-h7',      label: 'LED крушки H7' },
+            { href: '/c/led-krushki-h4',      label: 'LED крушки H4' },
+            { href: '/c/led-krushki-h1',      label: 'LED крушки H1' },
+            { href: '/c/led-krushki-h11',     label: 'LED крушки H11' },
+            { href: '/c/led-krushki-canbus',  label: 'LED крушки CANBUS' },
+            { href: '/c/ksenon-krushki',      label: 'LED заместител на ксенон' },
+            { href: '/c/dnevni-svetlini',     label: 'Дневни светлини' },
+            { href: '/blog',                  label: 'Блог' },
+          ].map(l => (
+            <Link key={l.href} href={l.href} className="text-muted hover:text-white transition-colors">
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-6 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted/50">
             © {new Date().getFullYear()} LED Ivanov Auto. Всички права запазени.
           </p>
