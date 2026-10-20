@@ -42,7 +42,7 @@ export default function PrivacyPage() {
         <Section title="2. Каква информация събираме">
           <p>Събираме следните категории лични данни:</p>
           <ul className="list-disc list-inside space-y-1.5 pl-2">
-            <li><strong className="text-white">Данни при поръчка:</strong> три имена, телефонен номер, адрес за доставка</li>
+            <li><strong className="text-white">Данни при поръчка:</strong> три имена, телефонен номер, имейл адрес, адрес за доставка и съдържание на количката</li>
             <li><strong className="text-white">Данни при контакт:</strong> имена и телефонен номер при обаждане или съобщение</li>
             <li><strong className="text-white">Технически данни:</strong> IP адрес, вид на браузър, посетени страници (чрез бисквитки)</li>
           </ul>
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-1.5 pl-2">
             <li><strong className="text-white">Изпълнение на договор</strong> — обработка и доставка на поръчки</li>
             <li><strong className="text-white">Законово задължение</strong> — съхранение на документи за счетоводни цели (5 години)</li>
-            <li><strong className="text-white">Легитимен интерес</strong> — подобряване на сайта чрез анализ на посещенията</li>
+            <li><strong className="text-white">Легитимен интерес</strong> — подобряване на сайта чрез анализ на посещенията; еднократно напомняне по имейл за незавършена поръчка и имейли с предложения за подобни продукти към клиенти. Всеки такъв имейл съдържа линк за отписване.</li>
             <li><strong className="text-white">Съгласие</strong> — аналитични и маркетингови бисквитки (при дадено съгласие)</li>
           </ul>
         </Section>
@@ -62,6 +62,7 @@ export default function PrivacyPage() {
         <Section title="4. Срок на съхранение">
           <ul className="list-disc list-inside space-y-1.5 pl-2">
             <li>Данни, свързани с поръчки — 5 години (счетоводно изискване)</li>
+            <li>Незавършени колички (имейл и продукти) — до 90 дни</li>
             <li>Данни при контакт — до 6 месеца след приключване на комуникацията</li>
             <li>Технически и аналитични данни (бисквитки) — до 1 година</li>
           </ul>
@@ -72,6 +73,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-1.5 pl-2">
             <li><strong className="text-white">Куриерски фирми</strong> (Еконт, Спиди) — за изпълнение на доставка</li>
             <li><strong className="text-white">Supabase Inc.</strong> — хостинг на база данни (ЕС-съвместим)</li>
+            <li><strong className="text-white">Resend Inc.</strong> — изпращане на имейли за поръчки, напомняния и новини</li>
             <li><strong className="text-white">Google LLC</strong> — анализ на посещения (при дадено съгласие)</li>
           </ul>
           <p>Не продаваме и не предоставяме данни на трети страни за маркетингови цели.</p>

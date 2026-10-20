@@ -135,6 +135,15 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: 'Грешка при запис' }, { status: 500 })
 
+  // Stop any pending abandoned-cart reminder for this customer (no-op until migration 019)
+  if (row.customer_email) {
+    await supabase
+      .from('abandoned_carts')
+      .update({ recovered_at: new Date().toISOString() })
+      .eq('email', row.customer_email.trim().toLowerCase())
+      .is('recovered_at', null)
+  }
+
   await sendOrderEmails({ ...order, source: data.source ?? null })
 
   return NextResponse.json({ order_number: order.order_number, total: order.total }, { status: 201 })

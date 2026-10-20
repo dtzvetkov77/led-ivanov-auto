@@ -8,6 +8,7 @@ import type { CartItem } from '@/lib/types'
 import { readTrafficSource } from '@/lib/traffic-source'
 import { CONVERSIONS, trackConversion } from '@/lib/gtag'
 import { optImg } from '@/lib/img'
+import { captureCart, resetCartId } from '@/lib/cartCapture'
 
 type DeliveryType = 'address' | 'office'
 type BumpProduct = { id: string; name: string; price: number; sale_price: number | null; images: string[]; short_description: string | null }
@@ -78,6 +79,9 @@ export default function CheckoutForm() {
     })
   }, [])
 
+  // Save the cart for an abandoned-cart reminder once a valid email is entered
+  const capture = () => captureCart(form.customer_email, form.customer_name, items)
+
   const set = (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm(f => ({ ...f, [k]: e.target.value }))
@@ -131,6 +135,7 @@ export default function CheckoutForm() {
         sessionStorage.setItem('last_order', JSON.stringify({ order_number: data.order_number, total: data.total, email: form.customer_email, phone: form.customer_phone }))
       } catch {}
       clearCart()
+      resetCartId()
       window.dispatchEvent(new Event('cart-updated'))
       router.push(`/checkout/success?order=${data.order_number}`)
     } catch {
@@ -168,9 +173,12 @@ export default function CheckoutForm() {
           </div>
 
           <Field label="Имейл" error={errors.customer_email}>
-            <input type="email" value={form.customer_email} onChange={set('customer_email')} required
+            <input type="email" value={form.customer_email} onChange={set('customer_email')} onBlur={capture} required
               placeholder="email@example.com"
               className="field-input" />
+            <p className="mt-1.5 text-xs text-muted">
+              Ако не завършиш поръчката, може да ти изпратим едно напомняне на този имейл.
+            </p>
           </Field>
         </fieldset>
 

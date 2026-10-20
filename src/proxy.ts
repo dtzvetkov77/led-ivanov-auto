@@ -4,11 +4,11 @@ import { createServerClient } from '@supabase/ssr'
 // Rate limiting for /api/orders (10 req/min per IP)
 const ipCounts = new Map<string, { count: number; reset: number }>()
 
-function checkRateLimit(ip: string): boolean {
+function checkRateLimit(key: string): boolean {
   const now = Date.now()
-  const entry = ipCounts.get(ip)
+  const entry = ipCounts.get(key)
   if (!entry || now > entry.reset) {
-    ipCounts.set(ip, { count: 1, reset: now + 60_000 })
+    ipCounts.set(key, { count: 1, reset: now + 60_000 })
     return true
   }
   if (entry.count >= 10) return false
@@ -19,10 +19,10 @@ function checkRateLimit(ip: string): boolean {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // Rate limit order submissions
-  if (pathname === '/api/orders' && req.method === 'POST') {
+  // Rate limit order submissions and abandoned-cart captures
+  if ((pathname === '/api/orders' || pathname === '/api/cart-capture') && req.method === 'POST') {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
-    if (!checkRateLimit(ip)) {
+    if (!checkRateLimit(`${pathname}:${ip}`)) {
       return NextResponse.json({ error: 'Твърде много заявки' }, { status: 429 })
     }
   }
@@ -55,5 +55,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/orders'],
+  matcher: ['/admin/:path*', '/api/orders', '/api/cart-capture'],
 }

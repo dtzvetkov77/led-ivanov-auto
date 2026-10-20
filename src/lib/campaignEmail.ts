@@ -176,19 +176,22 @@ function bodyHtml(body: string): string {
   return out.join('')
 }
 
-export function renderCampaignHtml(c: CampaignContent, firstName: string, unsubscribeUrl: string): string {
-  const subject = esc(personalize(c.subject, firstName))
-  const preheader = esc(personalize(c.preheader, firstName))
-  const cta = c.ctaLabel && /^https?:\/\//.test(c.ctaUrl)
-    ? `<table cellpadding="0" cellspacing="0" style="margin:8px 0 8px;"><tr><td style="background:#cc0000;border-radius:10px;">
-        <a href="${esc(c.ctaUrl)}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-weight:700;font-size:15px;text-decoration:none;">${esc(c.ctaLabel)}</a>
+export const escHtml = esc
+
+export function ctaButton(label: string, url: string): string {
+  if (!label || !/^https?:\/\//.test(url)) return ''
+  return `<table cellpadding="0" cellspacing="0" style="margin:8px 0 8px;"><tr><td style="background:#cc0000;border-radius:10px;">
+        <a href="${esc(url)}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-weight:700;font-size:15px;text-decoration:none;">${esc(label)}</a>
       </td></tr></table>`
-    : ''
+}
+
+/** Shared dark layout with logo header and unsubscribe footer. `inner` must already be escaped HTML. */
+export function emailLayout(opts: { title: string; preheader: string; inner: string; reason: string; unsubscribeUrl: string }): string {
   return `<!DOCTYPE html>
 <html lang="bg">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject}</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(opts.title)}</title></head>
 <body style="margin:0;padding:0;background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;">
-  <div style="display:none;max-height:0;overflow:hidden;">${preheader}</div>
+  <div style="display:none;max-height:0;overflow:hidden;">${esc(opts.preheader)}</div>
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0d0d;padding:32px 0;">
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
@@ -201,15 +204,14 @@ export function renderCampaignHtml(c: CampaignContent, firstName: string, unsubs
         </tr>
         <tr>
           <td style="background:#161616;padding:36px 40px;border-radius:0 0 16px 16px;">
-            ${bodyHtml(personalize(c.body, firstName))}
-            ${cta}
+            ${opts.inner}
           </td>
         </tr>
         <tr>
           <td style="padding:24px 40px;text-align:center;font-size:12px;color:#9a9a9a;line-height:1.8;">
             LED Ivanov Auto · ж.к. Малинова долина, София · <a href="tel:+359999997996" style="color:#cc0000;text-decoration:none;">+359 99 999 7996</a><br>
-            Получаваш този имейл, защото си пазарувал от ledivanovauto.com.<br>
-            <a href="${esc(unsubscribeUrl)}" style="color:#9a9a9a;">Отпиши се от тези имейли</a>
+            ${esc(opts.reason)}<br>
+            <a href="${esc(opts.unsubscribeUrl)}" style="color:#9a9a9a;">Отпиши се от тези имейли</a>
           </td>
         </tr>
       </table>
@@ -217,6 +219,16 @@ export function renderCampaignHtml(c: CampaignContent, firstName: string, unsubs
   </table>
 </body>
 </html>`
+}
+
+export function renderCampaignHtml(c: CampaignContent, firstName: string, unsubscribeUrl: string): string {
+  return emailLayout({
+    title: personalize(c.subject, firstName),
+    preheader: personalize(c.preheader, firstName),
+    inner: bodyHtml(personalize(c.body, firstName)) + ctaButton(c.ctaLabel, c.ctaUrl),
+    reason: 'Получаваш този имейл, защото си пазарувал от ledivanovauto.com.',
+    unsubscribeUrl,
+  })
 }
 
 export function renderCampaignText(c: CampaignContent, firstName: string, unsubscribeUrl: string): string {
