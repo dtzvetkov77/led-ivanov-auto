@@ -156,7 +156,34 @@ export function segmentContext(customers: Customer[], now = Date.now()) {
   return { now, topSpend }
 }
 
-const csvCell = (v: string) => (/[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)
+/** Customers in a segment who can be emailed: have an email and have not unsubscribed. */
+export function emailRecipients(
+  customers: Customer[],
+  segment: Segment,
+  ctx: ReturnType<typeof segmentContext>,
+  unsubscribed: Set<string>,
+): Customer[] {
+  const seen = new Set<string>()
+  return customers.filter(c => {
+    if (!c.email || unsubscribed.has(c.email) || seen.has(c.email) || !segment.match(c, ctx)) return false
+    seen.add(c.email)
+    return true
+  })
+}
+
+/** Unsubscribed emails, or null when the email_unsubscribes table doesn't exist yet. */
+export async function loadUnsubscribed(supabase: SupabaseClient): Promise<Set<string> | null> {
+  const set = new Set<string>()
+  const page = 1000
+  for (let from = 0; ; from += page) {
+    const { data, error } = await supabase.from('email_unsubscribes').select('email').range(from, from + page - 1)
+    if (error) return null
+    for (const r of data ?? []) set.add(r.email)
+    if (!data || data.length < page) return set
+  }
+}
+
+const csvCell =(v: string) => (/[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)
 // Names come from the public order form — keep only letters, spaces, hyphens and apostrophes
 // so nothing can become a spreadsheet formula or a new cell (Excel BG splits on `;`)
 const safeName = (v: string) => v.replace(/[^\p{L}\s'-]/gu, '').replace(/\s+/g, ' ').replace(/^[\s'-]+/, '').trim()
