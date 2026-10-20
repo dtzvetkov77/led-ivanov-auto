@@ -156,12 +156,15 @@ export function segmentContext(customers: Customer[], now = Date.now()) {
 }
 
 const csvCell = (v: string) => (/[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)
+// Free-text fields come from the public order form — drop leading spreadsheet formula triggers
+const safeText = (v: string) => v.replace(/^[=+\-@\t\r\s]+/, '')
 
 /** Google Ads Customer Match CSV (unhashed — Google hashes on upload). */
 export function toCustomerMatchCsv(customers: Customer[]): string {
   const lines = ['Email,Phone,First Name,Last Name,Country,Zip']
   for (const c of customers) {
-    lines.push([c.email ?? '', c.phone ?? '', c.firstName, c.lastName, 'BG', ''].map(csvCell).join(','))
+    const email = safeText(c.email ?? '')
+    lines.push([email, c.phone ?? '', safeText(c.firstName), safeText(c.lastName), 'BG', ''].map(csvCell).join(','))
   }
   return lines.join('\n') + '\n'
 }
