@@ -5,7 +5,8 @@ import { normalizeEmail } from '@/lib/customerSegments'
 import { validateCartItems } from '@/lib/abandonedCart'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-/** New carts allowed per IP per 24h — real shoppers need 1-2; caps bulk abuse. */
+/** New carts allowed per IP per 24h — real shoppers need 1-2; caps bulk abuse.
+ * Fast path only; the atomic limit is the DB trigger in migration 019. */
 const MAX_NEW_CARTS_PER_IP = 3
 
 function ipHash(req: NextRequest) {
@@ -51,7 +52,10 @@ export async function POST(req: NextRequest) {
     total: items.reduce((s, i) => s + i.price * i.qty, 0),
     updated_at: new Date().toISOString(),
   })
-  if (error) return NextResponse.json({ error: 'Failed' }, { status: 500 })
+  if (error) {
+    if (error.message.includes('cart_ip_cap')) return NextResponse.json({ ok: true })
+    return NextResponse.json({ error: 'Failed' }, { status: 500 })
+  }
   return NextResponse.json({ ok: true })
 }
 
