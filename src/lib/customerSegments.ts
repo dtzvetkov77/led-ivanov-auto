@@ -41,7 +41,8 @@ export function normalizePhone(raw: string | null): string | null {
 
 export function normalizeEmail(raw: string | null): string | null {
   const e = raw?.trim().toLowerCase()
-  return e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) ? e : null
+  // Strict charset: starts alphanumeric, no `;`/`=`/quotes — safe as a CSV cell
+  return e && /^[a-z0-9][a-z0-9._%+-]*@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(e) ? e : null
 }
 
 // Cyrillic look-alikes customers and product names use for socket codes (Н7, Т10)
@@ -156,15 +157,15 @@ export function segmentContext(customers: Customer[], now = Date.now()) {
 }
 
 const csvCell = (v: string) => (/[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)
-// Free-text fields come from the public order form — drop leading spreadsheet formula triggers
-const safeText = (v: string) => v.replace(/^[=+\-@\t\r\s]+/, '')
+// Names come from the public order form — keep only letters, spaces, hyphens and apostrophes
+// so nothing can become a spreadsheet formula or a new cell (Excel BG splits on `;`)
+const safeName = (v: string) => v.replace(/[^\p{L}\s'-]/gu, '').replace(/\s+/g, ' ').replace(/^[\s'-]+/, '').trim()
 
 /** Google Ads Customer Match CSV (unhashed — Google hashes on upload). */
 export function toCustomerMatchCsv(customers: Customer[]): string {
   const lines = ['Email,Phone,First Name,Last Name,Country,Zip']
   for (const c of customers) {
-    const email = safeText(c.email ?? '')
-    lines.push([email, c.phone ?? '', safeText(c.firstName), safeText(c.lastName), 'BG', ''].map(csvCell).join(','))
+    lines.push([c.email ?? '', c.phone ?? '', safeName(c.firstName), safeName(c.lastName), 'BG', ''].map(csvCell).join(','))
   }
   return lines.join('\n') + '\n'
 }
