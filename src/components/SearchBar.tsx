@@ -98,11 +98,10 @@ export default function SearchBar() {
         q = q.or(variants.flatMap(v => [`name.ilike.%${v}%`, `short_description.ilike.%${v}%`, `description.ilike.%${v}%`]).join(','))
       }
       const { data } = await q
-      // Name matches first; description-only matches (e.g. "лед" inside "следващ") after.
-      const inName = (h: Hit) => words.every(w => {
-        const n = h.name.toLowerCase()
-        return [w, ...(SYNONYMS[w.toLowerCase()] ?? [])].some(v => n.includes(v.toLowerCase()))
-      })
+      // Word-start name matches first ("лед" in "LED", not in "огледала"), then the rest.
+      const esc = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const starts = words.map(w => new RegExp(`(^|[^a-zа-я0-9])(${[w, ...(SYNONYMS[w.toLowerCase()] ?? [])].map(esc).join('|')})`, 'i'))
+      const inName = (h: Hit) => starts.every(re => re.test(h.name))
       const hits = (data ?? []) as Hit[]
       setResults([...hits.filter(inName), ...hits.filter(h => !inName(h))].slice(0, 20))
       setLoading(false)
