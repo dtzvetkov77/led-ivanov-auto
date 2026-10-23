@@ -25,6 +25,28 @@ export function trackConversion(sendTo: string, params: Record<string, unknown> 
   gtag('event', 'conversion', { send_to: sendTo, ...params })
 }
 
+// GA4 (G-09HDCZYTM9) is a destination of the same Google tag, so page views
+// arrive on their own; e-commerce events are sent explicitly here.
+export const GA4_ID = 'G-09HDCZYTM9'
+
+export type Ga4Item = { product_id: string; name: string; price: number; qty: number }
+
+export function trackGa4(
+  event: 'add_to_cart' | 'begin_checkout' | 'purchase',
+  items: Ga4Item[],
+  extra: Record<string, unknown> = {},
+): void {
+  const gtag = getGtag()
+  if (!gtag || !items.length) return
+  gtag('event', event, {
+    send_to: GA4_ID,
+    currency: 'EUR',
+    value: Math.round(items.reduce((s, i) => s + i.price * i.qty, 0) * 100) / 100,
+    items: items.map(i => ({ item_id: i.product_id, item_name: i.name, price: i.price, quantity: i.qty })),
+    ...extra,
+  })
+}
+
 // Enhanced conversions: gtag hashes these (SHA-256) before sending
 export function setUserData(email?: string | null, phone?: string | null): void {
   const gtag = getGtag()

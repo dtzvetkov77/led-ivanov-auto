@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { getCart, clearCart, cartTotal } from '@/lib/cart'
 import type { CartItem } from '@/lib/types'
 import { readTrafficSource } from '@/lib/traffic-source'
-import { CONVERSIONS, trackConversion } from '@/lib/gtag'
+import { CONVERSIONS, trackConversion, trackGa4 } from '@/lib/gtag'
 import { optImg } from '@/lib/img'
 import { captureCart, resetCartId } from '@/lib/cartCapture'
 
@@ -40,7 +40,10 @@ export default function CheckoutForm() {
   useEffect(() => {
     const cart = getCart()
     setItems(cart)
-    if (cart.length > 0) trackConversion(CONVERSIONS.beginCheckout, { value: cartTotal(cart), currency: 'EUR' })
+    if (cart.length > 0) {
+      trackConversion(CONVERSIONS.beginCheckout, { value: cartTotal(cart), currency: 'EUR' })
+      trackGa4('begin_checkout', cart)
+    }
   }, [])
 
   useEffect(() => {
@@ -132,7 +135,7 @@ export default function CheckoutForm() {
       // Handed to the success page for the Ads conversion value and enhanced conversions; kept client-side
       // so order totals are never readable by order number alone
       try {
-        sessionStorage.setItem('last_order', JSON.stringify({ order_number: data.order_number, total: data.total, email: form.customer_email, phone: form.customer_phone }))
+        sessionStorage.setItem('last_order', JSON.stringify({ order_number: data.order_number, total: data.total, email: form.customer_email, phone: form.customer_phone, items: items.map(i => ({ product_id: i.product_id, name: i.name, price: i.price, qty: i.qty })) }))
       } catch {}
       clearCart()
       resetCartId()

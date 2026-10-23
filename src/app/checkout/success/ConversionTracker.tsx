@@ -1,9 +1,9 @@
 'use client'
 import { useEffect } from 'react'
-import { CONVERSIONS, setUserData, trackConversion } from '@/lib/gtag'
+import { CONVERSIONS, setUserData, trackConversion, trackGa4, type Ga4Item } from '@/lib/gtag'
 
 type Props = { orderNumber: string | null }
-type LastOrder = { order_number: string; total: number; email?: string; phone?: string }
+type LastOrder = { order_number: string; total: number; email?: string; phone?: string; items?: Ga4Item[] }
 
 // Order stored by CheckoutForm in sessionStorage, only if it belongs to this order
 function readLastOrder(orderNumber: string | null): LastOrder | null {
@@ -30,6 +30,10 @@ export default function ConversionTracker({ orderNumber }: Props) {
       currency: 'EUR',
       transaction_id: order.order_number,
     })
+    if (order.items?.length) {
+      // value = order total (incl. bump/discounts) so GA4 revenue matches the order
+      trackGa4('purchase', order.items, { transaction_id: order.order_number, value: Number(order.total) || 0 })
+    }
     try { sessionStorage.setItem(sentKey, '1') } catch {}
   }, [orderNumber])
   return null
