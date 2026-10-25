@@ -18,7 +18,19 @@ const GUIDES: Record<string, string[]> = {
   'ksenon-krushki': ['led-zamestitel-na-ksenon-d1s-d2s-d3s', 'led-vs-ksenon-vs-halogen', 'nai-dobrite-led-krushki'],
   'dnevni-svetlini': ['led-krushki-za-avtomobil-vsichko', 'led-vs-ksenon-vs-halogen', 'nai-dobrite-led-krushki'],
   'led-krushki-canbus': ['led-krushki-greshka-migane-smushtenia', 'montazh-led-krushki-h7', 'led-krushki-za-avtomobil-vsichko'],
+  'led-krushki-po-marka': ['led-krushki-za-kola-po-marki', 'kakva-krushka-e-moyata-kola', 'prehodnici-za-led-krushki'],
+  'led-krushki-za-vw': ['led-krushki-za-vw-golf-4-5-6-7', 'prehodnici-za-led-krushki', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-bmw': ['kakvo-e-canbus-led-krushki', 'led-zamestitel-na-ksenon-d1s-d2s-d3s', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-mercedes': ['kakvo-e-canbus-led-krushki', 'led-krushki-greshka-migane-smushtenia', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-audi': ['led-zamestitel-na-ksenon-d1s-d2s-d3s', 'kakvo-e-canbus-led-krushki', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-toyota': ['led-krushki-hb3-hb4-9005-9006', 'led-krushki-za-mygla-h11-h8', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-honda': ['led-krushki-hb3-hb4-9005-9006', 'prehodnici-za-led-krushki', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-mazda': ['led-krushki-hb3-hb4-9005-9006', 'led-krushki-za-mygla-h11-h8', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-dacia': ['led-krushki-h4-kasi-i-dalgi', 'zaslepyavat-li-led-krushkite', 'led-krushki-za-kola-po-marki'],
+  'led-krushki-za-fiat': ['led-krushki-h4-kasi-i-dalgi', 'zaslepyavat-li-led-krushkite', 'led-krushki-za-kola-po-marki'],
 }
+
+const BRAND_GUIDES = ['led-krushki-za-kola-po-marki', 'prehodnici-za-led-krushki', 'kakvo-e-canbus-led-krushki']
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
@@ -193,7 +205,7 @@ export default async function CategoryLandingPage({ params }: Props) {
 
       {/* Guides */}
       {(() => {
-        const guides = (GUIDES[slug] ?? []).map(getArticle).filter((a): a is Article => !!a)
+        const guides = (GUIDES[slug] ?? (slug.startsWith('led-krushki-za-') ? BRAND_GUIDES : [])).map(getArticle).filter((a): a is Article => !!a)
         if (!guides.length) return null
         return (
           <section className="mb-12">

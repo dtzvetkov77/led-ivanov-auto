@@ -1,3 +1,5 @@
+import { BRAND_HUB, BRAND_PAGE_CONFIGS } from './brandPages'
+
 export type CategoryPageConfig = {
   title: string
   metaDescription: string
@@ -285,4 +287,6 @@ CANBUS декодерите (адаптерите) или вградените C
       { q: 'Колко бързо е доставката?', a: 'Изпращаме с Еконт или Спиди и пратката пристига за 1–2 работни дни в цялата страна.' },
     ],
   },
+  'led-krushki-po-marka': BRAND_HUB,
+  ...BRAND_PAGE_CONFIGS,
 }

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { BRAND_LINKS } from '@/lib/brandPages'
 import { PRODUCT_CATEGORIES } from '@/lib/categories'
 import LogoImage from './LogoImage'
 
@@ -114,6 +115,15 @@ export default function Footer() {
           ].map(l => (
             <Link key={l.href} href={l.href} className="text-muted hover:text-white transition-colors">
               {l.label}
+            </Link>
+          ))}
+        </nav>
+
+        <nav aria-label="LED крушки по марка" className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+          <Link href="/c/led-krushki-po-marka" className="text-muted hover:text-white transition-colors">LED крушки по марка:</Link>
+          {BRAND_LINKS.map(l => (
+            <Link key={l.href} href={l.href} className="text-muted hover:text-white transition-colors">
+              {l.name}
             </Link>
           ))}
         </nav>
