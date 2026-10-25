@@ -118,6 +118,11 @@ export default async function CategoryLandingPage({ params }: Props) {
     }
   }
 
+  if (config.excludeTerms?.length) {
+    const ex = config.excludeTerms.map(t => t.toLowerCase())
+    products = products.filter(p => !ex.some(t => p.name.toLowerCase().includes(t)))
+  }
+
   // Bulbs first, accessories (modules, adapters, decoders) after — stable sort keeps DB position.
   products = products
     .map((p, i) => ({ p, i, acc: ACCESSORY.test(p.name) ? 1 : 0 }))

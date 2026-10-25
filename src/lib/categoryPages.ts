@@ -6,6 +6,8 @@ export type CategoryPageConfig = {
   h1: string
   breadcrumb: string
   searchTerms?: string[]
+  // Products whose name contains any of these (case-insensitive) are hidden.
+  excludeTerms?: string[]
   categorySlug?: string
   body: string
   faq: { q: string; a: string }[]

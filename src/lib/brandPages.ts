@@ -21,7 +21,25 @@ type Brand = {
 
 const PHONE = '+359 99 999 7996'
 
+// Words that mark a product as made for one specific make (e.g. VW-only adapters).
+const MAKE_WORDS: Record<string, string[]> = {
+  vw: ['Volkswagen', 'Golf', 'Scirocco', 'Touran'],
+  hyundai: ['Hyundai', 'Hyndai'],
+  kia: ['Kia'],
+  nissan: ['Nissan', 'Qashqai'],
+  honda: ['Honda'],
+  toyota: ['Toyota'],
+  bmw: ['BMW'],
+  mercedes: ['Mercedes'],
+  audi: ['Audi'],
+}
+
 function build(b: Brand): CategoryPageConfig {
+  // Hyundai, Kia and Nissan share adapters, so their products stay visible on each other's pages.
+  const shared: Record<string, string[]> = { hyundai: ['kia', 'nissan'], kia: ['hyundai', 'nissan'], nissan: ['hyundai', 'kia'] }
+  const keep = new Set([b.slug, ...(shared[b.slug] ?? [])])
+  const excludeTerms = Object.entries(MAKE_WORDS).filter(([k]) => !keep.has(k)).flatMap(([, w]) => w)
+
   const body = [
     `## Какви LED крушки трябват за ${b.name}`,
     b.intro,
@@ -47,6 +65,7 @@ function build(b: Brand): CategoryPageConfig {
     h1: `LED Крушки за ${b.name}`,
     breadcrumb: `LED Крушки за ${b.name}`,
     searchTerms: [...b.bases.split(', '), ...(b.searchExtra ?? [])],
+    excludeTerms,
     body,
     faq: b.faq,
   }
