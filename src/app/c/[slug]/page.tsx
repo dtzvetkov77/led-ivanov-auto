@@ -118,9 +118,14 @@ export default async function CategoryLandingPage({ params }: Props) {
     }
   }
 
-  if (config.excludeTerms?.length) {
-    const ex = config.excludeTerms.map(t => t.toLowerCase())
-    products = products.filter(p => !ex.some(t => p.name.toLowerCase().includes(t)))
+  if (config.brandFilter) {
+    const has = (name: string, words: string[]) => words.some(w => name.includes(w.toLowerCase()))
+    const { ownMake, anyMake } = config.brandFilter
+    products = products.filter(p => {
+      const name = p.name.toLowerCase()
+      const makeSpecific = /преходни/i.test(p.name) || has(name, anyMake)
+      return !makeSpecific || has(name, ownMake)
+    })
   }
 
   // Bulbs first, accessories (modules, adapters, decoders) after — stable sort keeps DB position.

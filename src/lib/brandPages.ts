@@ -21,25 +21,32 @@ type Brand = {
 
 const PHONE = '+359 99 999 7996'
 
-// Words that mark a product as made for one specific make (e.g. VW-only adapters).
+// Words in product names that tie a product (mostly H7/H1 adapters) to one make.
 const MAKE_WORDS: Record<string, string[]> = {
-  vw: ['Volkswagen', 'Golf', 'Scirocco', 'Touran'],
+  vw: ['Volkswagen', 'Golf', 'Passat', 'Jetta', 'Caddy', 'Touran', 'Scirocco', 'Sharan'],
+  skoda: ['Skoda', 'Octavia'],
+  seat: ['Seat', 'Leon'],
+  audi: ['Audi'],
+  bmw: ['BMW'],
+  mercedes: ['Mercedes'],
+  opel: ['Opel', 'Astra', 'Corsa', 'Meriva'],
+  ford: ['Ford', 'Focus', 'Mondeo', 'Fiesta', 'Kuga'],
+  toyota: ['Toyota'],
+  renault: ['Renault', 'Megane'],
+  dacia: ['Dacia'],
+  peugeot: ['Peugeot'],
+  citroen: ['Citroen'],
   hyundai: ['Hyundai', 'Hyndai'],
   kia: ['Kia'],
   nissan: ['Nissan', 'Qashqai'],
   honda: ['Honda'],
-  toyota: ['Toyota'],
-  bmw: ['BMW'],
-  mercedes: ['Mercedes'],
-  audi: ['Audi'],
+  mazda: ['Mazda'],
+  volvo: ['Volvo'],
+  fiat: ['Fiat'],
 }
+const ALL_MAKE_WORDS = Object.values(MAKE_WORDS).flat()
 
 function build(b: Brand): CategoryPageConfig {
-  // Hyundai, Kia and Nissan share adapters, so their products stay visible on each other's pages.
-  const shared: Record<string, string[]> = { hyundai: ['kia', 'nissan'], kia: ['hyundai', 'nissan'], nissan: ['hyundai', 'kia'] }
-  const keep = new Set([b.slug, ...(shared[b.slug] ?? [])])
-  const excludeTerms = Object.entries(MAKE_WORDS).filter(([k]) => !keep.has(k)).flatMap(([, w]) => w)
-
   const body = [
     `## Какви LED крушки трябват за ${b.name}`,
     b.intro,
@@ -65,7 +72,7 @@ function build(b: Brand): CategoryPageConfig {
     h1: `LED Крушки за ${b.name}`,
     breadcrumb: `LED Крушки за ${b.name}`,
     searchTerms: [...b.bases.split(', '), ...(b.searchExtra ?? [])],
-    excludeTerms,
+    brandFilter: { ownMake: MAKE_WORDS[b.slug] ?? [b.name], anyMake: ALL_MAKE_WORDS },
     body,
     faq: b.faq,
   }
