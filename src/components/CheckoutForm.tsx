@@ -24,6 +24,9 @@ export default function CheckoutForm() {
   const [bumpProduct, setBumpProduct] = useState<BumpProduct | null>(null)
   const [bumpChecked, setBumpChecked] = useState(false)
   const [downsells, setDownsells] = useState<DownsellProduct[]>([])
+  const [codeInput, setCodeInput] = useState('')
+  const [discount, setDiscount] = useState<{ code: string; percent: number } | null>(null)
+  const [codeChecking, setCodeChecking] = useState(false)
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -89,6 +92,30 @@ export default function CheckoutForm() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm(f => ({ ...f, [k]: e.target.value }))
 
+  const applyCode = async () => {
+    if (!codeInput.trim()) return
+    setCodeChecking(true)
+    setErrors(er => ({ ...er, discount_code: '' }))
+    try {
+      const res = await fetch('/api/discount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeInput }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setDiscount({ code: data.code, percent: data.percent })
+      } else {
+        setDiscount(null)
+        setErrors(er => ({ ...er, discount_code: data.error ?? 'Невалиден код за отстъпка.' }))
+      }
+    } catch {
+      setErrors(er => ({ ...er, discount_code: 'Грешка при проверка на кода.' }))
+    } finally {
+      setCodeChecking(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
@@ -119,7 +146,7 @@ export default function CheckoutForm() {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, delivery_address, delivery_city, items: allItems, source: readTrafficSource() }),
+        body: JSON.stringify({ ...form, delivery_address, delivery_city, items: allItems, discount_code: discount?.code, source: readTrafficSource() }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -129,6 +156,7 @@ export default function CheckoutForm() {
             errs[k] = v[0]
           }
           setErrors(errs)
+          if (errs.discount_code) setDiscount(null)
         }
         return
       }
@@ -148,7 +176,11 @@ export default function CheckoutForm() {
     }
   }
 
-  const total = cartTotal(items)
+  const bumpPrice = bumpChecked && bumpProduct ? (bumpProduct.sale_price ?? bumpProduct.price) : 0
+  const subtotal = cartTotal(items) + bumpPrice
+  // Preview only; the server recalculates the discount on order
+  const discountOff = discount ? Math.round(subtotal * discount.percent) / 100 : 0
+  const total = subtotal - discountOff
 
   return (
     <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start overflow-x-hidden">
@@ -462,13 +494,51 @@ export default function CheckoutForm() {
             </div>
           )}
 
+          <div className="mt-4 pt-4 border-t border-border">
+            {discount ? (
+              <div className="flex items-center justify-between gap-2 text-sm bg-accent/10 border border-accent/30 rounded-xl px-3 py-2">
+                <span>Код <strong>{discount.code}</strong> е приложен</span>
+                <button type="button" onClick={() => { setDiscount(null); setCodeInput('') }} className="text-xs text-muted hover:text-white">
+                  Премахни
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={codeInput}
+                  onChange={e => setCodeInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); applyCode() } }}
+                  placeholder="Код за отстъпка"
+                  aria-label="Код за отстъпка"
+                  className="field-input flex-1 min-w-0"
+                />
+                <button
+                  type="button"
+                  onClick={applyCode}
+                  disabled={codeChecking || !codeInput.trim()}
+                  className="shrink-0 px-4 rounded-xl border border-accent/40 text-accent text-sm font-semibold hover:border-accent disabled:opacity-50"
+                >
+                  {codeChecking ? '...' : 'Приложи'}
+                </button>
+              </div>
+            )}
+            {errors.discount_code && <p className="text-red-400 text-xs mt-1.5">{errors.discount_code}</p>}
+          </div>
+
           <div className="mt-4 pt-4 border-t border-border space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted">Продукти</span>
               <div className="text-right">
-                <span>{total.toFixed(2)} €</span>
+                <span>{subtotal.toFixed(2)} €</span>
               </div>
             </div>
+            {discount && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Отстъпка {discount.code} (-{discount.percent}%)</span>
+                <span className="text-green-400">-{discountOff.toFixed(2)} €</span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-muted">Доставка</span>
               <span>~2–4 €</span>

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateOrderNumber } from '@/lib/order-number'
 import { sendOrderEmails } from '@/lib/email'
+import { checkDiscountCode, discountAmount } from '@/lib/discountCodes'
 
 const CartItemSchema = z.object({
   product_id: z.string().min(1), // may be "uuid__variantAttrs" for variation products
@@ -43,6 +44,7 @@ const OrderSchema = z.object({
   courier: z.enum(['ekont', 'speedy']),
   items: z.array(CartItemSchema).min(1),
   notes: z.string().max(500).optional(),
+  discount_code: z.string().max(50).optional(),
   // Invalid/odd tracking data must never block an order
   source: SourceSchema.nullish().catch(null),
 })
@@ -104,7 +106,22 @@ export async function POST(req: NextRequest) {
     return { ...item, price }
   })
 
-  const total = validatedItems.reduce((s, i) => s + i.price * i.qty, 0)
+  const subtotal = validatedItems.reduce((s, i) => s + i.price * i.qty, 0)
+
+  // Discount is recalculated here; the client value is only a preview.
+  // Stored in notes so admin and emails show it without a schema change.
+  let total = subtotal
+  let discountNote = ''
+  if (data.discount_code?.trim()) {
+    const discount = checkDiscountCode(data.discount_code)
+    if (!discount.ok) {
+      return NextResponse.json({ error: { fieldErrors: { discount_code: [discount.error] } } }, { status: 400 })
+    }
+    const off = discountAmount(subtotal, discount.percent)
+    total = Math.round((subtotal - off) * 100) / 100
+    discountNote = `Код за отстъпка ${discount.code}: -${discount.percent}% (-${off.toFixed(2)} €, без отстъпка ${subtotal.toFixed(2)} €)`
+  }
+  const notes = [discountNote, data.notes?.trim()].filter(Boolean).join('\n') || null
 
   let order_number: string
   try {
@@ -123,7 +140,7 @@ export async function POST(req: NextRequest) {
     courier: data.courier,
     items: validatedItems,
     total,
-    notes: data.notes || null,
+    notes,
     source: data.source ?? null,
   }
   let { data: order, error } = await supabase.from('orders').insert(row).select().single()
