@@ -50,6 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: { absolute: `${name} | Партньорски сервизи | LED Ivanov Auto` },
     description: `${name} — партньорски сервиз на LED Ivanov Auto в ${partner?.city ?? ''}. Полиране на фарове и автомобилна козметика.`,
+    alternates: { canonical: `/partners/${slug}` },
   }
 }
 

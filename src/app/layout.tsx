@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'LED Ivanov Auto', url: SITE }],
   creator: 'LED Ivanov Auto',
   publisher: 'LED Ivanov Auto',
-  alternates: { canonical: SITE },
   openGraph: {
     type: 'website',
     locale: 'bg_BG',
