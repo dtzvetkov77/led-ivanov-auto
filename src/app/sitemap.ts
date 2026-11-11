@@ -7,12 +7,28 @@ export const revalidate = 3600
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
+// Fallback when the partners table is empty — keep in sync with STATIC_PARTNERS in src/app/partners/page.tsx
+const STATIC_PARTNER_SLUGS = [
+  'kostas-garage', 'dbr-tint', 'antonio-dinchev', 'dzumbi-folio', 'zlatnite-race-ses',
+  'erik-auto', 'alpha-garage', 'georgi-videv', 'auto-union-19',
+]
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
-  const [{ data: products }, { data: blogPosts }] = await Promise.all([
+  const [{ data: products }, { data: blogPosts }, { data: partners }] = await Promise.all([
     supabase.from('products').select('slug, updated_at').eq('published', true),
     supabase.from('blog_posts').select('slug, updated_at').eq('published', true),
+    supabase.from('partners').select('slug').eq('published', true),
   ])
+
+  // Same source as /partners: published rows from the partners table, static fallback if empty
+  const partnerSlugs = (partners ?? []).map(p => p.slug).filter(Boolean)
+  const partnerUrls: MetadataRoute.Sitemap = (partnerSlugs.length > 0 ? partnerSlugs : STATIC_PARTNER_SLUGS).map(slug => ({
+    url: `${SITE}/partners/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.4,
+  }))
 
   const productUrls: MetadataRoute.Sitemap = (products ?? []).map(p => ({
     url: `${SITE}/products/${p.slug}`,
@@ -46,7 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE,                                     lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
     { url: `${SITE}/products`,                       lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
     { url: `${SITE}/blog`,                           lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
-    { url: `${SITE}/services/headlight-polishing`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE}/services`,                       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE}/services/headlight-polishing`,  lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/services/headlight-tinting`,     lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/services/headlight-alignment`,   lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/partners`,                       lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
@@ -54,9 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/contact`,                        lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE}/gallery`,                        lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
     { url: `${SITE}/video`,                          lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.5 },
-    { url: `${SITE}/privacy-policy`,                 lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.2 },
-    { url: `${SITE}/terms`,                          lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.2 },
-    { url: `${SITE}/cookies`,                        lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.2 },
+    ...partnerUrls,
     ...categoryUrls,
     ...blogUrls,
     ...articleUrls,
