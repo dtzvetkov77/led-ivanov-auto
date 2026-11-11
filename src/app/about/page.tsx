@@ -4,6 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: { absolute: 'За нас | LED Ivanov Auto' },
   description: 'LED Ivanov Auto – вашият специалист за LED крушки и авто осветление в България. Качество, гаранция и монтаж.',
+  alternates: { canonical: '/about' },
 }
 
 const VALUES = [

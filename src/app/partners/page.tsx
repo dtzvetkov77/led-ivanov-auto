@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: { absolute: 'Партньорски сервизи | LED Ivanov Auto' },
   description: 'Намери авторизиран партньорски сервиз на LED Ivanov Auto близо до теб. Полиране на фарове, фолиране и автомобилна козметика в цялата страна.',
+  alternates: { canonical: '/partners' },
 }
 
 type Partner = {

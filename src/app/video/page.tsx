@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: { absolute: 'Видео | LED Ivanov Auto' },
   description: 'Видео демонстрации и монтажни инструкции на LED крушки от LED Ivanov Auto.',
+  alternates: { canonical: '/video' },
 }
 
 // Replace these with the real YouTube video IDs from the channel

@@ -19,6 +19,8 @@ const STATIC_PARTNERS = [
   { slug: 'erik-auto',         name: 'Ерик Ауто',            city: 'Червен Бряг',                      phone: '+359877449103', cover_image: null, logo_url: null },
 ]
 
+export const metadata = { alternates: { canonical: '/' } }
+
 export default async function HomePage() {
   const supabase = await createClient()
   const [{ data: partnersData }, { data: categoriesData }] = await Promise.all([
