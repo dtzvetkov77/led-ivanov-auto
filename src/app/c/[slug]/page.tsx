@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import ProductGrid from '@/components/ProductGrid'
 import Link from 'next/link'
 import { JsonLd } from '@/components/JsonLd'
@@ -33,6 +33,9 @@ const GUIDES: Record<string, string[]> = {
 const BRAND_GUIDES = ['led-krushki-za-kola-po-marki', 'prehodnici-za-led-krushki', 'kakvo-e-canbus-led-krushki']
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
+
+// Static + ISR: rebuilt in the background at most every 10 minutes, so product/price changes show up within 10 min.
+export const revalidate = 600
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -75,7 +78,8 @@ export default async function CategoryLandingPage({ params }: Props) {
   const config = CATEGORY_PAGE_CONFIGS[slug]
   if (!config) notFound()
 
-  const supabase = await createClient()
+  // Cookie-free client so the page is prerendered and served from cache (ISR, see `revalidate`).
+  const supabase = createPublicClient()
 
   let products: Product[] = []
 
