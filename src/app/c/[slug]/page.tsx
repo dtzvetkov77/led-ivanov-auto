@@ -157,10 +157,26 @@ export default async function CategoryLandingPage({ params }: Props) {
     ],
   }
 
+  // Markdown-lite → HTML for schema text: [text](url) → <a>, **bold** → plain.
+  const schemaText = (text: string) => text
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => `<a href="${u.startsWith('/') ? SITE + u : u}">${t}</a>`)
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+
+  const faqSchema = config.faq.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: config.faq.map(item => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: schemaText(item.a) },
+    })),
+  } : null
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {itemListSchema && <JsonLd data={itemListSchema} />}
       <JsonLd data={breadcrumbSchema} />
+      {faqSchema && <JsonLd data={faqSchema} />}
 
       {/* Breadcrumb */}
       <nav className="text-xs text-muted mb-6 flex items-center gap-1.5 flex-wrap">
@@ -173,6 +189,34 @@ export default async function CategoryLandingPage({ params }: Props) {
 
       <h1 className="text-3xl font-black mb-3">{config.h1}</h1>
       <p className="text-muted text-sm mb-6 leading-relaxed max-w-3xl">{config.metaDescription}</p>
+
+      {/* Comparison table */}
+      {config.comparison && (
+        <section className="mb-10 max-w-4xl">
+          <h2 className="text-xl font-black mb-4">{config.comparison.title}</h2>
+          <div className="overflow-x-auto border border-border rounded-xl">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-surface">
+                <tr>
+                  {config.comparison.head.map((h, i) => (
+                    <th key={i} scope="col" className="px-4 py-3 font-bold text-white border-b border-border">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {config.comparison.rows.map((row, i) => (
+                  <tr key={i} className="border-b border-border last:border-b-0">
+                    {row.map((cell, j) => j === 0
+                      ? <th key={j} scope="row" className="px-4 py-3 font-semibold text-white align-top">{cell}</th>
+                      : <td key={j} className="px-4 py-3 text-muted align-top">{inline(cell)}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {config.comparison.note && <p className="text-muted text-xs mt-3">{inline(config.comparison.note)}</p>}
+        </section>
+      )}
 
       {/* Products */}
       {products.length > 0 ? (
@@ -239,7 +283,7 @@ export default async function CategoryLandingPage({ params }: Props) {
             {config.faq.map((item, i) => (
               <div key={i} className="bg-surface border border-border rounded-xl p-5">
                 <h3 className="font-bold text-sm mb-2">{item.q}</h3>
-                <p className="text-muted text-sm leading-relaxed">{item.a}</p>
+                <p className="text-muted text-sm leading-relaxed">{inline(item.a)}</p>
               </div>
             ))}
           </div>
