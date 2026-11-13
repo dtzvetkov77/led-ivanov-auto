@@ -9,7 +9,7 @@ const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com
 
 export const metadata: Metadata = {
   title: { absolute: 'Регулиране на фарове | LED Ivanov Auto' },
-  description: 'Професионално регулиране на фарове в София. Правилната насоченост на фаровете е задължителна за ГТП и за безопасност. Обслужваме всички марки автомобили.',
+  description: 'Регулиране на фарове в София. Правилната насоченост на фаровете е задължителна за ГТП и за безопасност. Обслужваме всички марки автомобили.',
   alternates: { canonical: '/services/headlight-alignment' },
 }
 

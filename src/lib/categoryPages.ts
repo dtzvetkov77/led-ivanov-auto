@@ -52,7 +52,7 @@ LED крушките H7 работят с рефлекторни фарове. �
 
   'led-krushki-h4': {
     title: 'LED Крушки H4 за Кола — Би-LED, Plug & Play | LED Ivanov Auto',
-    metaDescription: 'LED крушки H4 за автомобил — Би-LED технология, Plug & Play, без CanBus грешки. До 2 год. гаранция. Подходящи за VW, BMW, Toyota, Renault и др. Доставка 1–2 дни.',
+    metaDescription: 'LED крушки H4 за кола: Би-LED къси и дълги в една крушка, Plug & Play, без CanBus грешки. До 2 год. гаранция, доставка 1–2 дни.',
     h1: 'LED Крушки H4 за Автомобил',
     breadcrumb: 'LED Крушки H4',
     searchTerms: ['H4'],

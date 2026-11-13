@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
 import { ARTICLES, articleCover } from '@/lib/articles'
 import { optImg } from '@/lib/img'
+import { DEFAULT_OG_IMAGES } from '@/lib/og'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +17,7 @@ export const metadata = {
     title: 'Блог — LED крушки и авто осветление | LED Ivanov Auto',
     description: 'Ръководства, съвети и новини за LED крушки, ксенон, полиране и фолиране на фарове.',
     url: `${SITE}/blog`,
+    images: DEFAULT_OG_IMAGES,
   },
 }
 

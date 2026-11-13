@@ -186,7 +186,7 @@ ${table(
     slug: 'led-krushki-h4-kasi-i-dalgi',
     title: 'LED крушки H4: къси и дълги в една крушка. Как да изберете правилната',
     metaDescription:
-      'Как работят LED крушките H4, защо някои светят зле в рефлекторни фарове, 180W срещу Bi LED 170W, монтаж и регулиране. Ръководство от сервиза на LED Ivanov Auto.',
+      'Как работят LED крушките H4, защо някои светят зле в рефлекторни фарове, 180W срещу Bi LED 170W, монтаж и регулиране.',
     date: '2026-10-18',
     readingTime: 10,
     related: ['led-krushki-sveti-slabo-razseyana-svetlina', 'led-krushki-za-avtomobil-vsichko', 'zakonni-li-sa-led-krushkite'],
@@ -293,7 +293,7 @@ ${table(
     slug: 'led-krushki-h7-110w-180w-200w',
     title: 'LED крушки H7: 110W срещу 180W срещу 200W. Коя да изберете',
     metaDescription:
-      'Сравнение на LED крушки H7 110W, 180W и 200W: яркост, размер, охлаждане, CANBUS, гаранция и за кои коли е подходяща всяка. Съвети от сервиза на LED Ivanov Auto.',
+      'Сравнение на LED крушки H7 110W, 180W и 200W: яркост, размер, охлаждане, CANBUS, гаранция и за кои коли е подходяща всяка.',
     date: '2026-10-18',
     readingTime: 9,
     related: ['montazh-led-krushki-h7', 'led-krushki-greshka-migane-smushtenia', 'nai-dobrite-led-krushki'],
@@ -534,7 +534,7 @@ ${table(
     slug: 'led-krushki-greshka-migane-smushtenia',
     title: 'LED крушки: грешка на таблото, мигане, смущения в радиото. Решения',
     metaDescription:
-      'LED крушката дава грешка, мига, не светва или радиото пращи? Причини и решения за всеки проблем: CANBUS модул, полярност, драйвер, капак. От сервиза на LED Ivanov Auto.',
+      'LED крушката дава грешка, мига, не светва или радиото пращи? Причини и решения: CANBUS модул, полярност, драйвер, капак.',
     date: '2026-10-18',
     readingTime: 9,
     related: ['montazh-led-krushki-h7', 'led-krushki-sveti-slabo-razseyana-svetlina', 'kakvo-e-canbus-led-krushki'],
@@ -624,7 +624,7 @@ ${table(
     slug: 'montazh-led-krushki-h7',
     title: 'Монтаж на LED крушки H7 стъпка по стъпка (с преходници за VW, BMW, Mercedes)',
     metaDescription:
-      'Как да монтирате LED крушки H7 сами: подготовка, правилна ориентация, преходници за VW Golf, BMW, Mercedes, CANBUS модул и проверка на снопа. Ръководство на LED Ivanov Auto.',
+      'Как да монтирате LED крушки H7 сами: ориентация, преходници за VW Golf, BMW и Mercedes, CANBUS модул и проверка на снопа.',
     date: '2026-10-18',
     readingTime: 8,
     related: ['led-krushki-greshka-migane-smushtenia', 'led-krushki-h7-110w-180w-200w', 'prehodnici-za-led-krushki'],
@@ -727,7 +727,7 @@ ${table(
     slug: 'led-vs-ksenon-vs-halogen',
     title: 'LED срещу ксенон срещу халоген: кое осветление е най-добро за колата',
     metaDescription:
-      'Сравнение на LED, ксенон и халогенни крушки за автомобил: яркост, живот, цена, монтаж и закон. Кога си струва LED и кога ксенон. Анализ от LED Ivanov Auto.',
+      'Сравнение на LED, ксенон и халогенни крушки за автомобил: яркост, живот, цена, монтаж и закон. Кога си струва LED и кога ксенон.',
     date: '2026-10-18',
     readingTime: 8,
     related: ['led-krushki-za-avtomobil-vsichko', 'led-zamestitel-na-ksenon-d1s-d2s-d3s', 'zakonni-li-sa-led-krushkite'],
@@ -813,7 +813,7 @@ ${table(
     slug: 'led-krushki-sveti-slabo-razseyana-svetlina',
     title: 'LED крушките светят слабо или разпилено? 6 причини и как да ги оправите',
     metaDescription:
-      'Слагате LED крушки, а светлината е слаба, разпиляна или заслепява? Ориентация на чиповете, рефлектор и леща, пожълтели фарове, регулиране. Решения от LED Ivanov Auto.',
+      'Слагате LED крушки, а светлината е слаба, разпиляна или заслепява? Ориентация на чиповете, рефлектор и леща, пожълтели фарове, регулиране.',
     date: '2026-10-18',
     readingTime: 8,
     related: ['led-krushki-h4-kasi-i-dalgi', 'montazh-led-krushki-h7', 'zakonni-li-sa-led-krushkite'],
@@ -898,7 +898,7 @@ ${table(
     slug: 'nai-dobrite-led-krushki',
     title: 'Най-добрите LED крушки за кола през 2026: топ избор по цокъл',
     metaDescription:
-      'Най-добрите LED крушки за автомобил за 2026 по цокъл: H7, H4, H1, H11, HB3, HB4, D2S, D5S и T10 габарити. Подбор от сервиза на LED Ivanov Auto след реални тестове.',
+      'Най-добрите LED крушки за кола за 2026 по цокъл: H7, H4, H1, H11, HB3, HB4, D2S, D5S и T10 габарити, подбрани след реални тестове в сервиза.',
     date: '2026-10-18',
     readingTime: 7,
     related: ['led-krushki-h7-110w-180w-200w', 'led-krushki-h4-kasi-i-dalgi', 'led-zamestitel-na-ksenon-d1s-d2s-d3s'],
@@ -981,7 +981,7 @@ ${table(
     slug: 'led-zamestitel-na-ksenon-d1s-d2s-d3s',
     title: 'LED заместител на ксенон D1S, D2S, D3S, D4S, D5S, D8S: как работи и струва ли си',
     metaDescription:
-      'Какво е LED заместител на ксенон, как замества D1S, D2S, D3S, D4S, D5S и D8S без баласт, разлики между моделите и монтаж. Ръководство от LED Ivanov Auto.',
+      'Какво е LED заместител на ксенон, как замества D1S, D2S, D3S, D4S, D5S и D8S без баласт, разлики между моделите и монтаж.',
     date: '2026-10-18',
     readingTime: 8,
     related: ['led-vs-ksenon-vs-halogen', 'nai-dobrite-led-krushki', 'zakonni-li-sa-led-krushkite'],
@@ -1074,7 +1074,7 @@ ${table(
     slug: 'led-krushki-za-mygla-h11-h8',
     title: 'LED крушки за фарове за мъгла H11, H8, H1, H3: бели или жълти?',
     metaDescription:
-      'Как да изберете LED крушки за фарове за мъгла H11, H8, H1 и H3: бяла 6000K или жълта 3000K светлина, размер, CANBUS и монтаж. Съвети от LED Ivanov Auto.',
+      'Как да изберете LED крушки за фарове за мъгла H11, H8, H1 и H3: бяла 6000K или жълта 3000K светлина, размер, CANBUS и монтаж.',
     date: '2026-10-18',
     readingTime: 6,
     related: ['nai-dobrite-led-krushki', 'kakva-krushka-e-moyata-kola', 'led-krushki-greshka-migane-smushtenia'],
@@ -1504,7 +1504,7 @@ ${table(
     slug: 'led-krushki-za-kola-po-marki',
     title: 'LED крушки по марка кола: VW, BMW, Audi, Mercedes, Opel, Ford, Toyota, Skoda',
     metaDescription:
-      'Какви LED крушки трябват за VW Golf, Passat, BMW E90, F30, Audi A4, Mercedes C, Opel Astra, Ford Focus, Toyota Corolla, Skoda Octavia. Цокли, преходници, CANBUS.',
+      'Какви LED крушки трябват за VW Golf, BMW E90 и F30, Audi A4, Mercedes C, Opel Astra, Ford Focus, Skoda Octavia: цокли, преходници и CANBUS.',
     date: '2026-10-20',
     readingTime: 9,
     related: ['led-krushki-za-vw-golf-4-5-6-7', 'prehodnici-za-led-krushki', 'kakvo-e-canbus-led-krushki'],
@@ -1732,7 +1732,7 @@ ${table(
     slug: 'kakvo-e-canbus-led-krushki',
     title: 'Какво е CANBUS при LED крушките и кога ви трябва CANBUS модул (декодер)',
     metaDescription:
-      'CANBUS обяснено просто: защо LED крушките дават грешка „крушка изгоряла", мигат или угасват, кои марки коли са чувствителни и кога трябва CANBUS модул или резистор.',
+      'CANBUS обяснено просто: защо LED крушките мигат или дават грешка „крушка изгоряла", кои коли са чувствителни и кога трябва модул или резистор.',
     date: '2026-10-25',
     readingTime: 10,
     related: ['led-krushki-greshka-migane-smushtenia', 'led-krushki-za-kola-po-marki', 'montazh-led-krushki-h7'],
@@ -1832,7 +1832,7 @@ ${table(
     slug: 'prehodnici-za-led-krushki',
     title: 'Преходници за LED крушки H7 и H1: кога трябват и за кои коли (VW, Hyundai, Kia, BMW, Mercedes)',
     metaDescription:
-      'Какво е преходник (адаптер) за LED крушка, защо LED H7 не влиза във фара на Golf, Hyundai или Kia и как да изберете правилния държач. Списък с модели и съвети от сервиз.',
+      'Какво е преходник (адаптер) за LED крушка, защо LED H7 не влиза във фара на Golf, Hyundai или Kia и как да изберете правилния държач.',
     date: '2026-10-25',
     readingTime: 8,
     related: ['montazh-led-krushki-h7', 'led-krushki-za-kola-po-marki', 'kakva-krushka-e-moyata-kola'],
@@ -1910,7 +1910,7 @@ ${table(
     slug: 'zaslepyavat-li-led-krushkite',
     title: 'Заслепяват ли LED крушките? Как да проверите и регулирате фаровете след монтаж',
     metaDescription:
-      'Кога LED крушките заслепяват насрещните, как да проверите снопа на стена за 5 минути, правилна височина на отсечката и регулиране на фаровете. Съвети от сервиз в София.',
+      'Кога LED крушките заслепяват насрещните, как да проверите снопа на стена за 5 минути, правилна височина на отсечката и регулиране на фаровете.',
     date: '2026-10-25',
     readingTime: 9,
     related: ['led-krushki-sveti-slabo-razseyana-svetlina', 'zakonni-li-sa-led-krushkite', 'montazh-led-krushki-h7'],
@@ -1989,7 +1989,7 @@ ${table(
     slug: 'cvetna-temperatura-led-krushki-6000k-4300k',
     title: 'Кой цвят LED крушки да изберем: 3000K, 4300K, 6000K или 6500K',
     metaDescription:
-      'Цветна температура на LED крушките обяснено: какво е 4300K, 6000K и 6500K, коя светлина се вижда най-добре в дъжд и мъгла, кое е законно и защо синята светлина свети по-малко.',
+      'Цветна температура на LED крушките: какво е 4300K, 6000K и 6500K, коя светлина се вижда най-добре в дъжд и мъгла и защо синята свети по-слабо.',
     date: '2026-10-25',
     readingTime: 8,
     related: ['led-krushki-za-mygla-h11-h8', 'led-vs-ksenon-vs-halogen', 'zakonni-li-sa-led-krushkite'],
@@ -2060,7 +2060,7 @@ ${table(
     slug: 'evtini-led-krushki-struva-li-si',
     title: 'Евтини LED крушки от eMAG, Temu и AliExpress: струва ли си и защо излизат скъпо',
     metaDescription:
-      'Евтини LED крушки за кола от маркетплейси: какво показват „120 000 лумена" на кутията, защо мигат, изгарят и заслепяват и как да разпознаете качествена крушка преди покупка.',
+      'Евтини LED крушки от маркетплейси: какво значи „120 000 лумена" на кутията, защо мигат и изгарят и как да разпознаете качествена крушка.',
     date: '2026-10-25',
     readingTime: 8,
     related: ['led-krushki-za-kola-ceni', 'led-krushki-za-kola-kak-da-izberem', 'nai-dobrite-led-krushki'],
@@ -2132,7 +2132,7 @@ ${table(
     slug: 'kolko-izdarzhat-led-krushkite',
     title: 'Колко издържат LED крушките за кола и защо изгарят преди време',
     metaDescription:
-      'Реален живот на LED крушките за кола срещу халоген и ксенон: колко часа и колко години, 7 причини да изгорят по-рано и как да удължите живота им. Гаранция и съвети.',
+      'Реален живот на LED крушките за кола срещу халоген и ксенон: колко часа и колко години, 7 причини да изгорят по-рано и как да удължите живота им.',
     date: '2026-10-25',
     readingTime: 7,
     related: ['led-krushki-s-ventilator-ili-bez', 'led-vs-ksenon-vs-halogen', 'evtini-led-krushki-struva-li-si'],
@@ -2197,7 +2197,7 @@ ${table(
     slug: 'led-krushki-za-vw-golf-4-5-6-7',
     title: 'LED крушки за VW Golf 4, 5, 6 и 7: какъв цокъл, преходник и CANBUS',
     metaDescription:
-      'Какви LED крушки трябват за Volkswagen Golf 4, Golf 5, Golf 6 и Golf 7: къси, дълги, мъгла и габарити. Цокли H7, H1, H15, преходници за VW и монтаж в София.',
+      'Какви LED крушки трябват за VW Golf 4, 5, 6 и 7: къси, дълги, мъгла и габарити. Цокли H7, H1, H15, преходници за VW и монтаж в София.',
     date: '2026-10-25',
     readingTime: 7,
     related: ['led-krushki-za-kola-po-marki', 'prehodnici-za-led-krushki', 'montazh-led-krushki-h7'],

@@ -8,7 +8,7 @@ const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com
 
 export const metadata: Metadata = {
   title: { absolute: 'Полиране на фарове | LED Ivanov Auto' },
-  description: 'Професионално полиране и възстановяване на фарове в София. Премахваме пожълтяването и мътността за кристална прозрачност и ярка светлина. Гаранция за резултата.',
+  description: 'Полиране и възстановяване на фарове в София. Премахваме пожълтяването и мътността за кристална прозрачност и ярка светлина. Гаранция за резултата.',
   alternates: { canonical: '/services/headlight-polishing' },
 }
 

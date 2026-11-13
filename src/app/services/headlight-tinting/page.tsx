@@ -9,7 +9,7 @@ const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com
 
 export const metadata: Metadata = {
   title: { absolute: 'Фолиране на фарове | LED Ivanov Auto' },
-  description: 'Професионално фолиране на фарове с PPF фолио в София. Защита от UV лъчи, камъни и надрасквания. Запазва прозрачността и стойността на автомобила с до 5 години гаранция.',
+  description: 'Фолиране на фарове с PPF фолио в София: защита от UV лъчи, камъни и надрасквания, запазена прозрачност. До 5 години гаранция.',
   alternates: { canonical: '/services/headlight-tinting' },
 }
 

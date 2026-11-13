@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import ProductGrid from '@/components/ProductGrid'
 import ProductFilter from '@/components/ProductFilter'
 import { Suspense } from 'react'
+import { DEFAULT_OG_IMAGES } from '@/lib/og'
 
 export const metadata = {
   title: { absolute: 'LED крушки и ксенон за автомобили | LED Ivanov Auto' },
@@ -13,6 +14,7 @@ export const metadata = {
     title: 'LED крушки и ксенон за автомобили | LED Ivanov Auto',
     description: 'Купете LED и ксенон крушки за фарове онлайн — широк избор от H1, H4, H7, H11 и др. Plug & Play монтаж, без CanBus грешки, до 2 год. гаранция.',
     url: 'https://www.ledivanovauto.com/products',
+    images: DEFAULT_OG_IMAGES,
   },
 }
 

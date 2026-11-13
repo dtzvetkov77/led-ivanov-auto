@@ -24,6 +24,7 @@ function sanitize(html: string) {
 }
 import type { Product } from '@/lib/types'
 import { optImg } from '@/lib/img'
+import { DEFAULT_OG_IMAGES } from '@/lib/og'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title: `${product.name} | LED Ivanov Auto`,
       description: plainDesc,
-      ...(product.images?.[0] ? { images: [{ url: product.images[0] }] } : {}),
+      images: product.images?.[0] ? [{ url: product.images[0] }] : DEFAULT_OG_IMAGES,
     },
   }
 }

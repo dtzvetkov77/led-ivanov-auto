@@ -6,6 +6,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { CATEGORY_PAGE_CONFIGS } from '@/lib/categoryPages'
 import type { Product } from '@/lib/types'
 import { getArticle, type Article } from '@/lib/articles'
+import { DEFAULT_OG_IMAGES } from '@/lib/og'
 
 const ACCESSORY = /модул|резистор|декодер|адаптер|преходни|кабел|букс|ключодърж|стикер/i
 
@@ -66,6 +67,7 @@ export async function generateMetadata({ params }: Props) {
       title: config.title,
       description: config.metaDescription,
       url: `${SITE}/c/${slug}`,
+      images: DEFAULT_OG_IMAGES,
     },
   }
 }

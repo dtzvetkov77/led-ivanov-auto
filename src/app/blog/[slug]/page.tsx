@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
 import { getArticle, articleCover, type Article } from '@/lib/articles'
 import { optImg } from '@/lib/img'
+import { DEFAULT_OG_IMAGES } from '@/lib/og'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,7 +57,7 @@ export async function generateMetadata({ params }: Props) {
       url: `${SITE}/blog/${slug}`,
       type: 'article',
       publishedTime: post.created_at,
-      ...(post.cover_image ? { images: [{ url: post.cover_image.startsWith('/') ? `${SITE}${post.cover_image}` : post.cover_image, width: 1600, height: 900, alt: post.title }] } : {}),
+      images: post.cover_image ? [{ url: post.cover_image.startsWith('/') ? `${SITE}${post.cover_image}` : post.cover_image, width: 1600, height: 900, alt: post.title }] : DEFAULT_OG_IMAGES,
       modifiedTime: post.updated_at ?? undefined,
     },
   }
