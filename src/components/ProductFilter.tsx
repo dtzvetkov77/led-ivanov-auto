@@ -53,6 +53,7 @@ export default function ProductFilter({
 
   function navigate(updates: Record<string, string | undefined>) {
     const params = new URLSearchParams(searchParams.toString())
+    params.delete('page') // new filter/sort → start from page 1
     for (const [k, v] of Object.entries(updates)) {
       if (v) params.set(k, v)
       else params.delete(k)

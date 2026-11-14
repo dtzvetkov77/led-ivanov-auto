@@ -3,17 +3,32 @@ import ProductGrid from '@/components/ProductGrid'
 import ProductFilter from '@/components/ProductFilter'
 import { Suspense } from 'react'
 
-export const metadata = {
-  title: { absolute: 'LED крушки и ксенон за автомобили | LED Ivanov Auto' },
-  description: 'Купете LED и ксенон крушки за фарове онлайн — широк избор от H1, H4, H7, H11 и др. Plug & Play монтаж, без CanBus грешки, до 2 год. гаранция.',
-  alternates: {
-    canonical: '/products',
-  },
-  openGraph: {
-    title: 'LED крушки и ксенон за автомобили | LED Ivanov Auto',
-    description: 'Купете LED и ксенон крушки за фарове онлайн — широк избор от H1, H4, H7, H11 и др. Plug & Play монтаж, без CanBus грешки, до 2 год. гаранция.',
-    url: 'https://www.ledivanovauto.com/products',
-  },
+const PAGE_SIZE = 48
+
+function parsePage(raw?: string): number {
+  const n = Number.parseInt(raw ?? '1', 10)
+  return Number.isFinite(n) && n > 1 ? n : 1
+}
+
+export async function generateMetadata({ searchParams }: Props) {
+  const page = parsePage((await searchParams).page)
+  const path = page > 1 ? `/products?page=${page}` : '/products'
+  const title = page > 1
+    ? `LED крушки и ксенон за автомобили — страница ${page} | LED Ivanov Auto`
+    : 'LED крушки и ксенон за автомобили | LED Ivanov Auto'
+  const description = 'Купете LED и ксенон крушки за фарове онлайн — широк избор от H1, H4, H7, H11 и др. Plug & Play монтаж, без CanBus грешки, до 2 год. гаранция.'
+  return {
+    title: { absolute: title },
+    description,
+    alternates: {
+      canonical: path,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.ledivanovauto.com${path}`,
+    },
+  }
 }
 
 type Props = {
@@ -23,11 +38,13 @@ type Props = {
     category?: string
     sort?: string
     q?: string
+    page?: string
   }>
 }
 
 export default async function ProductsPage({ searchParams }: Props) {
   const params = await searchParams
+  const page = parsePage(params.page)
   const supabase = await createClient()
 
   // ── Fetch filter data ─────────────────────────────────────────────────────
@@ -80,7 +97,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   }
 
   // ── Build query ───────────────────────────────────────────────────────────
-  let query = supabase.from('products').select('*').eq('published', true)
+  let query = supabase.from('products').select('*', { count: 'exact' }).eq('published', true)
 
   if (params.q) {
     const words = params.q.trim().split(/\s+/).filter(Boolean)
@@ -144,7 +161,21 @@ export default async function ProductsPage({ searchParams }: Props) {
     query = query.in('id', productIds)
   }
 
-  const { data: products } = await query
+  const from = (page - 1) * PAGE_SIZE
+  const { data: products, count } = await query.range(from, from + PAGE_SIZE - 1)
+  const total = count ?? products?.length ?? 0
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+
+  // Plain crawlable links that keep the active filters
+  const pageHref = (n: number) => {
+    const qs = new URLSearchParams()
+    for (const [k, v] of Object.entries(params)) {
+      if (k !== 'page' && typeof v === 'string' && v) qs.set(k, v)
+    }
+    if (n > 1) qs.set('page', String(n))
+    const s = qs.toString()
+    return s ? `/products?${s}` : '/products'
+  }
 
   // ── Page title ────────────────────────────────────────────────────────────
   let title = 'Всички продукти'
@@ -170,7 +201,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-black">{title}</h1>
-        <span className="text-muted text-sm">{products?.length ?? 0} продукта</span>
+        <span className="text-muted text-sm">{total} продукта</span>
       </div>
 
       {activeFiltersCount === 0 && (
@@ -198,6 +229,28 @@ export default async function ProductsPage({ searchParams }: Props) {
       )}
 
       <ProductGrid products={products ?? []} />
+
+      {totalPages > 1 && (
+        <nav aria-label="Страници" className="flex flex-wrap items-center justify-center gap-2 mt-8">
+          {page > 1 && (
+            <a href={pageHref(page - 1)} rel="prev" className="px-3 py-1.5 rounded-lg text-sm border border-border text-muted hover:border-accent hover:text-white">
+              ← Предишна
+            </a>
+          )}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            n === page ? (
+              <span key={n} aria-current="page" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-accent border border-accent text-white">{n}</span>
+            ) : (
+              <a key={n} href={pageHref(n)} className="px-3 py-1.5 rounded-lg text-sm border border-border text-muted hover:border-accent hover:text-white">{n}</a>
+            )
+          ))}
+          {page < totalPages && (
+            <a href={pageHref(page + 1)} rel="next" className="px-3 py-1.5 rounded-lg text-sm border border-border text-muted hover:border-accent hover:text-white">
+              Следваща →
+            </a>
+          )}
+        </nav>
+      )}
     </div>
   )
 }
