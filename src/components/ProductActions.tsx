@@ -45,6 +45,13 @@ export default function ProductActions({ product, categorySlug, priceNote }: Pro
     : (!hasVariations ? product.stock_quantity : null)
   const showUrgency = effectiveStock !== null && effectiveStock > 0 && effectiveStock <= 5
 
+  // Stock shown as text (also read by search engines and AI shopping agents); same rule as the Product JSON-LD
+  const inStock = selectedVariation !== null
+    ? selectedVariation.stock_quantity !== 0
+    : hasVariations
+      ? (product.variations ?? []).some(v => v.stock_quantity !== 0)
+      : product.stock_quantity !== 0
+
   const handleAddToCart = () => {
     const name = selectedVariation
       ? `${product.name} — ${Object.entries(selectedVariation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')}`
@@ -97,6 +104,11 @@ export default function ProductActions({ product, categorySlug, priceNote }: Pro
           </div>
         </div>
       )}
+
+      <p className={`flex items-center gap-2 text-sm font-semibold -mt-3 mb-4 ${inStock ? 'text-green-500' : 'text-muted'}`}>
+        <span className={`w-2 h-2 rounded-full shrink-0 ${inStock ? 'bg-green-500' : 'bg-muted'}`} />
+        {inStock ? 'В наличност' : 'Изчерпан'}
+      </p>
 
       {priceNote && (
         <p className="flex items-center gap-2 text-sm text-white font-semibold -mt-2 mb-4">

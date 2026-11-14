@@ -181,20 +181,45 @@ export default async function ProductPage({ params }: Props) {
   const customerPhotos = [...socketPhotos, ...(gallery ?? []).filter(g => !socketPhotos.includes(g))].slice(0, 8)
 
   const effectivePrice = Number(p.sale_price ?? p.price)
+  // Same rule as the stock label in ProductActions: with variations, in stock if any variation is
+  const inStock = p.variations && p.variations.length > 0
+    ? p.variations.some(v => v.stock_quantity !== 0)
+    : p.stock_quantity !== 0
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: p.name,
     description: p.short_description ? p.short_description.replace(/<[^>]+>/g, '') : undefined,
     image: p.images ?? [],
+    sku: p.id,
     brand: { '@type': 'Brand', name: 'LED Ivanov Auto' },
     offers: {
       '@type': 'Offer',
       url: `${SITE}/products/${p.slug}`,
       priceCurrency: 'EUR',
       price: effectivePrice.toFixed(2),
-      availability: p.stock_quantity === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      availability: inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
       seller: { '@type': 'Organization', name: 'LED Ivanov Auto' },
+      // Shipping cost is the courier's standard tariff (see /contact), so no shippingRate is claimed here
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'BG' },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+          transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'DAY' },
+        },
+      },
+      // 14-day withdrawal, return shipping paid by the customer (see /terms, section 7)
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'BG',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/ReturnShippingFees',
+      },
     },
   }
 
