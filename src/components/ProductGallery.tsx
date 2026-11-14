@@ -11,6 +11,8 @@ export default function ProductGallery({ images, name }: Props) {
   const prev = useCallback(() => setActive(i => (i - 1 + images.length) % images.length), [images.length])
   const next = useCallback(() => setActive(i => (i + 1) % images.length), [images.length])
   const close = useCallback(() => setLightbox(false), [])
+  // Descriptive alt per photo: "<name>" for the first, "<name>, снимка N" for the rest
+  const imgAlt = (i: number) => (i === 0 ? name : `${name}, снимка ${i + 1}`)
 
   useEffect(() => {
     if (!lightbox) return
@@ -47,7 +49,7 @@ export default function ProductGallery({ images, name }: Props) {
             src={optImg(images[active], 828)}
             srcSet={optImgSet(images[active], [640, 828, 1200])}
             sizes="(max-width: 1024px) 100vw, 50vw"
-            alt={name}
+            alt={imgAlt(active)}
             fetchPriority="high"
             decoding="async"
             className="w-full h-full object-contain block"
@@ -69,7 +71,7 @@ export default function ProductGallery({ images, name }: Props) {
                 aria-label={`Снимка ${i + 1}`}
                 className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${i === active ? 'border-accent' : 'border-border hover:border-muted'}`}
               >
-                <img src={optImg(img, 128)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover block" />
+                <img src={optImg(img, 128)} alt={imgAlt(i)} loading="lazy" decoding="async" className="w-full h-full object-cover block" />
               </button>
             ))}
           </div>
@@ -118,7 +120,7 @@ export default function ProductGallery({ images, name }: Props) {
           >
             <img
               src={optImg(images[active], 1920)}
-              alt={name}
+              alt={imgAlt(active)}
               decoding="async"
               className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
             />
