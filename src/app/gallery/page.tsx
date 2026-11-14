@@ -1,7 +1,24 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import LightboxGallery from '@/components/LightboxGallery'
 
-export const metadata = { title: { absolute: 'Галерия | LED Ivanov Auto' }, alternates: { canonical: '/gallery' } }
+const GALLERY_TITLE = 'Галерия: реални монтажи на LED крушки | LED Ivanov Auto'
+const GALLERY_DESC = 'Снимки от реални монтажи на LED и ксенон крушки при наши клиенти от сервиза на LED Ivanov Auto в София.'
+
+export const metadata: Metadata = {
+  title: { absolute: GALLERY_TITLE },
+  description: GALLERY_DESC,
+  alternates: { canonical: '/gallery' },
+  openGraph: {
+    title: GALLERY_TITLE,
+    description: GALLERY_DESC,
+    url: '/gallery',
+    type: 'website',
+    locale: 'bg_BG',
+    siteName: 'LED Ivanov Auto',
+    images: ['/images/hero.webp'],
+  },
+}
 
 export default async function GalleryPage() {
   const supabase = await createClient()
