@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import { optImg } from '@/lib/img'
+import { cache } from 'react'
+import { JsonLd } from '@/components/JsonLd'
 
 type Partner = {
   id: string
@@ -39,24 +41,23 @@ const STATIC_PARTNERS: Partner[] = [
   { id: '9', slug: 'auto-union-19', name: 'Ауто Юнион19 ЕООД', city: 'Асеновград', address: '—', phone: '+359897211675', hours: 'Всеки ден', contact_person: 'Йордан Авков', description: null, cover_image: null, published: true, position: 9 },
 ]
 
-export async function generateStaticParams() {
-  return STATIC_PARTNERS.map(p => ({ slug: p.slug }))
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
+
+// Links to LED Ivanov Auto's own categories and services (internal linking from partner pages)
+const RELATED_LINKS: { href: string; label: string }[] = [
+  { href: '/c/led-krushki-h7', label: 'LED крушки H7' },
+  { href: '/c/led-krushki-canbus', label: 'LED крушки с CANBUS' },
+  { href: '/c/ksenon-krushki', label: 'Ксенон крушки' },
+  { href: '/services', label: 'Услуги за фарове' },
+]
+
+// A partner page counts as filled only when it has its own description.
+// Pages without one are noindex and left out of the sitemap until the data is added in the admin.
+function hasContent(partner: Partner) {
+  return !!partner.description && partner.description.trim().length > 0
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params
-  const partner = STATIC_PARTNERS.find(p => p.slug === slug)
-  const name = partner?.name ?? slug
-  return {
-    title: { absolute: `${name} | Партньорски сервизи | LED Ivanov Auto` },
-    description: `${name} — партньорски сервиз на LED Ivanov Auto в ${partner?.city ?? ''}. Полиране на фарове и автомобилна козметика.`,
-    alternates: { canonical: `/partners/${slug}` },
-  }
-}
-
-export default async function PartnerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-
+const getPartnerData = cache(async (slug: string): Promise<{ partner: Partner | null; images: PartnerImage[] }> => {
   let partner: Partner | null = null
   let images: PartnerImage[] = []
 
@@ -86,12 +87,58 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
     partner = STATIC_PARTNERS.find(p => p.slug === slug) ?? null
   }
 
+  return { partner, images }
+})
+
+export async function generateStaticParams() {
+  return STATIC_PARTNERS.map(p => ({ slug: p.slug }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const { partner } = await getPartnerData(slug)
+  const name = partner?.name ?? slug
+  return {
+    title: { absolute: `${name} | Партньорски сервизи | LED Ivanov Auto` },
+    description: `${name} — партньорски сервиз на LED Ivanov Auto в ${partner?.city ?? ''}. Полиране на фарове и автомобилна козметика.`,
+    alternates: { canonical: `/partners/${slug}` },
+    ...(partner && !hasContent(partner) ? { robots: { index: false, follow: true } } : {}),
+  }
+}
+
+export default async function PartnerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+
+  const { partner, images } = await getPartnerData(slug)
+
   if (!partner) {
     notFound()
   }
 
+  const hasAddress = !!partner.address && partner.address !== '—'
+  const mapQuery = [partner.name, hasAddress ? partner.address : null, partner.city].filter(Boolean).join(', ')
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+  const schemaImage = partner.cover_image ?? images[0]?.url
+
+  const autoRepairSchema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'AutoRepair',
+    name: partner.name,
+    url: `${SITE}/partners/${partner.slug}`,
+    telephone: partner.phone,
+    address: {
+      '@type': 'PostalAddress',
+      ...(hasAddress ? { streetAddress: partner.address } : {}),
+      addressLocality: partner.city,
+      addressCountry: 'BG',
+    },
+    ...(partner.description ? { description: partner.description } : {}),
+    ...(schemaImage ? { image: schemaImage } : {}),
+  }
+
   return (
     <main className="min-h-screen bg-background">
+      <JsonLd data={autoRepairSchema} />
       <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
         {/* Back link */}
         <Link
@@ -172,6 +219,14 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
               </div>
             )}
           </div>
+          <a
+            href={mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-6 text-sm text-accent hover:underline"
+          >
+            Виж местоположението в Google Maps
+          </a>
         </div>
 
         {/* Description */}
@@ -200,6 +255,22 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
         )}
+
+        {/* Related LED Ivanov Auto categories and services */}
+        <div className="mb-10">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4">Продукти и услуги на LED Ivanov Auto</h2>
+          <div className="flex flex-wrap gap-3">
+            {RELATED_LINKS.map(l => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="inline-flex items-center border border-border text-white text-sm px-4 py-2 rounded-xl hover:border-accent/50 hover:bg-white/5 transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
 
         {/* CTA */}
         <div className="bg-surface border border-border rounded-2xl p-8 text-center">

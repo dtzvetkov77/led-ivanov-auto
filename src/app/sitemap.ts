@@ -7,23 +7,21 @@ export const revalidate = 3600
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
-// Fallback when the partners table is empty — keep in sync with STATIC_PARTNERS in src/app/partners/page.tsx
-const STATIC_PARTNER_SLUGS = [
-  'kostas-garage', 'dbr-tint', 'antonio-dinchev', 'dzumbi-folio', 'zlatnite-race-ses',
-  'erik-auto', 'alpha-garage', 'georgi-videv', 'auto-union-19',
-]
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
   const [{ data: products }, { data: blogPosts }, { data: partners }] = await Promise.all([
     supabase.from('products').select('slug, updated_at').eq('published', true),
     supabase.from('blog_posts').select('slug, updated_at').eq('published', true),
-    supabase.from('partners').select('slug').eq('published', true),
+    supabase.from('partners').select('slug, description').eq('published', true),
   ])
 
-  // Same source as /partners: published rows from the partners table, static fallback if empty
-  const partnerSlugs = (partners ?? []).map(p => p.slug).filter(Boolean)
-  const partnerUrls: MetadataRoute.Sitemap = (partnerSlugs.length > 0 ? partnerSlugs : STATIC_PARTNER_SLUGS).map(slug => ({
+  // Only partner pages with their own description; empty ones are noindex
+  // (see hasContent in src/app/partners/[slug]/page.tsx) until the data is filled in the admin.
+  const partnerSlugs = (partners ?? [])
+    .filter(p => typeof p.description === 'string' && p.description.trim().length > 0)
+    .map(p => p.slug)
+    .filter(Boolean)
+  const partnerUrls: MetadataRoute.Sitemap = partnerSlugs.map(slug => ({
     url: `${SITE}/partners/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
