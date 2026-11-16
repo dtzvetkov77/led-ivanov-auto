@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    // Fewer variants = fewer Vercel image transformations and cache writes.
+    formats: ['image/webp'],
+    // Product images rarely change; replaced images should get a new URL.
+    minimumCacheTTL: 2678400, // 31 days
+    // Covers the sizes= values in use (100vw/50vw layouts, 576px/480px fixed) at 1x-2x DPR.
+    deviceSizes: [640, 828, 1080, 1200, 1920],
+    // Thumbnails (56px/80px) at 1x-2x plus small grid cards.
+    imageSizes: [64, 128, 256, 384],
     remotePatterns: [
       { protocol: 'https', hostname: 'ivanov-auto.com' },
       { protocol: 'https', hostname: '*.supabase.co' },
