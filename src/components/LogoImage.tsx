@@ -8,8 +8,6 @@ export default function LogoImage({ className = 'h-8' }: { className?: string })
     return (
       <img
         src="/images/logo.png"
-        width={1734}
-        height={160}
         alt="LED Ivanov Auto"
         className={`w-auto object-contain ${className}`}
         onError={() => setFailed(true)}

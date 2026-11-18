@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import { seoTitle, seoDescription } from '@/lib/seoMeta'
 import { createPublicClient } from '@/lib/supabase/server'
 import ProductGrid from '@/components/ProductGrid'
 import Link from 'next/link'
@@ -63,12 +62,12 @@ export async function generateMetadata({ params }: Props) {
   const config = CATEGORY_PAGE_CONFIGS[slug]
   if (!config) return {}
   return {
-    title: { absolute: seoTitle(config.title.replace(/ \| LED Ivanov Auto$/, "")) },
-    description: seoDescription(config.metaDescription),
+    title: { absolute: config.title },
+    description: config.metaDescription,
     alternates: { canonical: `/c/${slug}` },
     openGraph: {
-      title: seoTitle(config.title.replace(/ \| LED Ivanov Auto$/, "")),
-      description: seoDescription(config.metaDescription),
+      title: config.title,
+      description: config.metaDescription,
       url: `${SITE}/c/${slug}`,
     },
   }

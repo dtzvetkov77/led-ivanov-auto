@@ -83,8 +83,6 @@ export default async function BlogPage() {
                 {post.cover_image ? (
                   <img
                     src={optImg(post.cover_image, 640)}
-                    width={640}
-                    height={360}
                     loading="lazy"
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"

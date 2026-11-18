@@ -1,5 +1,4 @@
-import { createPublicClient } from '@/lib/supabase/server'
-import type { Product } from '@/lib/types'
+import { createClient } from '@/lib/supabase/server'
 import HeroFilter from '@/components/HeroFilter'
 import { getGoogleReviews } from '@/lib/google-reviews'
 import BestsellersGrid from '@/components/BestsellersGrid'
@@ -22,11 +21,8 @@ const STATIC_PARTNERS = [
 
 export const metadata = { alternates: { canonical: '/' } }
 
-// Cookie-free Supabase client + ISR: the home page is served from cache instead of rendered per request.
-export const revalidate = 600
-
 export default async function HomePage() {
-  const supabase = createPublicClient()
+  const supabase = await createClient()
   const [{ data: partnersData }, { data: categoriesData }] = await Promise.all([
     supabase.from('partners').select('slug,name,city,phone,cover_image,logo_url').eq('published', true).order('position'),
     supabase.from('categories').select('id,name,slug,parent_id,image_url').order('name'),
@@ -38,8 +34,7 @@ export default async function HomePage() {
     ? await supabase.from('product_categories').select('product_id').in('category_id', bulbCatIds)
     : { data: [] }
   const bulbIds = [...new Set((pc ?? []).map(r => r.product_id as string))]
-  // Only the fields ProductCard needs; full rows (descriptions etc.) bloated the RSC payload.
-  let productsQuery = supabase.from('products').select('id,name,slug,price,sale_price,images,stock_quantity,attributes,variations').eq('published', true)
+  let productsQuery = supabase.from('products').select('*').eq('published', true)
   productsQuery = bulbIds.length
     ? productsQuery.in('id', bulbIds)
     : bulbCatIds.length ? productsQuery.in('category_id', bulbCatIds) : productsQuery.limit(8)
@@ -60,7 +55,7 @@ export default async function HomePage() {
     .filter(p => !/модул/i.test(p.name))
     .map((p, i) => ({ p, i }))
     .sort((a, b) => pinRank(a.p.slug) - pinRank(b.p.slug) || a.i - b.i)
-    .map(x => ({ ...x.p, images: (x.p.images ?? []).slice(0, 1) }) as unknown as Product)
+    .map(x => x.p)
 
   const PARTNERS = (partnersData && partnersData.length > 0) ? partnersData : STATIC_PARTNERS
   const allDbCats = (categoriesData ?? []) as { id: string; name: string; slug: string; parent_id: string | null; image_url: string | null }[]
@@ -264,7 +259,7 @@ const SERVICES = [
 ]
 
 async function ServicesSection() {
-  const supabase = createPublicClient()
+  const supabase = await createClient()
 
   const previews = await Promise.all(
     SERVICES.map(async s => {
@@ -314,18 +309,18 @@ async function ServicesSection() {
                 {s.pair ? (
                   <div className="absolute inset-0 grid grid-cols-2">
                     <div className="relative overflow-hidden border-r border-border/50">
-                      <img src={optImg(s.pair.before_url, 640)} width={320} height={360} loading="lazy" alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                      <img src={optImg(s.pair.before_url, 640)} loading="lazy" alt={`Преди — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
                       <span className="absolute bottom-2 left-2 text-[10px] font-bold bg-black/70 text-white px-2 py-0.5 rounded z-10">ПРЕДИ</span>
                     </div>
                     <div className="relative overflow-hidden">
-                      <img src={optImg(s.pair.after_url, 640)} width={320} height={360} loading="lazy" alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
+                      <img src={optImg(s.pair.after_url, 640)} loading="lazy" alt={`След — ${s.name}`} className="absolute inset-0 w-full h-full object-cover" />
                       <span className="absolute bottom-2 right-2 text-[10px] font-bold bg-accent/90 text-white px-2 py-0.5 rounded z-10">СЛЕД</span>
                     </div>
                   </div>
                 ) : s.fallbackImg ? (
-                  <img src={optImg(s.fallbackImg, 828)} width={640} height={360} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={optImg(s.fallbackImg, 828)} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : s.heroImg ? (
-                  <img src={optImg(s.heroImg, 828)} width={640} height={360} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={optImg(s.heroImg, 828)} loading="lazy" alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <svg className="w-12 h-12 text-border" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

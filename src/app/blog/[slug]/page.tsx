@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import { seoTitle, seoDescription } from '@/lib/seoMeta'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { JsonLd } from '@/components/JsonLd'
@@ -48,12 +47,12 @@ export async function generateMetadata({ params }: Props) {
   if (!post) return {}
 
   return {
-    title: { absolute: seoTitle(post.title) },
-    description: post.meta_description ? seoDescription(post.meta_description) : undefined,
+    title: { absolute: `${post.title} | LED Ivanov Auto` },
+    description: post.meta_description ?? undefined,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
-      title: seoTitle(post.title),
-      description: post.meta_description ? seoDescription(post.meta_description) : undefined,
+      title: `${post.title} | LED Ivanov Auto`,
+      description: post.meta_description ?? undefined,
       url: `${SITE}/blog/${slug}`,
       type: 'article',
       publishedTime: post.created_at,
@@ -82,7 +81,7 @@ export default async function BlogPostPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
-    description: post.meta_description ? seoDescription(post.meta_description) : undefined,
+    description: post.meta_description ?? undefined,
     datePublished: post.created_at,
     dateModified: post.updated_at ?? post.created_at,
     ...(post.cover_image ? { image: post.cover_image.startsWith('/') ? `${SITE}${post.cover_image}` : post.cover_image } : {}),
