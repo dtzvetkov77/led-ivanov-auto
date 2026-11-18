@@ -32,12 +32,16 @@ type Props = { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
-  const { data: product } = await supabase
+  // Metadata resolves before the streamed shell for crawlers, so notFound() here makes
+  // a missing product a real 404 (the page's loading.tsx would otherwise commit a 200).
+  const { data: product, error } = await supabase
     .from('products')
     .select('name, short_description, images')
     .eq('slug', slug)
-    .single()
-  if (!product) return { title: 'LED Ivanov Auto' }
+    .eq('published', true)
+    .maybeSingle()
+  if (error) throw new Error(`Product lookup failed: ${error.message}`)
+  if (!product) notFound()
   const plainDesc = product.short_description
     ? product.short_description.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 160)
     : undefined
@@ -106,9 +110,11 @@ export default async function ProductPage({ params }: Props) {
     .select('*, category:categories!category_id(name, slug)')
     .eq('slug', slug)
     .eq('published', true)
-    .single()
+    .maybeSingle()
 
-  if (productError || !product) notFound()
+  // A database error is a 5xx, not an empty 200 page; a missing product is a 404
+  if (productError) throw new Error(`Product lookup failed: ${productError.message}`)
+  if (!product) notFound()
 
   const p = product as Product & { category: { name: string; slug: string } | null }
 
