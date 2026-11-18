@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: 'LED Ivanov Auto — LED и ксенон крушки, полиране и фолиране на фарове',
+    default: 'LED Ivanov Auto — LED крушки, полиране и фолиране на фарове',
     template: '%s | LED Ivanov Auto',
   },
   description: 'LED и ксенон крушки за автомобили — Plug & Play, без CanBus грешки, до 2 год. гаранция. Полиране, фолиране и регулиране на фарове в София.',

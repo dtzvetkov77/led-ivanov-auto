@@ -82,6 +82,7 @@ export default function Footer() {
                 { href: '/about',                         label: 'За нас' },
                 { href: '/partners',                      label: 'Партньори' },
                 { href: '/gallery',                       label: 'Галерия' },
+                { href: '/video',                         label: 'Видео' },
                 { href: '/contact',                       label: 'Контакти' },
               ].map(l => (
                 <li key={l.href}>

@@ -1,10 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 
-export default async function AdminBar({ productId }: { productId: string }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+// Client-side session check: product pages are ISR-cached, so a server-side
+// cookies() read here would make every cached render fail with a 500.
+export default function AdminBar({ productId }: { productId: string }) {
+  const [isAdmin, setIsAdmin] = useState(false)
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => setIsAdmin(!!data.user)).catch(() => {})
+  }, [])
+  if (!isAdmin) return null
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-3 px-4 py-3 bg-black/90 backdrop-blur-sm border-t border-accent/30">

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import ProductGallery from '@/components/ProductGallery'
 import ProductActions from '@/components/ProductActions'
 import ProductDescriptionTabs from '@/components/ProductDescriptionTabs'
@@ -24,33 +24,62 @@ function sanitize(html: string) {
 }
 import type { Product } from '@/lib/types'
 import { optImg } from '@/lib/img'
+import { seoTitle, seoDescription } from '@/lib/seoMeta'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ledivanovauto.com').replace('http://localhost:3000', 'https://www.ledivanovauto.com')
 
 type Props = { params: Promise<{ slug: string }> }
 
+// ISR: pages render on first visit, then are served from cache and refreshed every 10 min.
+// The empty list opts the route into on-demand caching without prebuilding every product.
+export const revalidate = 600
+export async function generateStaticParams() {
+  return []
+}
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   // Metadata resolves before the streamed shell for crawlers, so notFound() here makes
   // a missing product a real 404 (the page's loading.tsx would otherwise commit a 200).
   const { data: product, error } = await supabase
     .from('products')
-    .select('name, short_description, images')
+    .select('name, short_description, images, price, sale_price')
     .eq('slug', slug)
     .eq('published', true)
     .maybeSingle()
   if (error) throw new Error(`Product lookup failed: ${error.message}`)
   if (!product) notFound()
-  const plainDesc = product.short_description
-    ? product.short_description.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 160)
-    : undefined
+
+  // Several products share a name (e.g. four "Стикер Quattro"); give each a distinct title.
+  const { data: sameName } = await supabase
+    .from('products')
+    .select('slug')
+    .eq('name', product.name)
+    .eq('published', true)
+    .order('created_at')
+  let name = product.name.trim()
+  if (sameName && sameName.length > 1) {
+    name += ` (вариант ${sameName.findIndex(p => p.slug === slug) + 1})`
+  }
+
+  // Name + price first keeps descriptions unique even when short descriptions are copy-pasted.
+  const price = Number(product.sale_price ?? product.price)
+  const shortText = (product.short_description ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/(^|\s)-\s*/g, ', ')
+    .replace(/:\s*,/g, ':')
+    .replace(/^[\s,]+/, '')
+  const plainDesc = seoDescription(
+    `${name}${price > 0 ? ` – ${price.toFixed(2)} €` : ''}. ${shortText || 'Доставка 1–2 дни, до 2 год. гаранция.'}`
+  )
+  const title = seoTitle(name)
   return {
-    title: { absolute: `${product.name} | LED Ivanov Auto` },
+    title: { absolute: title },
     description: plainDesc,
     alternates: { canonical: `/products/${slug}` },
     openGraph: {
-      title: `${product.name} | LED Ivanov Auto`,
+      title,
       description: plainDesc,
       ...(product.images?.[0] ? { images: [{ url: product.images[0] }] } : {}),
     },
@@ -103,7 +132,7 @@ const plain = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g,
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data: product, error: productError } = await supabase
     .from('products')
@@ -118,16 +147,23 @@ export default async function ProductPage({ params }: Props) {
 
   const p = product as Product & { category: { name: string; slug: string } | null }
 
-  // Related: same category, different product
-  const { data: related } = p.category_id
+  // Related: the next 4 products of the same category, wrapping around. A fixed "first 4"
+  // linked the same few products from everywhere and left deep-pagination products without
+  // internal links; neighbours give every product inbound links from its siblings.
+  const { data: siblings } = p.category_id
     ? await supabase
         .from('products')
         .select('id, name, slug, price, sale_price, images')
         .eq('published', true)
         .eq('category_id', p.category_id)
-        .neq('id', p.id)
-        .limit(4)
+        .order('position')
+        .order('created_at', { ascending: false })
     : { data: [] }
+  const sib = siblings ?? []
+  const at = sib.findIndex(s => s.id === p.id)
+  const related = sib.length > 1
+    ? Array.from({ length: Math.min(4, sib.length - 1) }, (_, k) => sib[(at + 1 + k) % sib.length])
+    : []
 
   // Bundle relations for FBT
   const { data: bundleRelations } = await supabase
